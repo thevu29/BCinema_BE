@@ -1,0 +1,153 @@
+# Ignore Visual Studio temporary files, build results, and
+# build directories.
+.vscode/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Ignore build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Ignore NuGet packages
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Ignore Rider files
+.idea/
+*.sln.iml
+
+# Ignore JetBrains Rider temp files
+.idea/
+*.sln.iml
+
+# Ignore Resharper files
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Ignore code coverage results
+*.coverage
+*.coveragexml
+*.coveragejson
+*.opencover.xml
+coverage.opencover.xml
+coverage.cobertura.xml
+coverage.json
+
+# Ignore database files
+*.mdf
+*.ldf
+
+# Ignore npm packages
+node_modules/
+
+# Ignore yarn files
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+
+# Ignore logs
+*.log
+*.log.*
+
+# Ignore byebug command history file.
+.byebug_history
+
+# Ignore .NET Core project files
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Ignore StyleCop
+StyleCopReport.xml
+
+# Ignore NCrunch
+_NCrunch_*
+.*crunch*.local.xml
+
+# Ignore Azure DevOps
+.vsts/
+
+# Ignore local history
+.localhistory/
+
+# Ignore Rider
+.idea/
+*.sln.iml
+
+# Ignore Visual Studio Code
+.vscode/
+
+# Ignore Mac files
+.DS_Store
+
+# Ignore Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Ignore folder config file
+Desktop.ini
+
+# Ignore Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Ignore Windows shortcuts
+*.lnk
+
+# Ignore Docker related files
+**/Dockerfile
+**/docker-compose.yml
+**/docker-compose.override.yml
+*.dockerignore
+.docker/
+
+# Ignore IIS Express files
+.IISExpress/
+
+# Ignore local settings files
+*.local
+*.sln.local
+
+# Ignore test results
+TestResults/
+
+# Ignore JetBrains Rider specific files
+.idea/
+*.sln.iml
+*.DotSettings
+
+# Ignore PHPStorm specific files
+.idea/
+*.iml
+
+# Ignore temporary files
+*.tmp
+*.temp
+
+# Ignore environment variables file
+.env
+.env.*
+
+# Ignore appsettings for different environments
+appsettings*.json

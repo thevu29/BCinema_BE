@@ -1,0 +1,15 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=host;Database=database;Username=username;Password=password;"
+  },
+  "ApiSettings": {
+    "ApiKey": "your_api_key_here"
+  }
+}
