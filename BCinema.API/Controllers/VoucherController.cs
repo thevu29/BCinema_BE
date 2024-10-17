@@ -5,6 +5,7 @@ using BCinema.Application.Features.UserVouchers.Commands;
 using BCinema.Application.Features.UserVouchers.Queries;
 using BCinema.Application.Features.Vouchers.Commands;
 using BCinema.Application.Features.Vouchers.Queries;
+using BCinema.Application.Helpers;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -25,12 +26,13 @@ public class VoucherController : ControllerBase
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetVouchers()
+    public async Task<IActionResult> GetVouchers([FromQuery] VoucherQuery query)
     {
         try
         {
-            var vouchers = await _mediator.Send(new GetAllVoucherQuery());
-            return Ok(new ApiResponse<IEnumerable<VoucherDto>>(true, "Get all voucher successfully", vouchers));
+            var vouchers = await _mediator.Send(new GetAllVoucherQuery { Query = query });
+            return Ok(new PageResponse<IEnumerable<VoucherDto>>(true, "Get vouchers successfully", 
+                vouchers.Data, vouchers.Page, vouchers.Size, vouchers.TotalPages, vouchers.TotalElements));
         }
         catch (Exception ex)
         {

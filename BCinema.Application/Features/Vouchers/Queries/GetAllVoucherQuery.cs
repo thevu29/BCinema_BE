@@ -1,14 +1,16 @@
 using AutoMapper;
 using BCinema.Application.DTOs;
+using BCinema.Application.Helpers;
 using BCinema.Application.Interfaces;
+using BCinema.Doman.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace BCinema.Application.Features.Vouchers.Queries;
 
-public class GetAllVoucherQuery : IRequest<IEnumerable<VoucherDto>>
+public class GetAllVoucherQuery : IRequest<PaginatedList<VoucherDto>>
 {
-    public class GetAllVoucherQueryHandler : IRequestHandler<GetAllVoucherQuery, IEnumerable<VoucherDto>>
+    public VoucherQuery Query { get; set; }
+    public class GetAllVoucherQueryHandler : IRequestHandler<GetAllVoucherQuery, PaginatedList<VoucherDto>>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -19,10 +21,35 @@ public class GetAllVoucherQuery : IRequest<IEnumerable<VoucherDto>>
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<VoucherDto>> Handle(GetAllVoucherQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedList<VoucherDto>> Handle(GetAllVoucherQuery request, CancellationToken cancellationToken)
         {
-            var vouchers = await _context.Vouchers.ToListAsync(cancellationToken);
-            return _mapper.Map<IEnumerable<VoucherDto>>(vouchers);
+            IQueryable<Voucher> query = _context.Vouchers;
+            if (!string.IsNullOrEmpty(request.Query.Code))
+            {
+                query = query.Where(x => x.Code.ToLower().Contains(request.Query.Code.ToLower()));
+            }
+
+            query = ApplySorting(query, request.Query.SortBy, request.Query.SortOrder);
+
+            var vouchers = await PaginatedList<Voucher>
+                .ToPageList(query, request.Query.Page, request.Query.Size);
+            var voucherDtos = _mapper.Map<IEnumerable<VoucherDto>>(vouchers.Data);
+            return new PaginatedList<VoucherDto>(vouchers.Page, vouchers.Size, vouchers.TotalElements, voucherDtos);
+        }
+        
+        private IQueryable<Voucher> ApplySorting(IQueryable<Voucher> query, string sortBy, string sortOrder)
+        {
+            switch (sortBy.ToLower())
+            {
+                case "createdat":
+                    query = sortOrder.ToUpper() == "ASC" ? query.OrderBy(v => v.CreateAt) : query.OrderByDescending(v => v.CreateAt);
+                    break;
+                default:
+                    query = sortOrder.ToUpper() == "ASC" ? query.OrderBy(v => v.Id) : query.OrderByDescending(v => v.Id);
+                    break;
+            }
+
+            return query;
         }
     }
 }
