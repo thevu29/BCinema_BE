@@ -7,7 +7,8 @@ public class PageResponse<T> : ApiResponse<T>
     public int TotalPages { get; set; }
     public int TotalElements { get; set; }
     
-    public PageResponse(bool success, string message, T data, int page, int size, int totalPage, int totalElements) : base(success, message, data)
+    public PageResponse(bool success, string message, T data, int page, int size, int totalPage, int totalElements) 
+        : base(success, message, data)
     {
         Page = page;
         Size = size;

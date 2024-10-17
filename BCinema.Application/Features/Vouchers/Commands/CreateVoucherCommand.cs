@@ -8,7 +8,7 @@ namespace BCinema.Application.Features.Vouchers.Commands;
 
 public class CreateVoucherCommand : IRequest<VoucherDto>
 {
-    public string Code { get; set; }
+    public string Code { get; set; } = default!;
     public int Discount { get; set; }
     public int Quantity { get; set; }
     public string? Description { get; set; }

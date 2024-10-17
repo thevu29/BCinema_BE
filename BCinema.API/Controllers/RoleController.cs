@@ -9,7 +9,7 @@ using FluentValidation;
 
 namespace BCinema.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/roles")]
     [ApiController]
     public class RoleController : ControllerBase
     {
@@ -41,7 +41,7 @@ namespace BCinema.API.Controllers
             }
         }
 
-        [HttpGet("all")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<RoleDto>>> GetRoles()
         {
             try

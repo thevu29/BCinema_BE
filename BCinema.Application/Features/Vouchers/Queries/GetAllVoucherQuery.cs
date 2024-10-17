@@ -9,7 +9,8 @@ namespace BCinema.Application.Features.Vouchers.Queries;
 
 public class GetAllVoucherQuery : IRequest<PaginatedList<VoucherDto>>
 {
-    public VoucherQuery Query { get; set; }
+    public VoucherQuery Query { get; set; } = default!;
+
     public class GetAllVoucherQueryHandler : IRequestHandler<GetAllVoucherQuery, PaginatedList<VoucherDto>>
     {
         private readonly IApplicationDbContext _context;
@@ -37,15 +38,19 @@ public class GetAllVoucherQuery : IRequest<PaginatedList<VoucherDto>>
             return new PaginatedList<VoucherDto>(vouchers.Page, vouchers.Size, vouchers.TotalElements, voucherDtos);
         }
         
-        private IQueryable<Voucher> ApplySorting(IQueryable<Voucher> query, string sortBy, string sortOrder)
+        private static IQueryable<Voucher> ApplySorting(IQueryable<Voucher> query, string sortBy, string sortOrder)
         {
             switch (sortBy.ToLower())
             {
                 case "createdat":
-                    query = sortOrder.ToUpper() == "ASC" ? query.OrderBy(v => v.CreateAt) : query.OrderByDescending(v => v.CreateAt);
+                    query = sortOrder.ToUpper() == "ASC"
+                        ? query.OrderBy(v => v.CreateAt)
+                        : query.OrderByDescending(v => v.CreateAt);
                     break;
                 default:
-                    query = sortOrder.ToUpper() == "ASC" ? query.OrderBy(v => v.Id) : query.OrderByDescending(v => v.Id);
+                    query = sortOrder.ToUpper() == "ASC"
+                        ? query.OrderBy(v => v.Id)
+                        : query.OrderByDescending(v => v.Id);
                     break;
             }
 

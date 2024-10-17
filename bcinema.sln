@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BCinema.Doman", "BCinema.Doman\BCinema.Doman.csproj", "{146B9AC5-328D-4A10-AA0C-52561EDD0D1E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BCinema.Domain", "BCinema.Doman\BCinema.Domain.csproj", "{146B9AC5-328D-4A10-AA0C-52561EDD0D1E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BCinema.Application", "BCinema.Application\BCinema.Application.csproj", "{016B41FA-6AC9-4C49-8874-12E0ADB5A28E}"
 EndProject

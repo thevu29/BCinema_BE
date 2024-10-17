@@ -5,7 +5,6 @@ using BCinema.Application.Features.UserVouchers.Commands;
 using BCinema.Application.Features.UserVouchers.Queries;
 using BCinema.Application.Features.Vouchers.Commands;
 using BCinema.Application.Features.Vouchers.Queries;
-using BCinema.Application.Helpers;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +35,7 @@ public class VoucherController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An unexpected error occurred while getting all roles.");
+            _logger.LogError(ex, "An unexpected error occurred while getting all vouchers.");
             return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred."));
         }
     }
@@ -55,7 +54,7 @@ public class VoucherController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An unexpected error occurred while creating role.");
+            _logger.LogError(ex, "An unexpected error occurred while getting voucher.");
             return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred."));
         }
         
@@ -66,7 +65,8 @@ public class VoucherController : ControllerBase
     {
         try
         {
-            var userVoucher = await _mediator.Send(new GetByUIdAndVIdQuery() { VoucherId = voucherId, UserId = userId });
+            var userVoucher = await _mediator.Send(
+                new GetByUIdAndVIdQuery() { VoucherId = voucherId, UserId = userId });
             return Ok(new ApiResponse<UserVoucherDto>(true, "Get user voucher successfully", userVoucher));
         }
         catch (NotFoundException ex)
@@ -75,7 +75,7 @@ public class VoucherController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An unexpected error occurred while creating role.");
+            _logger.LogError(ex, "An unexpected error occurred while getting user-voucher.");
             return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred."));
         }
     }
@@ -95,7 +95,7 @@ public class VoucherController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An unexpected error occurred while creating role.");
+            _logger.LogError(ex, "An unexpected error occurred while updating voucher.");
             return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred."));
         }
     }
@@ -106,15 +106,18 @@ public class VoucherController : ControllerBase
         try
         {
             var voucher = await _mediator.Send(command);
-            return StatusCode(StatusCodes.Status201Created, new ApiResponse<VoucherDto>(true, "Voucher created successfully", voucher));
+            return StatusCode(
+                StatusCodes.Status201Created,
+                new ApiResponse<VoucherDto>(true, "Voucher created successfully", voucher));
         }
         catch (ValidationException ex)
         {
+            _logger.LogError(ex, "An unexpected error occurred while creating voucher.");
             return BadRequest(new ApiResponse<string>(false, ex.Message));
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An unexpected error occurred while creating role.");
+            _logger.LogError(ex, "An unexpected error occurred while creating voucher.");
             return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred."));
         }
     }
@@ -125,7 +128,9 @@ public class VoucherController : ControllerBase
         try
         {
             var userVoucher = await _mediator.Send(command);
-            return StatusCode(StatusCodes.Status201Created, new ApiResponse<UserVoucherDto>(true, "User voucher created successfully", userVoucher));
+            return StatusCode(
+                StatusCodes.Status201Created,
+                new ApiResponse<UserVoucherDto>(true, "User voucher created successfully", userVoucher));
         }
         catch (Exception ex) when (ex is ValidationException || ex is BadRequestException )
         {
@@ -137,7 +142,7 @@ public class VoucherController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An unexpected error occurred while creating role.");
+            _logger.LogError(ex, "An unexpected error occurred while creating user-voucher.");
             return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred."));
         }
     }

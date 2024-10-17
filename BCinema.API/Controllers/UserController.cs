@@ -9,7 +9,7 @@ using BCinema.Application.Features.Users.Queries;
 
 namespace BCinema.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/users")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -45,7 +45,7 @@ namespace BCinema.API.Controllers
             }
         }
 
-        [HttpGet("all")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
         {
             try

@@ -23,7 +23,8 @@ public class GetVoucherByCodeQuery : IRequest<VoucherDto>
 
         public async Task<VoucherDto> Handle(GetVoucherByCodeQuery request, CancellationToken cancellationToken)
         {
-            var voucher = await _context.Vouchers.FirstOrDefaultAsync(v => v.Code == request.Code, cancellationToken: cancellationToken)
+            var voucher = await _context.Vouchers
+                .FirstOrDefaultAsync(v => v.Code == request.Code, cancellationToken: cancellationToken)
                 ?? throw new NotFoundException(nameof(Vouchers), request.Code);
             return _mapper.Map<VoucherDto>(voucher);
         }
