@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BCinema.Doman.Entities
+namespace BCinema.Domain.Entities
 {
     public class Base
     {

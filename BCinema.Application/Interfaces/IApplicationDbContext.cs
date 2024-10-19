@@ -1,4 +1,4 @@
-﻿using BCinema.Doman.Entities;
+﻿using BCinema.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace BCinema.Application.Interfaces

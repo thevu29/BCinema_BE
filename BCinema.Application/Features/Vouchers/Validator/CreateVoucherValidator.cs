@@ -23,11 +23,6 @@ public class CreateVoucherValidator : AbstractValidator<CreateVoucherCommand>
             .NotNull()
             .GreaterThan(0).WithMessage("{PropertyName} must be greater than 0.");
 
-        RuleFor(x => x.Quantity)
-            .NotEmpty().WithMessage("{PropertyName} is required.")
-            .NotNull()
-            .GreaterThan(0).WithMessage("{PropertyName} must be greater than 0.");
-
         RuleFor(x => x.ExpireAt)
             .NotEmpty().WithMessage("{PropertyName} is required.")
             .NotNull()

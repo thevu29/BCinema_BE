@@ -2,7 +2,7 @@ using AutoMapper;
 using BCinema.Application.DTOs;
 using BCinema.Application.Helpers;
 using BCinema.Application.Interfaces;
-using BCinema.Doman.Entities;
+using BCinema.Domain.Entities;
 using MediatR;
 
 namespace BCinema.Application.Features.Vouchers.Queries;

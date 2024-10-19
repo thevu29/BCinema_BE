@@ -2,7 +2,7 @@ using AutoMapper;
 using BCinema.Application.DTOs;
 using BCinema.Application.Exceptions;
 using BCinema.Application.Interfaces;
-using BCinema.Doman.Entities;
+using BCinema.Domain.Entities;
 using MediatR;
 
 namespace BCinema.Application.Features.Vouchers.Commands;
@@ -10,9 +10,7 @@ namespace BCinema.Application.Features.Vouchers.Commands;
 public class UpdateVoucherCommand : IRequest<VoucherDto>
 {
     public Guid Id { get; set; }
-    public string Code { get; set; }
     public int Discount { get; set; }
-    public int Quantity { get; set; }
     public string? Description { get; set; }
     public DateTime ExpireAt { get; set; }
         

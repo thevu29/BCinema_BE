@@ -1,11 +1,11 @@
-﻿using BCinema.Application.Interfaces;
-using BCinema.Doman.Entities;
+﻿using AutoMapper;
+using BCinema.Application.DTOs;
+using BCinema.Application.Exceptions;
+using BCinema.Application.Interfaces;
+using BCinema.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using BCinema.Application.DTOs;
-using AutoMapper;
-using BCinema.Application.Exceptions;
 
 namespace BCinema.Application.Features.Users.Commands
 {

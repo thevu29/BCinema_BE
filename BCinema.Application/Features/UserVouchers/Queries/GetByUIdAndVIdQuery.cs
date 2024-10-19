@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using BCinema.Application.DTOs;
-using BCinema.Application.Exceptions;
 using BCinema.Application.Interfaces;
-using BCinema.Doman.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,10 +1,10 @@
-﻿using BCinema.Doman.Entities;
+﻿using System.Reflection;
 using BCinema.Application.Behaviors;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
+using BCinema.Domain.Entities;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BCinema.Application
 {

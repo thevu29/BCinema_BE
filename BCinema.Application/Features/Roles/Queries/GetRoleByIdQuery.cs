@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using BCinema.Application.DTOs;
-using BCinema.Application.Interfaces;
-using MediatR;
 using BCinema.Application.Exceptions;
-using BCinema.Doman.Entities;
+using BCinema.Application.Interfaces;
+using BCinema.Domain.Entities;
+using MediatR;
 
 namespace BCinema.Application.Features.Roles.Queries
 {

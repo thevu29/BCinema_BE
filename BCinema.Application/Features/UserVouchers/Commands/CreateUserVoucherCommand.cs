@@ -2,7 +2,7 @@
 using BCinema.Application.DTOs;
 using BCinema.Application.Exceptions;
 using BCinema.Application.Interfaces;
-using BCinema.Doman.Entities;
+using BCinema.Domain.Entities;
 using MediatR;
 
 namespace BCinema.Application.Features.UserVouchers.Commands;
@@ -29,11 +29,10 @@ public class CreateUserVoucherCommand : IRequest<UserVoucherDto>
                 ?? throw new NotFoundException(nameof(User), request.UserId);
             var voucher = await _context.Vouchers.FindAsync(request.VoucherId)
                 ?? throw new NotFoundException(nameof(Voucher), request.VoucherId);
-            if (voucher.Quantity == 0)
+            if (voucher.ExpireAt < DateTime.UtcNow)
             {
-                throw new BadRequestException("Voucher is out of stock");
+                throw new BadRequestException("Voucher is expired.");
             }
-            voucher.Quantity--;
             _context.Vouchers.Update(voucher);
             var userVoucher = _mapper.Map<UserVoucher>(request);
             _context.UserVouchers.Add(userVoucher);

@@ -1,5 +1,5 @@
 ﻿using BCinema.Application.Interfaces;
-using BCinema.Doman.Entities;
+using BCinema.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace BCinema.Persistence.Context

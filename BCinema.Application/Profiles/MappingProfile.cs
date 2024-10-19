@@ -2,7 +2,7 @@
 using BCinema.Application.DTOs;
 using BCinema.Application.Features.UserVouchers.Commands;
 using BCinema.Application.Features.Vouchers.Commands;
-using BCinema.Doman.Entities;
+using BCinema.Domain.Entities;
 
 namespace BCinema.Application.Profiles
 {

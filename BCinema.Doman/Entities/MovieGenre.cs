@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using BCinema.Domain.Entities;
 
-namespace BCinema.Doman.Entities
+namespace BCinema.Domain.Entities
 {
     [Table("MovieGenres")]
     public class MovieGenre : Base

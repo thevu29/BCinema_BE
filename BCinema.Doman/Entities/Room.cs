@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace BCinema.Doman.Entities
+namespace BCinema.Domain.Entities
 {
     [Table("Rooms")]
     public class Room : Base
