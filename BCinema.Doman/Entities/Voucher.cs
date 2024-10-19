@@ -12,9 +12,6 @@ namespace BCinema.Doman.Entities
         [Required]
         public int Discount { get; set; } = 0;
 
-        [Required]
-        public int Quantity { get; set; } = 0;
-
         public string? Description { get; set; }
 
         [Required]
