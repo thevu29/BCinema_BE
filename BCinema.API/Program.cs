@@ -1,11 +1,32 @@
+using BCinema.API.Middlewares;
+using BCinema.API.Responses;
 using BCinema.Application;
 using BCinema.Persistence;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.InvalidModelStateResponseFactory = context =>
+        {
+            var errors = context.ModelState
+                .Where(e => e.Value?.Errors.Count > 0)
+                .Select(e => new
+                {
+                    Name = e.Key,
+                    Message = e.Value?.Errors.FirstOrDefault()?.ErrorMessage ?? "Unknown error"
+                }).ToArray();
+
+            var response = new ApiResponse<object>(false, "One or more validation errors occurred.", errors);
+            return new BadRequestObjectResult(response);
+        };
+    });
+
+
 builder.Services.AddLogging();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -36,6 +57,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseMiddleware<ValidationExceptionMiddleware>();
 
 app.MapControllers();
 

@@ -14,18 +14,22 @@ namespace BCinema.Application.Features.Users.Validator
             _context = context;
 
             RuleFor(x => x.Name)
-                .NotEmpty().WithMessage("Name is required.");
+                .NotEmpty().WithMessage("Name is required.")
+                .NotNull();
 
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("Email is required.")
+                .NotNull()
                 .EmailAddress().WithMessage("A valid email is required.")
                 .MustAsync(BeUniqueEmail).WithMessage("Email already exists.");
 
             RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("Password is required.");
+                .NotEmpty().WithMessage("Password is required.")
+                .NotNull();
 
             RuleFor(x => x.RoleId)
-                .NotEmpty().WithMessage("RoleId is required.");
+                .NotEmpty().WithMessage("RoleId is required.")
+                .NotNull();
         }
 
         private async Task<bool> BeUniqueEmail(string email, CancellationToken cancellationToken)
