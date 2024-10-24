@@ -99,26 +99,6 @@ public class VoucherController : ControllerBase
         }
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutVoucher(Guid id, [FromBody] UpdateVoucherCommand command)
-    {
-        try
-        {
-            command.Id = id;
-            var voucher = await _mediator.Send(command);
-            return Ok(new ApiResponse<VoucherDto>(true, "Voucher updated successfully", voucher));
-        }
-        catch (ValidationException ex)
-        {
-            return BadRequest(new ApiResponse<string>(false, ex.Message));
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An unexpected error occurred while updating voucher.");
-            return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred."));
-        }
-    }
-
     [HttpPost]
     public async Task<IActionResult> CreateVoucher([FromBody] CreateVoucherCommand command)
     {

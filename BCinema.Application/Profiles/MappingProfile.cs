@@ -20,9 +20,6 @@ namespace BCinema.Application.Profiles
             CreateMap<CreateVoucherCommand, Voucher>()
                 .ForMember(dest => dest.ExpireAt, opt => opt.MapFrom(src => src.ExpireAt.ToLocalTime()));
 
-            CreateMap<UpdateVoucherCommand, Voucher>()
-                .ForMember(dest => dest.ExpireAt, opt => opt.MapFrom(src => src.ExpireAt.ToLocalTime()));
-
             // UserVoucher
             CreateMap<UserVoucher, UserVoucherDto>();
             CreateMap<CreateUserVoucherCommand, UserVoucher>();

@@ -20,4 +20,8 @@
     <ProjectReference Include="..\BCinema.Doman\BCinema.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

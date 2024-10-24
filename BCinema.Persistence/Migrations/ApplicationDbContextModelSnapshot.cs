@@ -22,7 +22,7 @@ namespace BCinema.Persistence.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Food", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Food", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -52,7 +52,7 @@ namespace BCinema.Persistence.Migrations
                     b.ToTable("Foods");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Genre", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Genre", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
@@ -72,7 +72,7 @@ namespace BCinema.Persistence.Migrations
                     b.ToTable("Genres");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Movie", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Movie", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
@@ -116,7 +116,7 @@ namespace BCinema.Persistence.Migrations
                     b.ToTable("Movies");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.MovieGenre", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.MovieGenre", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -145,7 +145,7 @@ namespace BCinema.Persistence.Migrations
                     b.ToTable("MovieGenres");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Payment", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Payment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -183,7 +183,7 @@ namespace BCinema.Persistence.Migrations
                     b.ToTable("Payments");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.PaymentDetail", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.PaymentDetail", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -221,7 +221,7 @@ namespace BCinema.Persistence.Migrations
                     b.ToTable("PaymentDetails");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Role", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Role", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -245,7 +245,7 @@ namespace BCinema.Persistence.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Room", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Room", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -270,7 +270,7 @@ namespace BCinema.Persistence.Migrations
                     b.ToTable("Rooms");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Schedule", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Schedule", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -304,7 +304,7 @@ namespace BCinema.Persistence.Migrations
                     b.ToTable("Schedules");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Seat", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Seat", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -341,7 +341,7 @@ namespace BCinema.Persistence.Migrations
                     b.ToTable("Seats");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.SeatType", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.SeatType", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -365,7 +365,7 @@ namespace BCinema.Persistence.Migrations
                     b.ToTable("SeatTypes");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Token", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Token", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -394,7 +394,7 @@ namespace BCinema.Persistence.Migrations
                     b.ToTable("Tokens");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.User", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -440,7 +440,7 @@ namespace BCinema.Persistence.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.UserVoucher", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.UserVoucher", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -467,7 +467,7 @@ namespace BCinema.Persistence.Migrations
                     b.ToTable("UserVouchers");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Voucher", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Voucher", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -489,9 +489,6 @@ namespace BCinema.Persistence.Migrations
                     b.Property<DateTime>("ExpireAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -500,15 +497,15 @@ namespace BCinema.Persistence.Migrations
                     b.ToTable("Vouchers");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.MovieGenre", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.MovieGenre", b =>
                 {
-                    b.HasOne("BCinema.Doman.Entities.Genre", "Genre")
+                    b.HasOne("BCinema.Domain.Entities.Genre", "Genre")
                         .WithMany("MovieGenres")
                         .HasForeignKey("GenreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BCinema.Doman.Entities.Movie", "Movie")
+                    b.HasOne("BCinema.Domain.Entities.Movie", "Movie")
                         .WithMany("MovieGenres")
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -519,21 +516,21 @@ namespace BCinema.Persistence.Migrations
                     b.Navigation("Movie");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Payment", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Payment", b =>
                 {
-                    b.HasOne("BCinema.Doman.Entities.Schedule", "Schedule")
+                    b.HasOne("BCinema.Domain.Entities.Schedule", "Schedule")
                         .WithMany()
                         .HasForeignKey("ScheduleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BCinema.Doman.Entities.User", "User")
+                    b.HasOne("BCinema.Domain.Entities.User", "User")
                         .WithMany("Payments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BCinema.Doman.Entities.Voucher", "Voucher")
+                    b.HasOne("BCinema.Domain.Entities.Voucher", "Voucher")
                         .WithMany("Payments")
                         .HasForeignKey("VoucherId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -546,21 +543,21 @@ namespace BCinema.Persistence.Migrations
                     b.Navigation("Voucher");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.PaymentDetail", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.PaymentDetail", b =>
                 {
-                    b.HasOne("BCinema.Doman.Entities.Food", "Food")
+                    b.HasOne("BCinema.Domain.Entities.Food", "Food")
                         .WithMany("PaymentDetails")
                         .HasForeignKey("FoodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BCinema.Doman.Entities.Payment", "Payment")
+                    b.HasOne("BCinema.Domain.Entities.Payment", "Payment")
                         .WithMany("PaymentDetails")
                         .HasForeignKey("PaymentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BCinema.Doman.Entities.Seat", "Seat")
+                    b.HasOne("BCinema.Domain.Entities.Seat", "Seat")
                         .WithMany("PaymentDetails")
                         .HasForeignKey("SeatId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -573,15 +570,15 @@ namespace BCinema.Persistence.Migrations
                     b.Navigation("Seat");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Schedule", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Schedule", b =>
                 {
-                    b.HasOne("BCinema.Doman.Entities.Movie", "Movie")
+                    b.HasOne("BCinema.Domain.Entities.Movie", "Movie")
                         .WithMany("Schedules")
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BCinema.Doman.Entities.Room", "Room")
+                    b.HasOne("BCinema.Domain.Entities.Room", "Room")
                         .WithMany("Schedules")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -592,15 +589,15 @@ namespace BCinema.Persistence.Migrations
                     b.Navigation("Room");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Seat", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Seat", b =>
                 {
-                    b.HasOne("BCinema.Doman.Entities.Room", "Room")
+                    b.HasOne("BCinema.Domain.Entities.Room", "Room")
                         .WithMany("Seats")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BCinema.Doman.Entities.SeatType", "SeatType")
+                    b.HasOne("BCinema.Domain.Entities.SeatType", "SeatType")
                         .WithMany("Seats")
                         .HasForeignKey("SeatTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -611,9 +608,9 @@ namespace BCinema.Persistence.Migrations
                     b.Navigation("SeatType");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Token", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Token", b =>
                 {
-                    b.HasOne("BCinema.Doman.Entities.User", "User")
+                    b.HasOne("BCinema.Domain.Entities.User", "User")
                         .WithMany("Tokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -622,9 +619,9 @@ namespace BCinema.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.User", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.User", b =>
                 {
-                    b.HasOne("BCinema.Doman.Entities.Role", "Role")
+                    b.HasOne("BCinema.Domain.Entities.Role", "Role")
                         .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -633,15 +630,15 @@ namespace BCinema.Persistence.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.UserVoucher", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.UserVoucher", b =>
                 {
-                    b.HasOne("BCinema.Doman.Entities.User", "User")
+                    b.HasOne("BCinema.Domain.Entities.User", "User")
                         .WithMany("UserVouchers")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BCinema.Doman.Entities.Voucher", "Voucher")
+                    b.HasOne("BCinema.Domain.Entities.Voucher", "Voucher")
                         .WithMany("UserVouchers")
                         .HasForeignKey("VoucherId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -652,51 +649,51 @@ namespace BCinema.Persistence.Migrations
                     b.Navigation("Voucher");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Food", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Food", b =>
                 {
                     b.Navigation("PaymentDetails");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Genre", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Genre", b =>
                 {
                     b.Navigation("MovieGenres");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Movie", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Movie", b =>
                 {
                     b.Navigation("MovieGenres");
 
                     b.Navigation("Schedules");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Payment", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Payment", b =>
                 {
                     b.Navigation("PaymentDetails");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Role", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Role", b =>
                 {
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Room", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Room", b =>
                 {
                     b.Navigation("Schedules");
 
                     b.Navigation("Seats");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Seat", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Seat", b =>
                 {
                     b.Navigation("PaymentDetails");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.SeatType", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.SeatType", b =>
                 {
                     b.Navigation("Seats");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.User", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.User", b =>
                 {
                     b.Navigation("Payments");
 
@@ -705,7 +702,7 @@ namespace BCinema.Persistence.Migrations
                     b.Navigation("UserVouchers");
                 });
 
-            modelBuilder.Entity("BCinema.Doman.Entities.Voucher", b =>
+            modelBuilder.Entity("BCinema.Domain.Entities.Voucher", b =>
                 {
                     b.Navigation("Payments");
 
