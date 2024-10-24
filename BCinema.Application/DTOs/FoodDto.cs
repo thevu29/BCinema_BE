@@ -10,7 +10,7 @@ namespace BCinema.Application.DTOs
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = default!;
-        public string Description { get; set; } = default!;
+        public int Quantity { get; set; } = 0;
         public double Price { get; set; } = 0;
     }
 }

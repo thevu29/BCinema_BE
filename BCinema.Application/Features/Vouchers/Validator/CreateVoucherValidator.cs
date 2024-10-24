@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BCinema.Application.Features.Vouchers.Validator;
 
-public class CreateVoucherValidator : AbstractValidator<CreateVoucherCommand>
+public class CreateVoucherValidator     
 {
     private readonly IApplicationDbContext _context;
 

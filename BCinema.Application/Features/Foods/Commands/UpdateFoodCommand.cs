@@ -1,35 +1,40 @@
 ﻿using AutoMapper;
 using BCinema.Application.DTOs;
+using BCinema.Application.Exceptions;
 using BCinema.Application.Interfaces;
 using BCinema.Doman.Entities;
 using MediatR;
 
 namespace BCinema.Application.Features.Foods.Commands
 {
-    public class CreateFoodCommand : IRequest<FoodDto>
+    public class UpdateFoodCommand : IRequest<FoodDto>
     {
+        public Guid Id { get; set; }
         public string Name { get; set; } = default!;
         public int Quantity { get; set; }
         public double Price { get; set; }
 
-        public class CreateFoodCommandHandler : IRequestHandler<CreateFoodCommand, FoodDto>
+        public class UpdateFoodCommandHandler: IRequestHandler<UpdateFoodCommand,
+            FoodDto>
         {
             private readonly IApplicationDbContext _context;
             private readonly IMapper _mapper;
 
-            public CreateFoodCommandHandler(IApplicationDbContext context, IMapper mapper)
+            public UpdateFoodCommandHandler(IApplicationDbContext context,
+                IMapper mapper)
             {
                 _context = context;
                 _mapper = mapper;
             }
 
-            public async Task<FoodDto> Handle(CreateFoodCommand request, CancellationToken cancellationToken)
+            public async Task<FoodDto> Handle(UpdateFoodCommand request, CancellationToken cancellationToken)
             {
-                var food = _mapper.Map<Food>(request);
+                var food = await _context.Foods.FindAsync(request.Id)
+                                ?? throw new NotFoundException(nameof(Food),
+                                request.Id);
 
-                _context.Foods.Add(food);
+                _mapper.Map(request, food);
                 await _context.SaveChangesAsync(cancellationToken);
-
                 return _mapper.Map<FoodDto>(food);
             }
         }

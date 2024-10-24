@@ -18,8 +18,4 @@
     <ProjectReference Include="..\BCinema.Doman\BCinema.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\Foods\Validator\" />
-  </ItemGroup>
-
 </Project>
