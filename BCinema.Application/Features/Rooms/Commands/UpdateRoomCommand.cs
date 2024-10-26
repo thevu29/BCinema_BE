@@ -1,34 +1,35 @@
 ﻿using AutoMapper;
 using BCinema.Application.DTOs;
+using BCinema.Application.Exceptions;
 using BCinema.Application.Interfaces;
 using BCinema.Doman.Entities;
 using MediatR;
 
 namespace BCinema.Application.Features.Rooms.Commands
 {
-    public class CreateRoomCommand : IRequest<RoomDto>
+    public class UpdateRoomCommand : IRequest<RoomDto>
     {
+        public Guid Id { get; set; }
         public string Name { get; set; } = default!;
         public string? Description { get; set; }
 
-        public class CreateRoomCommandHandler : IRequestHandler<CreateRoomCommand, RoomDto>
+        public class UpdateRoomCommandHandler : IRequestHandler<UpdateRoomCommand, RoomDto>
         {
             private readonly IApplicationDbContext _context;
             private readonly IMapper _mapper;
 
-            public CreateRoomCommandHandler(IApplicationDbContext context, IMapper mapper)
+            public UpdateRoomCommandHandler(IApplicationDbContext context, IMapper mapper)
             {
                 _context = context;
                 _mapper = mapper;
             }
 
-            public async Task<RoomDto> Handle(CreateRoomCommand request, CancellationToken cancellationToken)
+            public async Task<RoomDto> Handle(UpdateRoomCommand request, CancellationToken cancellationToken)
             {
-                var room = _mapper.Map<Room>(request);
+                var room = await _context.Rooms.FindAsync(request.Id) ?? throw new NotFoundException(nameof(Room), request.Id);
 
-                _context.Rooms.Add(room);
+                _mapper.Map(request, room);
                 await _context.SaveChangesAsync(cancellationToken);
-
                 return _mapper.Map<RoomDto>(room);
             }
         }
