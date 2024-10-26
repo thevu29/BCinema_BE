@@ -10,7 +10,7 @@ namespace BCinema.Application.Features.SeatTypes.Commands
     public class UpdateSeatTypeCommand : IRequest<SeatTypeDto>
     {
         public Guid Id { get; set; }
-        public string Name { get; set; } = default!;
+        public string? Name { get; set; } = default!;
         public double Price { get; set; }
 
         public class UpdateSeatTypeCommandHandler : IRequestHandler<UpdateSeatTypeCommand, SeatTypeDto>
