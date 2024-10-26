@@ -95,6 +95,11 @@ public class VoucherController : ControllerBase
             var userVoucher = await _mediator.Send(
                 new GetUserVoucherByUIdAndVIdQuery() { UserId = userId, VoucherId = voucherId });
 
+            if (userVoucher == null)
+            {
+                return Ok(new ApiResponse<UserVoucherDto>(true, "User hasn't used this voucher"));
+            }
+
             return Ok(new ApiResponse<UserVoucherDto>(true, "User has used this voucher", userVoucher));
         }
         catch (NotFoundException ex)

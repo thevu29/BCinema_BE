@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using BCinema.Application.DTOs;
+using BCinema.Application.Exceptions;
+using BCinema.Domain.Entities;
 using BCinema.Domain.Interfaces.IRepositories;
 using MediatR;
 
@@ -13,11 +15,19 @@ public class GetUserVoucherByUIdAndVIdQuery : IRequest<UserVoucherDto>
     public class GetUserByUIdAndVIdQueryHandler : IRequestHandler<GetUserVoucherByUIdAndVIdQuery, UserVoucherDto>
     {
         private readonly IUserVoucherRepository _userVoucherRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IVoucherRepository _voucherRepository;
         private readonly IMapper _mapper;
 
-        public GetUserByUIdAndVIdQueryHandler(IUserVoucherRepository userVoucherRepository, IMapper mapper)
+        public GetUserByUIdAndVIdQueryHandler(
+            IUserVoucherRepository userVoucherRepository,
+            IUserRepository userRepository,
+            IVoucherRepository voucherRepository,
+            IMapper mapper)
         {
             _userVoucherRepository = userVoucherRepository;
+            _userRepository = userRepository;
+            _voucherRepository = voucherRepository;
             _mapper = mapper;
         }
         
@@ -25,6 +35,14 @@ public class GetUserVoucherByUIdAndVIdQuery : IRequest<UserVoucherDto>
             GetUserVoucherByUIdAndVIdQuery request,
             CancellationToken cancellationToken)
         {
+            var user = await _userRepository
+                .GetByIdAsync(request.UserId, cancellationToken)
+                ?? throw new NotFoundException(nameof(User));
+
+            var voucher = await _voucherRepository
+                .GetByIdAsync(request.VoucherId, cancellationToken)
+                ?? throw new NotFoundException(nameof(Voucher));
+
             var userVoucher = await _userVoucherRepository
                 .GetUserVoucherByUIdAndVIdAsync(request.UserId, request.VoucherId, cancellationToken);
 
