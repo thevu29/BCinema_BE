@@ -10,7 +10,7 @@ public class CreateUserVoucherValidator : AbstractValidator<CreateUserVoucherCom
         RuleFor(x => x.UserId)
             .NotEmpty().WithMessage("User id is required");
 
-        RuleFor(x => x.Code)
-            .NotEmpty().WithMessage("Code is required");
+        RuleFor(x => x.VoucherId)
+            .NotEmpty().WithMessage("Voucher id is required");
     }
 }

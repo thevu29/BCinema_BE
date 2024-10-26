@@ -10,8 +10,7 @@ namespace BCinema.Application.Features.UserVouchers.Commands;
 public class CreateUserVoucherCommand : IRequest<UserVoucherDto>
 {
     public Guid UserId { get; set; }
-    public Guid? VoucherId { get; set; }
-    public string Code { get; set; } = default!;
+    public Guid VoucherId { get; set; }
 
     public class CreateUserVoucherCommandHandler : IRequestHandler<CreateUserVoucherCommand, UserVoucherDto>
     {
@@ -38,12 +37,12 @@ public class CreateUserVoucherCommand : IRequest<UserVoucherDto>
         {
             var user = await _userRepository.GetByIdAsync(request.UserId, cancellationToken)
                 ?? throw new NotFoundException(nameof(User));
-
-            var voucher = await _voucherRepository.GetByCoedAsync(request.Code, cancellationToken)
-                ?? throw new BadRequestException("Invalid voucher code");
-
+            
+            var voucher = await _voucherRepository.GetByIdAsync(request.VoucherId, cancellationToken)
+                ?? throw new NotFoundException(nameof(Voucher));
+            
             var usingVoucher = await _userVoucherRepository
-                .GetUserVoucherByUIdAndVIdAsync(request.UserId, voucher.Id, cancellationToken);
+                .GetUserVoucherByUIdAndVIdAsync(user.Id, voucher.Id, cancellationToken);
 
             if (usingVoucher != null) throw new BadRequestException("User already used this voucher");
 
