@@ -1,30 +1,33 @@
 using AutoMapper;
 using BCinema.Application.DTOs;
 using BCinema.Application.Helpers;
-using BCinema.Application.Interfaces;
 using BCinema.Domain.Entities;
+using BCinema.Domain.Interfaces.IRepositories;
 using MediatR;
 
 namespace BCinema.Application.Features.Vouchers.Queries;
 
-public class GetAllVoucherQuery : IRequest<PaginatedList<VoucherDto>>
+public class GetVouchersQuery : IRequest<PaginatedList<VoucherDto>>
 {
     public VoucherQuery Query { get; set; } = default!;
 
-    public class GetAllVoucherQueryHandler : IRequestHandler<GetAllVoucherQuery, PaginatedList<VoucherDto>>
+    public class GetAllVoucherQueryHandler : IRequestHandler<GetVouchersQuery, PaginatedList<VoucherDto>>
     {
-        private readonly IApplicationDbContext _context;
+        private readonly IVoucherRepository _voucherRepository;
         private readonly IMapper _mapper;
 
-        public GetAllVoucherQueryHandler(IApplicationDbContext context, IMapper mapper)
+        public GetAllVoucherQueryHandler(IVoucherRepository voucherRepository, IMapper mapper)
         {
-            _context = context;
+            _voucherRepository = voucherRepository;
             _mapper = mapper;
         }
 
-        public async Task<PaginatedList<VoucherDto>> Handle(GetAllVoucherQuery request, CancellationToken cancellationToken)
+        public async Task<PaginatedList<VoucherDto>> Handle(
+            GetVouchersQuery request,
+            CancellationToken cancellationToken)
         {
-            IQueryable<Voucher> query = _context.Vouchers;
+            IQueryable<Voucher> query = _voucherRepository.GetVouchers();
+
             if (!string.IsNullOrEmpty(request.Query.Code))
             {
                 query = query.Where(x => x.Code.ToLower().Contains(request.Query.Code.ToLower()));
@@ -34,7 +37,9 @@ public class GetAllVoucherQuery : IRequest<PaginatedList<VoucherDto>>
 
             var vouchers = await PaginatedList<Voucher>
                 .ToPageList(query, request.Query.Page, request.Query.Size);
+
             var voucherDtos = _mapper.Map<IEnumerable<VoucherDto>>(vouchers.Data);
+
             return new PaginatedList<VoucherDto>(vouchers.Page, vouchers.Size, vouchers.TotalElements, voucherDtos);
         }
         

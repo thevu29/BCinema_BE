@@ -1,39 +1,47 @@
 using BCinema.API.Middlewares;
 using BCinema.API.Responses;
 using BCinema.Application;
+using BCinema.Infrastructure;
 using BCinema.Persistence;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Set the environment variable for Google Application Default Credentials
+Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS",
+    Path.Combine(AppContext.BaseDirectory, "firebase-adminsdk.json"));
+
+// Initialize Firebase
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromFile("firebase-adminsdk.json"),
+});
 
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>
     {
         options.InvalidModelStateResponseFactory = context =>
         {
-            var errors = context.ModelState
+            var errorMessage = context.ModelState
                 .Where(e => e.Value?.Errors.Count > 0)
-                .Select(e => new
-                {
-                    Name = e.Key,
-                    Message = e.Value?.Errors.FirstOrDefault()?.ErrorMessage ?? "Unknown error"
-                }).ToArray();
+                .Select(e => e.Value?.Errors.FirstOrDefault()?.ErrorMessage ?? "Unknown error")
+                .FirstOrDefault() ?? "Unknown error";
 
-            var response = new ApiResponse<object>(false, "One or more validation errors occurred.", errors);
+            var response = new ApiResponse<object>(false, errorMessage);
             return new BadRequestObjectResult(response);
         };
     });
 
 
 builder.Services.AddLogging();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.ConfigureApplicationServices();
-builder.Services.ConfigurePersistenceServices(builder.Configuration);
+builder.Services.AddApplication();
+builder.Services.AddInfrastructure();
+builder.Services.AddPersistence(builder.Configuration);
 
 builder.Services.AddCors(options =>
 {
@@ -55,13 +63,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseCors("AllowAll");
 
+app.UseMiddleware<DateValidationMiddleware>();
+app.UseMiddleware<GlobalExceptionHandleMiddleware>();
+
 app.UseAuthorization();
-
-app.UseMiddleware<ValidationExceptionMiddleware>();
-
 app.MapControllers();
-
 app.Run();

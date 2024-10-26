@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BCinema.Persistence", "BCin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BCinema.API", "BCinema.API\BCinema.API.csproj", "{9E719F57-EEA0-43E4-B50D-005B3CABBFCD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BCinema.Infrastructure", "BCinema.Infrastructure\BCinema.Infrastructure.csproj", "{8D19E6E6-06DA-47DC-8F1B-2456BEAFD772}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{9E719F57-EEA0-43E4-B50D-005B3CABBFCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E719F57-EEA0-43E4-B50D-005B3CABBFCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E719F57-EEA0-43E4-B50D-005B3CABBFCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D19E6E6-06DA-47DC-8F1B-2456BEAFD772}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D19E6E6-06DA-47DC-8F1B-2456BEAFD772}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D19E6E6-06DA-47DC-8F1B-2456BEAFD772}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D19E6E6-06DA-47DC-8F1B-2456BEAFD772}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

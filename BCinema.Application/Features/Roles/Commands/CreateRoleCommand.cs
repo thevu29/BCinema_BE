@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BCinema.Application.DTOs;
-using BCinema.Application.Interfaces;
 using BCinema.Domain.Entities;
+using BCinema.Domain.Interfaces.IRepositories;
 using MediatR;
 
 namespace BCinema.Application.Features.Roles.Commands
@@ -13,25 +13,21 @@ namespace BCinema.Application.Features.Roles.Commands
         
         public class CreateRoleCommandHandler : IRequestHandler<CreateRoleCommand, RoleDto>
         {
-            private readonly IApplicationDbContext _context;
+            private readonly IRoleRepository _roleRepository;
             private readonly IMapper _mapper;
 
-            public CreateRoleCommandHandler(IApplicationDbContext context, IMapper mapper)
+            public CreateRoleCommandHandler(IRoleRepository roleRepository, IMapper mapper)
             {
-                _context = context;
+                _roleRepository = roleRepository;
                 _mapper = mapper;
             }
 
             public async Task<RoleDto> Handle(CreateRoleCommand request, CancellationToken cancellationToken)
             {
-                var role = new Role
-                {
-                    Name = request.Name,
-                    Description = request.Description
-                };
+                var role = _mapper.Map<Role>(request);
 
-                _context.Roles.Add(role);
-                await _context.SaveChangesAsync(cancellationToken);
+                await _roleRepository.AddAsync(role, cancellationToken);
+                await _roleRepository.SaveChangesAsync(cancellationToken);
 
                 return _mapper.Map<RoleDto>(role);
             }

@@ -4,12 +4,14 @@ using System.Net;
 
 namespace BCinema.API.Middlewares
 {
-    public class ValidationExceptionMiddleware
+    public class GlobalExceptionHandleMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<ValidationExceptionMiddleware> _logger;
+        private readonly ILogger<GlobalExceptionHandleMiddleware> _logger;
 
-        public ValidationExceptionMiddleware(RequestDelegate next, ILogger<ValidationExceptionMiddleware> logger)
+        public GlobalExceptionHandleMiddleware(
+            RequestDelegate next,
+            ILogger<GlobalExceptionHandleMiddleware> logger)
         {
             _next = next;
             _logger = logger;
@@ -23,7 +25,7 @@ namespace BCinema.API.Middlewares
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unexpected error occurred.");
+                _logger.LogError(ex, "An unexpected error occurred");
                 await HandleExceptionAsync(context, ex);
             }
         }
@@ -33,7 +35,8 @@ namespace BCinema.API.Middlewares
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-            var response = new ApiResponse<string>(false, "An unexpected error occurred.");
+            var response = new ApiResponse<string>(false, exception.Message);
+
             return context.Response.WriteAsync(JsonConvert.SerializeObject(response));
         }
     }

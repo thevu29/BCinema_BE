@@ -22,6 +22,30 @@ namespace BCinema.API.Controllers
             _logger = logger;
         }
 
+        [HttpPut("{id}")]
+        public async Task<ActionResult<RoleDto>> UpdateRole(Guid id, [FromBody] UpdateRoleCommand command)
+        {
+            try
+            {
+                command.Id = id;
+                var role = await _mediator.Send(command);
+                return Ok(new ApiResponse<RoleDto>(true, "Role updated successfully", role));
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new ApiResponse<string>(false, ex.Message));
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new ApiResponse<string>(false, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An unexpected error occurred while updating role");
+                return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
+            }
+        }
+
         [HttpPost]
         public async Task<ActionResult<RoleDto>> CreateRole([FromBody] CreateRoleCommand command)
         {
@@ -36,23 +60,31 @@ namespace BCinema.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unexpected error occurred while creating role.");
-                return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred."));
+                _logger.LogError(ex, "An unexpected error occurred while creating role");
+                return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
             }
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RoleDto>>> GetRoles()
+        public async Task<IActionResult> GetRoles([FromQuery] RoleQuery query)
         {
             try
             {
-                var roles = await _mediator.Send(new GetRolesQuery());
-                return Ok(new ApiResponse<IEnumerable<RoleDto>>(true, "Get all roles successfully", roles));
+                var roles = await _mediator.Send(new GetRolesQuery { Query = query });
+
+                return Ok(new PageResponse<IEnumerable<RoleDto>>(
+                    true,
+                    "Get roles successfully",
+                    roles.Data,
+                    roles.Page,
+                    roles.Size,
+                    roles.TotalPages,
+                    roles.TotalElements));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unexpected error occurred while getting all roles.");
-                return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred."));
+                _logger.LogError(ex, "An unexpected error occurred while getting roles");
+                return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
             }
         }
 
@@ -70,8 +102,8 @@ namespace BCinema.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unexpected error occurred while getting role.");
-                return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred."));
+                _logger.LogError(ex, "An unexpected error occurred while getting role");
+                return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
             }
         }
     }

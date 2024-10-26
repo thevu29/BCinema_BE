@@ -3,17 +3,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BCinema.Domain.Entities
 {
-    public enum SeatStatus
-    {
-        Available,
-        Pending,
-        Booked,
-        NotAvailable
-    }
-
     [Table("Seats")]
     public class Seat : Base
     {
+        public enum SeatStatus
+        {
+            Available,
+            Pending,
+            Booked,
+            NotAvailable
+        }
+
         [Required]
         public string Row { get; set; } = default!;
 

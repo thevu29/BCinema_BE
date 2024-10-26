@@ -151,3 +151,4 @@ TestResults/
 
 # Ignore appsettings for different environments
 appsettings*.json
+firebase-adminsdk.json

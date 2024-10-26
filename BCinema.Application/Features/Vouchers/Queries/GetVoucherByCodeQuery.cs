@@ -1,31 +1,32 @@
 using AutoMapper;
 using BCinema.Application.DTOs;
 using BCinema.Application.Exceptions;
-using BCinema.Application.Interfaces;
+using BCinema.Domain.Interfaces.IRepositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace BCinema.Application.Features.Vouchers.Queries;
 
 public class GetVoucherByCodeQuery : IRequest<VoucherDto>
 {
     public string Code { get; set; } = default!;
-    public class GetVoucherByCodeQueryHandle : IRequestHandler<GetVoucherByCodeQuery, VoucherDto>
+
+    public class GetVoucherByCodeQueryHandler : IRequestHandler<GetVoucherByCodeQuery, VoucherDto>
     {
-        private readonly IApplicationDbContext _context;
+        private readonly IVoucherRepository _voucherRepository;
         private readonly IMapper _mapper;
 
-        public GetVoucherByCodeQueryHandle(IApplicationDbContext context, IMapper mapper)
+        public GetVoucherByCodeQueryHandler(IVoucherRepository voucherRepository, IMapper mapper)
         {
-            _context = context;
+            _voucherRepository = voucherRepository;
             _mapper = mapper;
         }
 
         public async Task<VoucherDto> Handle(GetVoucherByCodeQuery request, CancellationToken cancellationToken)
         {
-            var voucher = await _context.Vouchers
-                .FirstOrDefaultAsync(v => v.Code == request.Code, cancellationToken: cancellationToken)
-                ?? throw new NotFoundException(nameof(Vouchers), request.Code);
+            var voucher = await _voucherRepository
+                .GetByCoedAsync(request.Code, cancellationToken)
+                ?? throw new NotFoundException(nameof(Vouchers));
+
             return _mapper.Map<VoucherDto>(voucher);
         }
     }
