@@ -4,7 +4,6 @@ using BCinema.Application.Helpers;
 using BCinema.Domain.Entities;
 using BCinema.Domain.Interfaces.IRepositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace BCinema.Application.Features.Users.Queries
 {
@@ -27,8 +26,7 @@ namespace BCinema.Application.Features.Users.Queries
                 GetUsersQuery request,
                 CancellationToken cancellationToken)
             {
-                IQueryable<User> query = _userRepository.GetUsers()
-                    .Include(u => u.Role);
+                IQueryable<User> query = _userRepository.GetUsers();
 
                 if (!string.IsNullOrEmpty(request.Query.Name))
                 {

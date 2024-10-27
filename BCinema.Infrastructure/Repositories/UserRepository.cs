@@ -24,7 +24,7 @@ namespace BCinema.Infrastructure.Repositories
 
         public IQueryable<User> GetUsers()
         {
-            return _context.Users.AsQueryable();
+            return _context.Users.AsQueryable().Include(u => u.Role);
         }
 
         public async Task<IEnumerable<User>> GetUsersAsync(CancellationToken cancellationToken)
