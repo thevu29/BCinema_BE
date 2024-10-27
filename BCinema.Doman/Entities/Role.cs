@@ -10,6 +10,6 @@ namespace BCinema.Domain.Entities
         public string Name { get; set; } = default!;
         public string? Description { get; set; } = string.Empty;
 
-        public virtual ICollection<User> Users { get; set; } = new HashSet<User>();
+        public ICollection<User> Users { get; set; } = new HashSet<User>();
     }
 }

@@ -24,8 +24,8 @@ namespace BCinema.Domain.Entities
         public Guid RoomId { get; set; } = default!;
 
         [ForeignKey(nameof(MovieId))]
-        public virtual Movie Movie { get; set; } = default!;
+        public Movie Movie { get; set; } = default!;
         [ForeignKey(nameof(RoomId))]
-        public virtual Room Room { get; set; } = default!;
+        public Room Room { get; set; } = default!;
     }
 }

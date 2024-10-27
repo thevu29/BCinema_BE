@@ -12,8 +12,8 @@ namespace BCinema.Domain.Entities
         public Guid VoucherId { get; set; }
 
         [ForeignKey(nameof(UserId))]
-        public virtual User User { get; set; } = default!;
+        public User User { get; set; } = default!;
         [ForeignKey(nameof(VoucherId))]
-        public virtual Voucher Voucher { get; set; } = default!;
+        public Voucher Voucher { get; set; } = default!;
     }
 }

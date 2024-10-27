@@ -20,10 +20,10 @@ namespace BCinema.Domain.Entities
         public DateTime? DeleteAt { get; set; }
 
         [ForeignKey(nameof(RoleId))]
-        public virtual Role Role { get; set; } = default!;
+        public Role Role { get; set; } = default!;
 
-        public virtual ICollection<UserVoucher> UserVouchers { get; set; } = new HashSet<UserVoucher>();
-        public virtual ICollection<Token> Tokens { get; set; } = new HashSet<Token>();
-        public virtual ICollection<Payment> Payments { get; set; } = new HashSet<Payment>();
+        public ICollection<UserVoucher> UserVouchers { get; set; } = new HashSet<UserVoucher>();
+        public ICollection<Token> Tokens { get; set; } = new HashSet<Token>();
+        public ICollection<Payment> Payments { get; set; } = new HashSet<Payment>();
     }
 }

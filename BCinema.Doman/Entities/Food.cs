@@ -14,6 +14,6 @@ namespace BCinema.Domain.Entities
         public int Quantity { get; set; } = default!;
         public DateTime? DeleteAt { get; set; }
 
-        public virtual ICollection<PaymentDetail> PaymentDetails { get; set; } = new HashSet<PaymentDetail>();
+        public ICollection<PaymentDetail> PaymentDetails { get; set; } = new HashSet<PaymentDetail>();
     }
 }

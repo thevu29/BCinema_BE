@@ -18,12 +18,12 @@ namespace BCinema.Domain.Entities
         public double TotalPrice { get; set; }
 
         [ForeignKey(nameof(UserId))]
-        public virtual User User { get; set; } = default!;
+        public User User { get; set; } = default!;
         [ForeignKey(nameof(ScheduleId))]
-        public virtual Schedule Schedule { get; set; } = default!;
+        public Schedule Schedule { get; set; } = default!;
         [ForeignKey(nameof(VoucherId))]
-        public virtual Voucher Voucher { get; set; } = default!;
+        public Voucher Voucher { get; set; } = default!;
 
-        public virtual ICollection<PaymentDetail> PaymentDetails { get; set; } = new HashSet<PaymentDetail>();
+        public ICollection<PaymentDetail> PaymentDetails { get; set; } = new HashSet<PaymentDetail>();
     }
 }

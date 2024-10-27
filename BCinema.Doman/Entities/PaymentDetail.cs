@@ -18,10 +18,10 @@ namespace BCinema.Domain.Entities
         public double Price { get; set; }
 
         [ForeignKey(nameof(PaymentId))]
-        public virtual Payment Payment { get; set; } = default!;
+        public Payment Payment { get; set; } = default!;
         [ForeignKey(nameof(SeatId))]
-        public virtual Seat Seat { get; set; } = default!;
+        public Seat Seat { get; set; } = default!;
         [ForeignKey(nameof(FoodId))]
-        public virtual Food Food { get; set; } = default!;
+        public Food Food { get; set; } = default!;
     }
 }

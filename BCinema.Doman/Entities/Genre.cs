@@ -11,6 +11,6 @@ namespace BCinema.Domain.Entities
         [Required]
         public string Name { get; set; } = default!;
 
-        public virtual ICollection<MovieGenre> MovieGenres { get; set; } = new HashSet<MovieGenre>();
+        public ICollection<MovieGenre> MovieGenres { get; set; } = new HashSet<MovieGenre>();
     }
 }

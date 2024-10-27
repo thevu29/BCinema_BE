@@ -32,7 +32,7 @@ namespace BCinema.Domain.Entities
         [Required]
         public MovieStatus Status { get; set; } = MovieStatus.ComingSoon;
 
-        public virtual ICollection<MovieGenre> MovieGenres { get; set; } = new HashSet<MovieGenre>();
-        public virtual ICollection<Schedule> Schedules { get; set; } = new HashSet<Schedule>();
+        public ICollection<MovieGenre> MovieGenres { get; set; } = new HashSet<MovieGenre>();
+        public ICollection<Schedule> Schedules { get; set; } = new HashSet<Schedule>();
     }
 }

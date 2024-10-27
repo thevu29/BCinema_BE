@@ -10,8 +10,8 @@ namespace BCinema.Domain.Entities
         public string GenreId { get; set; } = default!;
 
         [ForeignKey(nameof(MovieId))]
-        public virtual Movie Movie { get; set; } = default!;
+        public Movie Movie { get; set; } = default!;
         [ForeignKey(nameof(GenreId))]
-        public virtual Genre Genre { get; set; } = default!;
+        public Genre Genre { get; set; } = default!;
     }
 }

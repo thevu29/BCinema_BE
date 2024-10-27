@@ -14,6 +14,6 @@ namespace BCinema.Domain.Entities
         public required Guid UserId { get; set; }
 
         [ForeignKey(nameof(UserId))]
-        public virtual User User { get; set; } = default!;
+        public User User { get; set; } = default!;
     }
 }

@@ -28,10 +28,10 @@ namespace BCinema.Domain.Entities
         public Guid RoomId { get; set; }
 
         [ForeignKey(nameof(SeatTypeId))]
-        public virtual SeatType SeatType { get; set; } = default!;
+        public SeatType SeatType { get; set; } = default!;
         [ForeignKey(nameof(RoomId))]
-        public virtual Room Room { get; set; } = default!;
+        public Room Room { get; set; } = default!;
 
-        public virtual ICollection<PaymentDetail> PaymentDetails { get; set; } = new HashSet<PaymentDetail>();
+        public ICollection<PaymentDetail> PaymentDetails { get; set; } = new HashSet<PaymentDetail>();
     }
 }

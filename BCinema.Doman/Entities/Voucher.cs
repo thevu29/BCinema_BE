@@ -17,7 +17,7 @@ namespace BCinema.Domain.Entities
         [Required]
         public DateTime ExpireAt { get; set; }
 
-        public virtual ICollection<UserVoucher> UserVouchers { get; set; } = new HashSet<UserVoucher>();
-        public virtual ICollection<Payment> Payments { get; set; } = new HashSet<Payment>();
+        public ICollection<UserVoucher> UserVouchers { get; set; } = new HashSet<UserVoucher>();
+        public ICollection<Payment> Payments { get; set; } = new HashSet<Payment>();
     }
 }

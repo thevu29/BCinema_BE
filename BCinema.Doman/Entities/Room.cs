@@ -11,7 +11,7 @@ namespace BCinema.Domain.Entities
         [Required]
         public string? Description { get; set; }
 
-        public virtual ICollection<Seat> Seats { get; set; } = new HashSet<Seat>();
-        public virtual ICollection<Schedule> Schedules { get; set; } = new HashSet<Schedule>();
+        public ICollection<Seat> Seats { get; set; } = new HashSet<Seat>();
+        public ICollection<Schedule> Schedules { get; set; } = new HashSet<Schedule>();
     }
 }
