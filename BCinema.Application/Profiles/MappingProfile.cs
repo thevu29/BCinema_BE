@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using BCinema.Application.DTOs;
+using BCinema.Application.Features.Seats.Commands;
+using BCinema.Application.Features.SeatTypes.Commands;
 using BCinema.Application.Features.UserVouchers.Commands;
 using BCinema.Application.Features.Vouchers.Commands;
 using BCinema.Doman.Entities;
@@ -27,6 +29,15 @@ namespace BCinema.Application.Profiles
             CreateMap<UserVoucher, UserVoucherDto>();
             CreateMap<CreateUserVoucherCommand, UserVoucher>();
 
+            // Seat
+            CreateMap<Seat, SeatDto>();
+            CreateMap<CreateSeatCommand, Seat>();
+            CreateMap<UpdateSeatCommand, Seat>();
+
+            // SeatType
+            CreateMap<SeatType, SeatTypeDto>();
+            CreateMap<CreateSeatTypeCommand, SeatType>();
+            CreateMap<UpdateSeatTypeCommand, SeatType>();
         }
     }
 }
