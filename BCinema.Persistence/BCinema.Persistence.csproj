@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BCinema.Application\BCinema.Application.csproj" />
+    <ProjectReference Include="..\BCinema.Domain\BCinema.Domain.csproj" />
     <ProjectReference Include="..\BCinema.Doman\BCinema.Domain.csproj" />
   </ItemGroup>
 
