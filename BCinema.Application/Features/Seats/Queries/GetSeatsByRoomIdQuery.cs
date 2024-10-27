@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BCinema.Application.DTOs;
 using BCinema.Application.Exceptions;
+using BCinema.Domain.Entities;
 using BCinema.Domain.Interfaces.IRepositories;
 using MediatR;
 
@@ -29,7 +30,7 @@ public class GetSeatsByRoomIdQuery : IRequest<IEnumerable<SeatDto>>
         public async Task<IEnumerable<SeatDto>> Handle(GetSeatsByRoomIdQuery request, CancellationToken cancellationToken)
         {
             var room = await _roomRepository.GetRoomByIdAsync(request.RoomId, cancellationToken)
-                ?? throw new NotFoundException("Room not found");
+                ?? throw new NotFoundException(nameof(Room));
             
             var seats = await _seatRepository.GetSeatsByRoomIdAsync(room.Id, cancellationToken);
             return _mapper.Map<IEnumerable<SeatDto>>(seats);

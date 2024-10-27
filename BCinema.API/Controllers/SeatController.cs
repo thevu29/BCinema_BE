@@ -22,6 +22,25 @@ public class SeatController : ControllerBase
         _logger = logger;
     }
     
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetSeatById(Guid id)
+    {
+        try
+        {
+            var seat = await _mediator.Send(new GetSeatByIdQuery() { Id = id });
+            return Ok(new ApiResponse<SeatDto>(true, "Seat retrieved successfully", seat));
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while retrieving seat");
+            return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
+        }
+    }
+    
     [HttpGet("room/{roomId}")]
     public async Task<IActionResult> GetSeatsByRoomId(Guid roomId)
     {
