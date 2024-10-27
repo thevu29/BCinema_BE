@@ -1,5 +1,6 @@
 ﻿using BCinema.Application.Interfaces;
 using BCinema.Domain.Entities;
+using BCinema.Persistence.Seeds;
 using Microsoft.EntityFrameworkCore;
 
 namespace BCinema.Persistence.Context
@@ -48,8 +49,14 @@ namespace BCinema.Persistence.Context
                     }
                 }
             }
-
+            
             return await base.SaveChangesAsync(cancellationToken);
+        }
+        
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            ApplicationDbContextSeed.Seed(modelBuilder);
         }
     }
 }
