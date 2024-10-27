@@ -20,12 +20,10 @@
 
   <ItemGroup>
     <Folder Include="Features\Movies\" />
-    <Folder Include="Features\Seats\" />
     <Folder Include="Features\PaymentDetails\" />
     <Folder Include="Features\Payments\Commands\" />
     <Folder Include="Features\Payments\Validators\" />
     <Folder Include="Features\Payments\Queries\" />
-    <Folder Include="Features\Rooms\Queries\" />
     <Folder Include="Features\Schedule\Commands\" />
     <Folder Include="Features\Schedule\Validators\" />
     <Folder Include="Features\Schedule\Queries\" />

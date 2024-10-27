@@ -11,6 +11,6 @@ namespace BCinema.Domain.Entities
         [Required]
         public double Price { get; set; } = default!;
 
-        public virtual ICollection<Seat> Seats { get; set; } = new HashSet<Seat>();
+        public ICollection<Seat> Seats { get; set; } = new HashSet<Seat>();
     }
 }

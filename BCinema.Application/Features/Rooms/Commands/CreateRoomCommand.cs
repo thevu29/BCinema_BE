@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using BCinema.Application.DTOs;
-using BCinema.Application.Interfaces;
+using BCinema.Application.Exceptions;
 using BCinema.Domain.Entities;
+using BCinema.Domain.Interfaces.IRepositories;
 using MediatR;
 
 namespace BCinema.Application.Features.Rooms.Commands
@@ -15,12 +16,20 @@ namespace BCinema.Application.Features.Rooms.Commands
 
         public class CreateRoomCommandHandler : IRequestHandler<CreateRoomCommand, RoomDto>
         {
-            private readonly IApplicationDbContext _context;
+            private readonly IRoomRepository _roomRepository;
+            private readonly ISeatRepository _seatRepository;
+            private readonly ISeatTypeRepository _seatTypeRepository;
             private readonly IMapper _mapper;
 
-            public CreateRoomCommandHandler(IApplicationDbContext context, IMapper mapper)
+            public CreateRoomCommandHandler(
+                IRoomRepository roomRepository,
+                ISeatRepository seatRepository,
+                ISeatTypeRepository seatTypeRepository,
+                IMapper mapper) 
             {
-                _context = context;
+                _roomRepository = roomRepository;
+                _seatRepository = seatRepository;
+                _seatTypeRepository = seatTypeRepository;
                 _mapper = mapper;
             }
 
@@ -28,23 +37,33 @@ namespace BCinema.Application.Features.Rooms.Commands
             {
                 var room = _mapper.Map<Room>(request);
 
-                _context.Rooms.Add(room);
+                await _roomRepository.AddRoomAsync(room, cancellationToken);
+                await _roomRepository.SaveChangesAsync(cancellationToken);
+                
+                var seatType = await _seatTypeRepository
+                    .GetByNameAsync("Regular", cancellationToken) 
+                    ?? throw new NotFoundException("Seat type regular does not in database");
 
-                foreach (var row in Enumerable.Range(1, request.SeatRows))
+                foreach (var row in Enumerable.Range(0, request.SeatRows))
                 {
-                    char rowLabel = (char)('A' + row);
+                    var rowLabel = (char)('A' + row);
 
                     foreach (var column in Enumerable.Range(1, request.SeatColumns))
                     {
-                        room.Seats.Add(new Seat
+                        var seat = new Seat
                         {
                             Row = rowLabel.ToString(),
-                            Number = column
-                        });
+                            Number = column,
+                            SeatTypeId = seatType.Id,
+                            RoomId = room.Id,
+                            Status = Seat.SeatStatus.Available
+                        };
+                        
+                        await _seatRepository.AddSeatAsync(seat, cancellationToken);
                     }
                 }
 
-                await _context.SaveChangesAsync(cancellationToken);
+                await _seatRepository.SaveChangesAsync(cancellationToken);
 
                 return _mapper.Map<RoomDto>(room);
             }

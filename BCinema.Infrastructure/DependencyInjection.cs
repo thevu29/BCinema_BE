@@ -17,8 +17,10 @@ namespace BCinema.Infrastructure
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<ISeatTypeRepository, SeatTypeRepository>();
+            services.AddScoped<ISeatRepository, SeatRepository>();
             services.AddScoped<IVoucherRepository, VoucherRepository>();
             services.AddScoped<IUserVoucherRepository, UserVoucherRepository>();
+            services.AddScoped<IRoomRepository, RoomRepository>();
 
             return services;
         }

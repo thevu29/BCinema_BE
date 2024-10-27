@@ -2,12 +2,14 @@
 using BCinema.Application.DTOs;
 using BCinema.Application.Features.Users.Commands;
 using BCinema.Application.Features.Roles.Commands;
+using BCinema.Application.Features.Rooms.Commands;
+using BCinema.Application.Features.Seats.Commands;
 using BCinema.Application.Features.SeatTypes.Commands;
 using BCinema.Application.Features.UserVouchers.Commands;
 using BCinema.Application.Features.Vouchers.Commands;
 using BCinema.Domain.Entities;
 
-namespace BCinema.Application.Profiles
+namespace BCinema.Application.Mappers
 {
     public class MappingProfile : Profile
     {
@@ -49,14 +51,28 @@ namespace BCinema.Application.Profiles
 
             // Room
             CreateMap<Room, RoomDto>();
+            CreateMap<CreateRoomCommand, Room>();
+            
+            CreateMap<UpdateRoomCommand, Room>()
+                .ForMember(dest => dest.Name, opt => opt.Condition(src => src.Name != null))
+                .ForMember(dest => dest.Description, opt => opt.Condition(src => src.Description != null));
 
             // Seat
-            CreateMap<Seat, SeatDto>();
-
+            CreateMap<Seat, SeatDto>()
+                .ForMember(dest => dest.SeatType, opt => opt.MapFrom(src => src.SeatType.Name))
+                .ForMember(dest => dest.Room, opt => opt.MapFrom(src => src.Room.Name))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+            
+            CreateMap<CreateSeatCommand, Seat>();
+            
+            CreateMap<UpdateSeatCommand, Seat>()
+                .ForMember(dest => dest.Status, opt => opt.Condition(src => src.Status != null))
+                .ForMember(dest => dest.SeatTypeId, opt => opt.Condition(src => src.SeatTypeId != null));
+            
             // Seat Type
             CreateMap<SeatType, SeatTypeDto>();
             CreateMap<CreateSeatTypeCommand, SeatType>();
-
+            
             CreateMap<UpdateSeatTypeCommand, SeatType>()
                 .ForMember(dest => dest.Name, opt => opt.Condition(src => src.Name != null))
                 .ForMember(dest => dest.Price, opt => opt.Condition(src => src.Price != 0));

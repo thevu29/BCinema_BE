@@ -11,7 +11,7 @@ namespace BCinema.Domain.Entities
             Available,
             Pending,
             Booked,
-            NotAvailable
+            Unavailable
         }
 
         [Required]
