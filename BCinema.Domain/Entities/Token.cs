@@ -7,11 +7,11 @@ namespace BCinema.Domain.Entities
     public class Token : Base
     {
         [Required]
-        public required string RefreshToken { get; set; }
+        public string RefreshToken { get; set; } = default!;
         [Required]
-        public required DateTime RefreshTokenExpireAt { get; set; }
+        public DateTime RefreshTokenExpireAt { get; set; }
         [Required]
-        public required Guid UserId { get; set; }
+        public Guid UserId { get; set; }
 
         [ForeignKey(nameof(UserId))]
         public User User { get; set; } = default!;

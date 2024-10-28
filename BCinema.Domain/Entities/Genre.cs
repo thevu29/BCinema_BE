@@ -7,10 +7,10 @@ namespace BCinema.Domain.Entities
     public class Genre : Base
     {
         [Key]
-        public new string Id { get; set; } = default!;
+        public new string Id { get; } = default!;
         [Required]
-        public string Name { get; set; } = default!;
+        public string Name { get; } = default!;
 
-        public ICollection<MovieGenre> MovieGenres { get; set; } = new HashSet<MovieGenre>();
+        public ICollection<MovieGenre> MovieGenres { get; } = new HashSet<MovieGenre>();
     }
 }

@@ -7,13 +7,13 @@ namespace BCinema.Domain.Entities
     public class Food : Base
     {
         [Required]
-        public string Name { get; set; } = default!;
+        public string Name { get; } = default!;
         [Required]
-        public double Price { get; set; } = default!;
+        public double Price { get; } = default!;
         [Required]
-        public int Quantity { get; set; } = default!;
+        public int Quantity { get; } = default!;
         public DateTime? DeleteAt { get; set; }
 
-        public ICollection<PaymentDetail> PaymentDetails { get; set; } = new HashSet<PaymentDetail>();
+        public ICollection<PaymentDetail> PaymentDetails { get; } = new HashSet<PaymentDetail>();
     }
 }

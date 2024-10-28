@@ -13,7 +13,7 @@ namespace BCinema.Domain.Entities
         [Required]
         public Guid VoucherId { get; set; }
         [Required]
-        public DateTime Date { get; set; } = DateTime.Now;
+        public DateTime Date { get; set; } = DateTime.UtcNow;
         [Required]
         public double TotalPrice { get; set; }
 

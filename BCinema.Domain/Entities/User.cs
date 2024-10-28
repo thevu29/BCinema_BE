@@ -12,9 +12,9 @@ namespace BCinema.Domain.Entities
         public string Email { get; set; } = default!;
         [Required]
         public string Password { get; set; } = default!;
-        public string? Avatar { get; set; } = default!;
+        public string? Avatar { get; set; }
         public int? Point { get; set; } = 0;
-        public string? Provider { get; set; } = default!;
+        public string? Provider { get; set; }
         [Required]
         public Guid RoleId { get; set; }
         public DateTime? DeleteAt { get; set; }

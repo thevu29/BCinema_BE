@@ -9,7 +9,7 @@ namespace BCinema.Domain.Entities
         [Required]
         public string Name { get; set; } = default!;
         [Required]
-        public double Price { get; set; } = default!;
+        public double Price { get; set; }
 
         public ICollection<Seat> Seats { get; set; } = new HashSet<Seat>();
     }

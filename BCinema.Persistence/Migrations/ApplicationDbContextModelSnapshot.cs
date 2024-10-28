@@ -34,19 +34,6 @@ namespace BCinema.Persistence.Migrations
                     b.Property<DateTime?>("DeleteAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<double>("Price")
-                        .HasColumnType("double precision");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdateAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.HasKey("Id");
 
                     b.ToTable("Foods");
@@ -58,13 +45,6 @@ namespace BCinema.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
@@ -108,9 +88,6 @@ namespace BCinema.Persistence.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("UpdateAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.HasKey("Id");
 
                     b.ToTable("Movies");
@@ -132,9 +109,6 @@ namespace BCinema.Persistence.Migrations
                     b.Property<string>("MovieId")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdateAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -162,9 +136,6 @@ namespace BCinema.Persistence.Migrations
 
                     b.Property<double>("TotalPrice")
                         .HasColumnType("double precision");
-
-                    b.Property<DateTime?>("UpdateAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -207,9 +178,6 @@ namespace BCinema.Persistence.Migrations
                     b.Property<Guid>("SeatId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("UpdateAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.HasKey("Id");
 
                     b.HasIndex("FoodId");
@@ -237,12 +205,23 @@ namespace BCinema.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("UpdateAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("41df5b69-6b40-4005-86be-cf4a40b4d0f1"),
+                            CreateAt = new DateTime(2024, 10, 28, 3, 0, 40, 250, DateTimeKind.Utc).AddTicks(2792),
+                            Name = "Admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("100e496a-b769-4e1c-887d-8667ea9850fe"),
+                            CreateAt = new DateTime(2024, 10, 28, 3, 0, 40, 250, DateTimeKind.Utc).AddTicks(2799),
+                            Name = "User"
+                        });
                 });
 
             modelBuilder.Entity("BCinema.Domain.Entities.Room", b =>
@@ -261,9 +240,6 @@ namespace BCinema.Persistence.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<DateTime?>("UpdateAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -291,9 +267,6 @@ namespace BCinema.Persistence.Migrations
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
-
-                    b.Property<DateTime?>("UpdateAt")
-                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -329,9 +302,6 @@ namespace BCinema.Persistence.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("UpdateAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.HasKey("Id");
 
                     b.HasIndex("RoomId");
@@ -357,12 +327,18 @@ namespace BCinema.Persistence.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("double precision");
 
-                    b.Property<DateTime?>("UpdateAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.HasKey("Id");
 
                     b.ToTable("SeatTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("a3a7be05-6a92-40a6-8e8e-5207d273fcf6"),
+                            CreateAt = new DateTime(2024, 10, 28, 3, 0, 40, 250, DateTimeKind.Utc).AddTicks(4543),
+                            Name = "Regular",
+                            Price = 50.0
+                        });
                 });
 
             modelBuilder.Entity("BCinema.Domain.Entities.Token", b =>
@@ -379,9 +355,6 @@ namespace BCinema.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("RefreshTokenExpireAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UserId")
@@ -430,14 +403,23 @@ namespace BCinema.Persistence.Migrations
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime?>("UpdateAt")
-                        .HasColumnType("timestamp with time zone");
-
                     b.HasKey("Id");
 
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("5ef23550-4d76-4694-8d98-d215d341c815"),
+                            CreateAt = new DateTime(2024, 10, 28, 3, 0, 40, 250, DateTimeKind.Utc).AddTicks(3064),
+                            Email = "admin@gmail.com",
+                            Name = "Admin",
+                            Password = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+                            Point = 0,
+                            RoleId = new Guid("41df5b69-6b40-4005-86be-cf4a40b4d0f1")
+                        });
                 });
 
             modelBuilder.Entity("BCinema.Domain.Entities.UserVoucher", b =>
@@ -447,9 +429,6 @@ namespace BCinema.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreateAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UserId")
@@ -487,9 +466,6 @@ namespace BCinema.Persistence.Migrations
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("ExpireAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime?>("UpdateAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");

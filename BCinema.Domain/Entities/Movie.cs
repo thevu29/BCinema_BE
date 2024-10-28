@@ -3,16 +3,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BCinema.Domain.Entities
 {
-    public enum MovieStatus
-    {
-        Released,
-        ComingSoon,
-        Ended,
-    }
-
     [Table("Movies")]
     public class Movie : Base
     {
+        public enum MovieStatus
+        {
+            Released,
+            ComingSoon,
+            Ended,
+        }
+        
         [Key] 
         public new string Id { get; set; } = default!;
         [Required]
@@ -32,7 +32,7 @@ namespace BCinema.Domain.Entities
         [Required]
         public MovieStatus Status { get; set; } = MovieStatus.ComingSoon;
 
-        public ICollection<MovieGenre> MovieGenres { get; set; } = new HashSet<MovieGenre>();
-        public ICollection<Schedule> Schedules { get; set; } = new HashSet<Schedule>();
+        public ICollection<MovieGenre> MovieGenres { get; } = new HashSet<MovieGenre>();
+        public ICollection<Schedule> Schedules { get; } = new HashSet<Schedule>();
     }
 }

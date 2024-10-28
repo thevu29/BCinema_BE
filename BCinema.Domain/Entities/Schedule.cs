@@ -3,17 +3,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BCinema.Domain.Entities
 {
-    public enum ScheduleStatus
-    {
-        NowPlaying,
-        ComingSoon,
-        Ended,
-        Cancelled
-    }
-
     [Table("Schedules")]
     public class Schedule : Base
     {
+        public enum ScheduleStatus
+        {
+            NowPlaying,
+            ComingSoon,
+            Ended,
+            Cancelled
+        }
+        
         [Required]
         public DateTime Date { get; set; } = DateTime.Now;
         [Required]
