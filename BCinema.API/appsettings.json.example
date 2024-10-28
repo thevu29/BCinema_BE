@@ -10,6 +10,6 @@
     "DefaultConnection": "Server=host;Database=database;Username=username;Password=password;"
   },
   "ApiSettings": {
-    "ApiKey": "your_api_key_here"
+    "TheMovieDbApiKey": "your_api_key_here"
   }
 }

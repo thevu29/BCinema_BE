@@ -13,6 +13,8 @@ namespace BCinema.Infrastructure
         {
             services.AddScoped<StorageClient>(provider => StorageClient.Create());
             services.AddScoped<IFileStorageService, FirebaseStorageService>();
+            
+            services.AddScoped<IMovieFetchService, MovieFetchService>();
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();

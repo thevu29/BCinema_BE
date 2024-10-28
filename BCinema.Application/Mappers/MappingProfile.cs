@@ -45,10 +45,7 @@ namespace BCinema.Application.Mappers
             CreateMap<CreateUserVoucherCommand, UserVoucher>();
 
             // Schedule
-            CreateMap<Schedule, ScheduleDto>()
-                .ForMember(dest => dest.MovieName, opt => opt.MapFrom(src => src.Movie.Name))
-                .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room.Name));
-
+            
             // Room
             CreateMap<Room, RoomDto>();
             CreateMap<CreateRoomCommand, Room>();

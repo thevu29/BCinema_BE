@@ -1,8 +1,8 @@
 ﻿using BCinema.Domain.Entities;
 using BCinema.Domain.Interfaces.IRepositories;
-using BCinema.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using BCinema.Persistence.Context;
 
 namespace BCinema.Infrastructure.Repositories
 {

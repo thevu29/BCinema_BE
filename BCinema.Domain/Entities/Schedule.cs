@@ -19,12 +19,10 @@ namespace BCinema.Domain.Entities
         [Required]
         public ScheduleStatus Status { get; set; } = ScheduleStatus.ComingSoon;
         [Required]
-        public string MovieId { get; set; } = default!;
+        public int MovieId { get; set; } = default!;
         [Required]
         public Guid RoomId { get; set; } = default!;
-
-        [ForeignKey(nameof(MovieId))]
-        public Movie Movie { get; set; } = default!;
+        
         [ForeignKey(nameof(RoomId))]
         public Room Room { get; set; } = default!;
     }

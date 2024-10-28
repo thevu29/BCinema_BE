@@ -12,6 +12,7 @@
     <PackageReference Include="MediatR" Version="12.4.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.10" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -19,7 +20,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Movies\" />
+    <Folder Include="Features\Genres\Commands\" />
+    <Folder Include="Features\Genres\Queries\" />
+    <Folder Include="Features\Genres\Validators\" />
+    <Folder Include="Features\MovieGenres\Commands\" />
+    <Folder Include="Features\MovieGenres\Queries\" />
+    <Folder Include="Features\MovieGenres\Validators\" />
+    <Folder Include="Features\Movies\Commands\" />
+    <Folder Include="Features\Movies\Queries\" />
+    <Folder Include="Features\Movies\Validators\" />
     <Folder Include="Features\PaymentDetails\" />
     <Folder Include="Features\Payments\Commands\" />
     <Folder Include="Features\Payments\Validators\" />
