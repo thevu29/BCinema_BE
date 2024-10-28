@@ -43,6 +43,7 @@ namespace BCinema.Infrastructure.Repositories
         {
             return await _context.Users
                 .Include(u => u.Role)
+                .Where(u => u.DeleteAt == null)
                 .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
         }
 
@@ -50,6 +51,7 @@ namespace BCinema.Infrastructure.Repositories
         {
             return await _context.Users
                 .Include(u => u.Role)
+                .Where(u => u.DeleteAt == null)
                 .FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
         }
 

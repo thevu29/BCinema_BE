@@ -21,6 +21,13 @@ public class PaginatedList<T>
     
     public static async Task<PaginatedList<T>> ToPageList(IQueryable<T> source, int page, int size)
     {
+        var property = typeof(T).GetProperty("DeleteAt");
+        
+        if (property != null)
+        {
+            source = source.Where(x => x != null && EF.Property<DateTime?>(x, "DeleteAt") == null);
+        }
+        
         var count = await source.CountAsync();
         var data = await source.Skip((page - 1) * size).Take(size).ToListAsync();
         return new PaginatedList<T>(page, size, count, data);

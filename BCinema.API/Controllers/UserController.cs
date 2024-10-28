@@ -22,6 +22,26 @@ namespace BCinema.API.Controllers
             _logger = logger;
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(Guid id)
+        {
+            try
+            {
+                await _mediator.Send(new DeleteUserCommand { Id = id });
+
+                return Ok(new ApiResponse<string>(true, "User deleted successfully"));
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new ApiResponse<string>(false, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An unexpected error occurred while deleting user");
+                return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
+            }
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(Guid id, [FromForm] UpdateUserCommand command)
         {
