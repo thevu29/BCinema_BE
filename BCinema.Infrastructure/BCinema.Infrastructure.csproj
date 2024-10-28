@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BCinema.Domain\BCinema.Domain.csproj" />
-    <ProjectReference Include="..\BCinema.Doman\BCinema.Domain.csproj" />
     <ProjectReference Include="..\BCinema.Persistence\BCinema.Persistence.csproj" />
   </ItemGroup>
 
