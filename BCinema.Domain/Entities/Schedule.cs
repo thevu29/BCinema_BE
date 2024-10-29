@@ -15,13 +15,15 @@ namespace BCinema.Domain.Entities
         }
         
         [Required]
-        public DateTime Date { get; set; } = DateTime.Now;
+        public DateTime Date { get; set; } = DateTime.UtcNow;
         [Required]
         public ScheduleStatus Status { get; set; } = ScheduleStatus.ComingSoon;
         [Required]
-        public int MovieId { get; set; } = default!;
+        public int MovieId { get; set; }
         [Required]
-        public Guid RoomId { get; set; } = default!;
+        public Guid RoomId { get; set; }
+
+        [Required] public int Runtime { get; set; }
         
         [ForeignKey(nameof(RoomId))]
         public Room Room { get; set; } = default!;

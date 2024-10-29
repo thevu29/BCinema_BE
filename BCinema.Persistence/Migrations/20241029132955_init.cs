@@ -119,6 +119,7 @@ namespace BCinema.Persistence.Migrations
                     Status = table.Column<int>(type: "integer", nullable: false),
                     MovieId = table.Column<int>(type: "integer", nullable: false),
                     RoomId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Runtime = table.Column<int>(type: "integer", nullable: false),
                     CreateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -283,19 +284,19 @@ namespace BCinema.Persistence.Migrations
                 columns: new[] { "Id", "CreateAt", "Description", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("209cbb66-4ffb-4753-81f2-82e9ff47e1c7"), new DateTime(2024, 10, 28, 6, 18, 29, 747, DateTimeKind.Utc).AddTicks(4168), null, "Admin" },
-                    { new Guid("fd8d2b7c-0ce7-445a-b61a-4c420e4accdf"), new DateTime(2024, 10, 28, 6, 18, 29, 747, DateTimeKind.Utc).AddTicks(4173), null, "User" }
+                    { new Guid("0731ff4e-b99c-4806-adcc-b836d0837291"), new DateTime(2024, 10, 29, 13, 29, 54, 558, DateTimeKind.Utc).AddTicks(6162), null, "User" },
+                    { new Guid("f174ece7-920d-4e35-86a9-a743aaf71e3d"), new DateTime(2024, 10, 29, 13, 29, 54, 558, DateTimeKind.Utc).AddTicks(6158), null, "Admin" }
                 });
 
             migrationBuilder.InsertData(
                 table: "SeatTypes",
                 columns: new[] { "Id", "CreateAt", "Name", "Price" },
-                values: new object[] { new Guid("0d8f6f01-6afd-4017-be85-7f33e51bee1d"), new DateTime(2024, 10, 28, 6, 18, 29, 747, DateTimeKind.Utc).AddTicks(5613), "Regular", 50.0 });
+                values: new object[] { new Guid("cc8a47f3-385d-4bc9-bed3-8b3ea0aba0e0"), new DateTime(2024, 10, 29, 13, 29, 54, 558, DateTimeKind.Utc).AddTicks(7476), "Regular", 50.0 });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Avatar", "CreateAt", "DeleteAt", "Email", "Name", "Password", "Point", "Provider", "RoleId" },
-                values: new object[] { new Guid("f99c2469-0b1d-4f61-8e14-e2961d2c1e47"), null, new DateTime(2024, 10, 28, 6, 18, 29, 747, DateTimeKind.Utc).AddTicks(4408), null, "admin@gmail.com", "Admin", "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", 0, null, new Guid("209cbb66-4ffb-4753-81f2-82e9ff47e1c7") });
+                values: new object[] { new Guid("d7bd43b0-1203-477b-bcde-59b84fc4a86f"), null, new DateTime(2024, 10, 29, 13, 29, 54, 558, DateTimeKind.Utc).AddTicks(6346), null, "admin@gmail.com", "Admin", "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", 0, null, new Guid("f174ece7-920d-4e35-86a9-a743aaf71e3d") });
 
             migrationBuilder.CreateIndex(
                 name: "IX_PaymentDetails_FoodId",
