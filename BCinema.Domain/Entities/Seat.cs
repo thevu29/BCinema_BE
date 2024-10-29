@@ -18,7 +18,7 @@ namespace BCinema.Domain.Entities
         public string Row { get; set; } = default!;
 
         [Required]
-        public int Number { get; set; } = default!;
+        public int Number { get; set; }
 
         [Required]
         public SeatStatus Status { get; set; } = SeatStatus.Available;

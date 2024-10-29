@@ -18,6 +18,9 @@ namespace BCinema.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Price = table.Column<double>(type: "double precision", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
                     DeleteAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CreateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -284,19 +287,19 @@ namespace BCinema.Persistence.Migrations
                 columns: new[] { "Id", "CreateAt", "Description", "Name" },
                 values: new object[,]
                 {
-                    { new Guid("0731ff4e-b99c-4806-adcc-b836d0837291"), new DateTime(2024, 10, 29, 13, 29, 54, 558, DateTimeKind.Utc).AddTicks(6162), null, "User" },
-                    { new Guid("f174ece7-920d-4e35-86a9-a743aaf71e3d"), new DateTime(2024, 10, 29, 13, 29, 54, 558, DateTimeKind.Utc).AddTicks(6158), null, "Admin" }
+                    { new Guid("1e9c39aa-23ef-410a-a698-ad8692ea78a5"), new DateTime(2024, 10, 29, 14, 40, 20, 305, DateTimeKind.Utc).AddTicks(5608), null, "User" },
+                    { new Guid("db32ee97-c967-4629-8267-0a4856935cef"), new DateTime(2024, 10, 29, 14, 40, 20, 305, DateTimeKind.Utc).AddTicks(5566), null, "Admin" }
                 });
 
             migrationBuilder.InsertData(
                 table: "SeatTypes",
                 columns: new[] { "Id", "CreateAt", "Name", "Price" },
-                values: new object[] { new Guid("cc8a47f3-385d-4bc9-bed3-8b3ea0aba0e0"), new DateTime(2024, 10, 29, 13, 29, 54, 558, DateTimeKind.Utc).AddTicks(7476), "Regular", 50.0 });
+                values: new object[] { new Guid("bf1f0663-1ed3-430b-8778-be12f5b40e5c"), new DateTime(2024, 10, 29, 14, 40, 20, 305, DateTimeKind.Utc).AddTicks(8507), "Regular", 50.0 });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "Avatar", "CreateAt", "DeleteAt", "Email", "Name", "Password", "Point", "Provider", "RoleId" },
-                values: new object[] { new Guid("d7bd43b0-1203-477b-bcde-59b84fc4a86f"), null, new DateTime(2024, 10, 29, 13, 29, 54, 558, DateTimeKind.Utc).AddTicks(6346), null, "admin@gmail.com", "Admin", "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", 0, null, new Guid("f174ece7-920d-4e35-86a9-a743aaf71e3d") });
+                values: new object[] { new Guid("550cabfc-d238-4fb3-af05-b2e2ed308409"), null, new DateTime(2024, 10, 29, 14, 40, 20, 305, DateTimeKind.Utc).AddTicks(6327), null, "admin@gmail.com", "Admin", "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", 0, null, new Guid("db32ee97-c967-4629-8267-0a4856935cef") });
 
             migrationBuilder.CreateIndex(
                 name: "IX_PaymentDetails_FoodId",

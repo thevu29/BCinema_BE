@@ -34,6 +34,16 @@ namespace BCinema.Persistence.Migrations
                     b.Property<DateTime?>("DeleteAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("double precision");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.ToTable("Foods");
@@ -132,14 +142,14 @@ namespace BCinema.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("f174ece7-920d-4e35-86a9-a743aaf71e3d"),
-                            CreateAt = new DateTime(2024, 10, 29, 13, 29, 54, 558, DateTimeKind.Utc).AddTicks(6158),
+                            Id = new Guid("db32ee97-c967-4629-8267-0a4856935cef"),
+                            CreateAt = new DateTime(2024, 10, 29, 14, 40, 20, 305, DateTimeKind.Utc).AddTicks(5566),
                             Name = "Admin"
                         },
                         new
                         {
-                            Id = new Guid("0731ff4e-b99c-4806-adcc-b836d0837291"),
-                            CreateAt = new DateTime(2024, 10, 29, 13, 29, 54, 558, DateTimeKind.Utc).AddTicks(6162),
+                            Id = new Guid("1e9c39aa-23ef-410a-a698-ad8692ea78a5"),
+                            CreateAt = new DateTime(2024, 10, 29, 14, 40, 20, 305, DateTimeKind.Utc).AddTicks(5608),
                             Name = "User"
                         });
                 });
@@ -254,8 +264,8 @@ namespace BCinema.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("cc8a47f3-385d-4bc9-bed3-8b3ea0aba0e0"),
-                            CreateAt = new DateTime(2024, 10, 29, 13, 29, 54, 558, DateTimeKind.Utc).AddTicks(7476),
+                            Id = new Guid("bf1f0663-1ed3-430b-8778-be12f5b40e5c"),
+                            CreateAt = new DateTime(2024, 10, 29, 14, 40, 20, 305, DateTimeKind.Utc).AddTicks(8507),
                             Name = "Regular",
                             Price = 50.0
                         });
@@ -332,13 +342,13 @@ namespace BCinema.Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("d7bd43b0-1203-477b-bcde-59b84fc4a86f"),
-                            CreateAt = new DateTime(2024, 10, 29, 13, 29, 54, 558, DateTimeKind.Utc).AddTicks(6346),
+                            Id = new Guid("550cabfc-d238-4fb3-af05-b2e2ed308409"),
+                            CreateAt = new DateTime(2024, 10, 29, 14, 40, 20, 305, DateTimeKind.Utc).AddTicks(6327),
                             Email = "admin@gmail.com",
                             Name = "Admin",
                             Password = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
                             Point = 0,
-                            RoleId = new Guid("f174ece7-920d-4e35-86a9-a743aaf71e3d")
+                            RoleId = new Guid("db32ee97-c967-4629-8267-0a4856935cef")
                         });
                 });
 
