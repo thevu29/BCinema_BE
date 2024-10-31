@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using BCinema.Application.DTOs;
-using BCinema.Application.Interfaces;
-using MediatR;
 using BCinema.Application.Exceptions;
-using BCinema.Doman.Entities;
+using BCinema.Domain.Entities;
+using BCinema.Domain.Interfaces.IRepositories;
+using MediatR;
 
 namespace BCinema.Application.Features.Roles.Queries
 {
@@ -13,19 +13,19 @@ namespace BCinema.Application.Features.Roles.Queries
 
         public class GetRoleByIdQueryHandler : IRequestHandler<GetRoleByIdQuery, RoleDto>
         {
-            private readonly IApplicationDbContext _context;
+            private readonly IRoleRepository _roleRpository;
             private readonly IMapper _mapper;
 
-            public GetRoleByIdQueryHandler(IApplicationDbContext context, IMapper mapper)
+            public GetRoleByIdQueryHandler(IRoleRepository roleRpository, IMapper mapper)
             {
-                _context = context;
+                _roleRpository = roleRpository;
                 _mapper = mapper;
             }
 
             public async Task<RoleDto> Handle(GetRoleByIdQuery request, CancellationToken cancellationToken)
             {
-                var role = await _context.Roles.FindAsync(request.Id)
-                    ?? throw new NotFoundException(nameof(Role), request.Id);
+                var role = await _roleRpository.GetByIdAsync(request.Id, cancellationToken)
+                    ?? throw new NotFoundException(nameof(Role));
 
                 return _mapper.Map<RoleDto>(role);
             }

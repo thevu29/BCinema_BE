@@ -2,7 +2,7 @@
 using BCinema.Application.DTOs;
 using BCinema.Application.Exceptions;
 using BCinema.Application.Interfaces;
-using BCinema.Doman.Entities;
+using BCinema.Domain.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;

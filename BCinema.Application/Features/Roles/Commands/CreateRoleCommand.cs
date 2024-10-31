@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using BCinema.Application.DTOs;
-using BCinema.Application.Interfaces;
-using BCinema.Doman.Entities;
+using BCinema.Domain.Entities;
+using BCinema.Domain.Interfaces.IRepositories;
 using MediatR;
 
 namespace BCinema.Application.Features.Roles.Commands
@@ -11,29 +11,25 @@ namespace BCinema.Application.Features.Roles.Commands
         public string Name { get; set; } = default!;
         public string? Description { get; set; }
         
-        public class CreateFoodCommandHandler : IRequestHandler<CreateFoodCommand, FoodDto>
+        public class CreateRoleCommandHandler : IRequestHandler<CreateRoleCommand, RoleDto>
         {
-            private readonly IApplicationDbContext _context;
+            private readonly IRoleRepository _roleRepository;
             private readonly IMapper _mapper;
 
-            public CreateFoodCommandHandler(IApplicationDbContext context, IMapper mapper)
+            public CreateRoleCommandHandler(IRoleRepository roleRepository, IMapper mapper)
             {
-                _context = context;
+                _roleRepository = roleRepository;
                 _mapper = mapper;
             }
 
-            public async Task<FoodDto> Handle(CreateFoodCommand request, CancellationToken cancellationToken)
+            public async Task<RoleDto> Handle(CreateRoleCommand request, CancellationToken cancellationToken)
             {
-                var food = new Food
-                {
-                    Name = request.Name,
-                    Description = request.Description
-                };
+                var role = _mapper.Map<Role>(request);
 
-                _context.Foods.Add(food);
-                await _context.SaveChangesAsync(cancellationToken);
+                await _roleRepository.AddAsync(role, cancellationToken);
+                await _roleRepository.SaveChangesAsync(cancellationToken);
 
-                return _mapper.Map<FoodDto>(food);
+                return _mapper.Map<RoleDto>(role);
             }
         }
     }

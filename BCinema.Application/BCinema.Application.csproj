@@ -12,10 +12,30 @@
     <PackageReference Include="MediatR" Version="12.4.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
     <PackageReference Include="Microsoft.Extensions.Identity.Core" Version="8.0.10" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BCinema.Doman\BCinema.Domain.csproj" />
+    <ProjectReference Include="..\BCinema.Domain\BCinema.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\Genres\Commands\" />
+    <Folder Include="Features\Genres\Queries\" />
+    <Folder Include="Features\Genres\Validators\" />
+    <Folder Include="Features\MovieGenres\Commands\" />
+    <Folder Include="Features\MovieGenres\Queries\" />
+    <Folder Include="Features\MovieGenres\Validators\" />
+    <Folder Include="Features\Movies\Commands\" />
+    <Folder Include="Features\Movies\Queries\" />
+    <Folder Include="Features\Movies\Validators\" />
+    <Folder Include="Features\PaymentDetails\" />
+    <Folder Include="Features\Payments\Commands\" />
+    <Folder Include="Features\Payments\Validators\" />
+    <Folder Include="Features\Payments\Queries\" />
+    <Folder Include="Features\Schedule\Commands\" />
+    <Folder Include="Features\Schedule\Validators\" />
+    <Folder Include="Features\Schedule\Queries\" />
   </ItemGroup>
 
 </Project>

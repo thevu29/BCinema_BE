@@ -1,16 +1,16 @@
-﻿using BCinema.Doman.Entities;
+﻿using System.Reflection;
 using BCinema.Application.Behaviors;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
+using BCinema.Domain.Entities;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace BCinema.Application
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection ConfigureApplicationServices(this IServiceCollection services)
+        public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
