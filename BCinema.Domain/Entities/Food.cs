@@ -11,7 +11,7 @@ namespace BCinema.Domain.Entities
         [Required]
         public double Price { get; set; }
         [Required]
-        public int Quantity { get; set; } = default!;
+        public int Quantity { get; set; }
         public DateTime? DeleteAt { get; set; }
 
         public ICollection<PaymentDetail> PaymentDetails { get; } = new HashSet<PaymentDetail>();
