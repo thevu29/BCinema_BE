@@ -47,7 +47,7 @@ public class GetVouchersQuery : IRequest<PaginatedList<VoucherDto>>
         {
             switch (sortBy.ToLower())
             {
-                case "createdat":
+                case "createat":
                     query = sortOrder.ToUpper() == "ASC"
                         ? query.OrderBy(v => v.CreateAt)
                         : query.OrderByDescending(v => v.CreateAt);
