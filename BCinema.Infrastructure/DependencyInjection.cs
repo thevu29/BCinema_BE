@@ -23,6 +23,7 @@ namespace BCinema.Infrastructure
             services.AddScoped<IVoucherRepository, VoucherRepository>();
             services.AddScoped<IUserVoucherRepository, UserVoucherRepository>();
             services.AddScoped<IRoomRepository, RoomRepository>();
+            services.AddScoped<IScheduleRepository, ScheduleRepository>();
 
             return services;
         }

@@ -16,14 +16,14 @@ namespace BCinema.Application.Features.Users.Commands
         public IFormFile? Avatar { get; set; }
         public Guid? RoleId { get; set; }
         
-        public class UpdateUserComanndHanlder : IRequestHandler<UpdateUserCommand, UserDto>
+        public class UpdateUserCommandHanlder : IRequestHandler<UpdateUserCommand, UserDto>
         {
             private readonly IUserRepository _userRepository;
             private readonly IRoleRepository _roleRepository;
             private readonly IFileStorageService _fileStorageService;
             private readonly IMapper _mapper;
 
-            public UpdateUserComanndHanlder(
+            public UpdateUserCommandHanlder(
                 IUserRepository userRepository,
                 IRoleRepository roleRepository,
                 IFileStorageService fileStorageService,
@@ -61,5 +61,5 @@ namespace BCinema.Application.Features.Users.Commands
                 return _mapper.Map<UserDto>(user);
             }
         }
-    }
+    }   
 }

@@ -3,6 +3,7 @@ using BCinema.Application.DTOs;
 using BCinema.Application.Features.Users.Commands;
 using BCinema.Application.Features.Roles.Commands;
 using BCinema.Application.Features.Rooms.Commands;
+using BCinema.Application.Features.Schedule.Commands;
 using BCinema.Application.Features.Seats.Commands;
 using BCinema.Application.Features.SeatTypes.Commands;
 using BCinema.Application.Features.UserVouchers.Commands;
@@ -24,7 +25,7 @@ namespace BCinema.Application.Mappers
             CreateMap<UpdateUserCommand, User>()
                 .ForMember(dest => dest.Name, opt => opt.Condition(src => src.Name != null))
                 .ForMember(dest => dest.RoleId, opt => opt.Condition(src => src.RoleId != null))
-                .ForMember(dest => dest.Avatar, opt => opt.Ignore()); ;
+                .ForMember(dest => dest.Avatar, opt => opt.Ignore());
 
             // Role
             CreateMap<Role, RoleDto>();
@@ -45,6 +46,20 @@ namespace BCinema.Application.Mappers
             CreateMap<CreateUserVoucherCommand, UserVoucher>();
 
             // Schedule
+            CreateMap<Schedule, ScheduleDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+            
+            CreateMap<Schedule, SchedulesDto>()
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.Date)))
+                .ForMember(dest => dest.Schedules, opt => opt.Ignore());
+            
+            CreateMap<CreateSchedulesCommand, Schedule>()
+                .ForMember(dest => dest.Date, opt => opt.Ignore());
+
+            CreateMap<UpdateScheduleCommand, Schedule>()
+                .ForMember(dest => dest.Date, opt => opt.Ignore())
+                .ForMember(dest => dest.RoomId, opt => opt.Condition(src => src.RoomId != null))
+                .ForMember(dest => dest.Status, opt => opt.Condition(src => src.Status != null));
             
             // Room
             CreateMap<Room, RoomDto>();
