@@ -22,7 +22,6 @@ namespace BCinema.Persistence.Context
         public DbSet<UserVoucher> UserVouchers { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<PaymentDetail> PaymentDetails { get; set; }
-        public DbSet<PaymentDetailFood> PaymentDetailFoods { get; set; }
         public DbSet<Token> Tokens { get; set; }
 
         public async Task<int> SaveChangesAsync()
