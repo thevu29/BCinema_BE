@@ -62,6 +62,25 @@ public class FoodController : ControllerBase
             return StatusCode(500, new ApiResponse<string>(false, "An error occured"));
         }
     }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteFood(Guid id)
+    {
+        try
+        {
+            await _mediator.Send(new DeleteFoodCommand { Id = id });
+            return Ok(new ApiResponse<string>(true, "Delete food successfully"));
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occured while updating food");
+            return StatusCode(500, new ApiResponse<string>(false, "An error occured"));
+        }
+    }
     
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateFood(Guid id, [FromBody] UpdateFoodCommand command)
