@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BCinema.Application.DTOs;
 using BCinema.Application.Features.Foods.Commands;
+using BCinema.Application.Features.Payments.Commands;
 using BCinema.Application.Features.Users.Commands;
 using BCinema.Application.Features.Roles.Commands;
 using BCinema.Application.Features.Rooms.Commands;
@@ -98,6 +99,13 @@ namespace BCinema.Application.Mappers
                 .ForMember(dest => dest.Name, opt => opt.Condition(src => src.Name != null))
                 .ForMember(dest => dest.Price, opt => opt.Condition(src => src.Price != null))
                 .ForMember(dest => dest.Quantity, opt => opt.Condition(src => src.Quantity != null));
+            
+            // Payment
+            CreateMap<Payment, PaymentDto>();
+            CreateMap<CreatePaymentCommand, Payment>();
+            
+            // Payment Detail
+            CreateMap<PaymentDetail, PaymentDetailDto>().ReverseMap();
         }
     }
 }
