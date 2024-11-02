@@ -26,7 +26,7 @@ namespace BCinema.Application.Features.Roles.Queries
                 GetRolesQuery request,
                 CancellationToken cancellationToken)
             {
-                IQueryable<Role> query = _roleRepository.GetRoles();
+                var query = _roleRepository.GetRoles();
 
                 if (!string.IsNullOrEmpty(request.Query.Name))
                 {
