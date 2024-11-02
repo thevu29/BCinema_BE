@@ -16,6 +16,7 @@ namespace BCinema.Application.Interfaces
         DbSet<UserVoucher> UserVouchers { get; set; }
         DbSet<Payment> Payments { get; set; }
         DbSet<PaymentDetail> PaymentDetails { get; set; }
+        DbSet<PaymentDetailFood> PaymentDetailFoods { get; set; }
         DbSet<Token> Tokens { get; set; }
 
         Task<int> SaveChangesAsync();
