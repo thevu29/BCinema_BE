@@ -10,7 +10,7 @@ public class ApplicationDbContextSeed
     public static void Seed(ModelBuilder modelBuilder)
     {
         var adminRoleId = Guid.NewGuid();
-        
+
         modelBuilder.Entity<Role>().HasData(
             new Role { Id = adminRoleId, Name = "Admin" },
             new Role { Id = Guid.NewGuid(), Name = "User" }
@@ -34,8 +34,7 @@ public class ApplicationDbContextSeed
     
     private static string HashPassword(string password)
     {
-        using var sha256 = SHA256.Create();
-        var hashedBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(password));
+        var hashedBytes = SHA256.HashData(Encoding.UTF8.GetBytes(password));
         return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
     }
 }
