@@ -18,7 +18,7 @@ public class PaymentDetailRepository : IPaymentDetailRepository
     {
         return await _context.PaymentDetails
             .Include(pd => pd.Payment)
-            .Include(pd => pd.Seat)
+            .Include(pd => pd.SeatSchedule)
             .ToListAsync(cancellationToken);
     }
     
@@ -27,7 +27,7 @@ public class PaymentDetailRepository : IPaymentDetailRepository
         return await _context.PaymentDetails
             .Where(pd => pd.PaymentId == paymentId)
             .Include(pd => pd.Payment)
-            .Include(pd => pd.Seat)
+            .Include(pd => pd.SeatSchedule)
             .ToListAsync(cancellationToken);
     }
     

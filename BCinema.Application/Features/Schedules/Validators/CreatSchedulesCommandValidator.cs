@@ -1,10 +1,11 @@
 ﻿using BCinema.Application.Exceptions;
-using BCinema.Application.Features.Schedule.Commands;
+using BCinema.Application.Features.Schedules.Commands;
+using BCinema.Domain.Entities;
 using BCinema.Domain.Interfaces.IRepositories;
 using BCinema.Domain.Interfaces.IServices;
 using FluentValidation;
 
-namespace BCinema.Application.Features.Schedule.Validators;
+namespace BCinema.Application.Features.Schedules.Validators;
 
 public class CreatSchedulesCommandValidator : AbstractValidator<CreateSchedulesCommand>
 {
@@ -39,27 +40,16 @@ public class CreatSchedulesCommandValidator : AbstractValidator<CreateSchedulesC
         var schedules = await _scheduleRepository
             .GetSchedulesByRoomAndDateAsync(command.RoomId, command.Date, cancellationToken);
 
-        foreach (var schedule in schedules)
-        {
-            foreach (var time in command.Times)
-            {
-                var newScheduleStart = DateTime.SpecifyKind(command.Date.Date.Add(time), DateTimeKind.Utc);
-                var newScheduleEnd = newScheduleStart.AddMinutes(movie.Runtime);
-                
-                var existingScheduleStart = schedule.Date;
-                var existingScheduleEnd = existingScheduleStart.AddMinutes(schedule.Runtime);
-                
-                if (newScheduleStart < existingScheduleEnd && newScheduleEnd > existingScheduleStart)
-                {
-                    return false;
-                }
-            }
-        }
-        
-        return true;
+        return !(from schedule in schedules from time in command.Times 
+            let newScheduleStart = DateTime.SpecifyKind(command.Date.Date.Add(time), DateTimeKind.Utc)
+            let newScheduleEnd = newScheduleStart.AddMinutes(movie.Runtime) 
+            let existingScheduleStart = schedule.Date 
+            let existingScheduleEnd = existingScheduleStart.AddMinutes(schedule.Runtime) 
+            where newScheduleStart < existingScheduleEnd && newScheduleEnd > existingScheduleStart 
+            select newScheduleStart).Any();
     }
     
-    private bool HaveUniqueTimes(IEnumerable<TimeSpan> times)
+    private static bool HaveUniqueTimes(IEnumerable<TimeSpan> times)
     {
         var timesList = times.ToList();
         return timesList.Distinct().Count() == timesList.Count;
@@ -67,6 +57,6 @@ public class CreatSchedulesCommandValidator : AbstractValidator<CreateSchedulesC
     
     private static bool BeAValidStatus(string? status)
     {
-        return status == null || Enum.TryParse<Domain.Entities.Schedule.ScheduleStatus>(status, ignoreCase: true, out _);
+        return status == null || Enum.TryParse<Schedule.ScheduleStatus>(status, ignoreCase: true, out _);
     }
 }

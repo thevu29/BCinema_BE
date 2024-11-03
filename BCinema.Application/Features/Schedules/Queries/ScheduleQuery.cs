@@ -1,6 +1,6 @@
 ﻿using BCinema.Application.Helpers;
 
-namespace BCinema.Application.Features.Schedule.Queries;
+namespace BCinema.Application.Features.Schedules.Queries;
 
 public class ScheduleQuery : PaginationQuery
 {

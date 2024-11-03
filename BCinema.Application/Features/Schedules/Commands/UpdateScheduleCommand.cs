@@ -5,7 +5,7 @@ using BCinema.Domain.Entities;
 using BCinema.Domain.Interfaces.IRepositories;
 using MediatR;
 
-namespace BCinema.Application.Features.Schedule.Commands;
+namespace BCinema.Application.Features.Schedules.Commands;
 
 public class UpdateScheduleCommand : IRequest<ScheduleDto>
 {

@@ -8,7 +8,7 @@ namespace BCinema.Domain.Entities
     {
         [Required]
         public Guid PaymentId { get; set; }
-        public Guid? SeatId { get; set; }
+        public Guid? SeatScheduleId { get; set; }
         public Guid? FoodId { get; set; }
         public int? FoodQuantity { get; set; }
         [Required]
@@ -16,8 +16,8 @@ namespace BCinema.Domain.Entities
 
         [ForeignKey(nameof(PaymentId))]
         public Payment Payment { get; set; } = default!;
-        [ForeignKey(nameof(SeatId))]
-        public Seat? Seat { get; set; }
+        [ForeignKey(nameof(SeatScheduleId))]
+        public SeatSchedule? SeatSchedule { get; set; }
         [ForeignKey(nameof(FoodId))]
         public Food? Food { get; set; }
     }

@@ -16,19 +16,11 @@ public class CreateSeatCommandValidator : AbstractValidator<CreateSeatCommand>
         RuleFor(x => x.Number)
             .NotEmpty().WithMessage("Number is required")
             .GreaterThan(0).WithMessage("Number must be greater than 0");
-
-        RuleFor(x => x.Status)
-            .Must(BeAValidStatus).WithMessage("Invalid status");
-
+        
         RuleFor(x => x.SeatTypeId)
             .NotEmpty().WithMessage("Seat type is required");
 
         RuleFor(x => x.RoomId)
             .NotEmpty().WithMessage("Room is required");
-    }
-
-    private static bool BeAValidStatus(string? status)
-    {
-        return status == null || Enum.TryParse(typeof(Seat.SeatStatus), StringUtil.UppercaseFirstLetter(status), out _);
     }
 }

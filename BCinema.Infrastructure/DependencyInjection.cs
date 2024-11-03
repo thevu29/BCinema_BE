@@ -27,6 +27,7 @@ namespace BCinema.Infrastructure
             services.AddScoped<IFoodRepository, FoodRepository>();
             services.AddScoped<IPaymentRepository, PaymentRepository>();
             services.AddScoped<IPaymentDetailRepository, PaymentDetailRepository>();
+            services.AddScoped<ISeatScheduleRepository, SeatScheduleRepository>();
 
             return services;
         }

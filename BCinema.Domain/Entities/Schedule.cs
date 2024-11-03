@@ -8,8 +8,7 @@ namespace BCinema.Domain.Entities
     {
         public enum ScheduleStatus
         {
-            NowPlaying,
-            ComingSoon,
+            Available,
             Ended,
             Cancelled
         }
@@ -17,15 +16,16 @@ namespace BCinema.Domain.Entities
         [Required]
         public DateTime Date { get; set; } = DateTime.UtcNow;
         [Required]
-        public ScheduleStatus Status { get; set; } = ScheduleStatus.ComingSoon;
+        public ScheduleStatus Status { get; set; } = ScheduleStatus.Available;
         [Required]
         public int MovieId { get; set; }
         [Required]
         public Guid RoomId { get; set; }
-
         [Required] public int Runtime { get; set; }
         
         [ForeignKey(nameof(RoomId))]
         public Room Room { get; set; } = default!;
+        
+        public ICollection<SeatSchedule> SeatSchedules { get; set; } = new HashSet<SeatSchedule>();
     }
 }

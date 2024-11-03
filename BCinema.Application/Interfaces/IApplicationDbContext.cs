@@ -9,6 +9,7 @@ namespace BCinema.Application.Interfaces
         DbSet<Role> Roles { get; set; }
         DbSet<Food> Foods { get; set; }
         DbSet<Room> Rooms { get; set; }
+        DbSet<SeatSchedule> SeatSchedules { get; set; }
         DbSet<Seat> Seats { get; set; }
         DbSet<SeatType> SeatTypes { get; set; }
         DbSet<Schedule> Schedules { get; set; }

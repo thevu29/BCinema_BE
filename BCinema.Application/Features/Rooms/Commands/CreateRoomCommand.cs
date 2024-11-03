@@ -56,7 +56,6 @@ namespace BCinema.Application.Features.Rooms.Commands
                             Number = column,
                             SeatTypeId = seatType.Id,
                             RoomId = room.Id,
-                            Status = Seat.SeatStatus.Available
                         };
                         
                         await _seatRepository.AddSeatAsync(seat, cancellationToken);

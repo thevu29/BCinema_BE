@@ -5,7 +5,7 @@ using BCinema.Application.Features.Payments.Commands;
 using BCinema.Application.Features.Users.Commands;
 using BCinema.Application.Features.Roles.Commands;
 using BCinema.Application.Features.Rooms.Commands;
-using BCinema.Application.Features.Schedule.Commands;
+using BCinema.Application.Features.Schedules.Commands;
 using BCinema.Application.Features.Seats.Commands;
 using BCinema.Application.Features.SeatTypes.Commands;
 using BCinema.Application.Features.UserVouchers.Commands;
@@ -74,13 +74,11 @@ namespace BCinema.Application.Mappers
             // Seat
             CreateMap<Seat, SeatDto>()
                 .ForMember(dest => dest.SeatType, opt => opt.MapFrom(src => src.SeatType.Name))
-                .ForMember(dest => dest.Room, opt => opt.MapFrom(src => src.Room.Name))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+                .ForMember(dest => dest.Room, opt => opt.MapFrom(src => src.Room.Name));
             
             CreateMap<CreateSeatCommand, Seat>();
             
             CreateMap<UpdateSeatCommand, Seat>()
-                .ForMember(dest => dest.Status, opt => opt.Condition(src => src.Status != null))
                 .ForMember(dest => dest.SeatTypeId, opt => opt.Condition(src => src.SeatTypeId != null));
             
             // Seat Type
@@ -90,6 +88,11 @@ namespace BCinema.Application.Mappers
             CreateMap<UpdateSeatTypeCommand, SeatType>()
                 .ForMember(dest => dest.Name, opt => opt.Condition(src => src.Name != null))
                 .ForMember(dest => dest.Price, opt => opt.Condition(src => src.Price != 0));
+            
+            // Seat Schedule
+            CreateMap<SeatSchedule, SeatScheduleDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Seat.SeatType.Price));
             
             // Food
             CreateMap<Food, FoodDto>();

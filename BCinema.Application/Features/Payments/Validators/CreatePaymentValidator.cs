@@ -16,7 +16,7 @@ public class CreatePaymentValidator : AbstractValidator<CreatePaymentCommand>
         
         RuleFor(x => x.PaymentDetails)
             .NotNull().WithMessage("Payment details is required")
-            .Must(HaveAtLeastOneSeatId).WithMessage("At least one seatId is required in payment details");
+            .Must(HaveAtLeastOneSeatId).WithMessage("At least one SeatScheduleId is required in payment details");
         
         RuleForEach(x => x.PaymentDetails).ChildRules(paymentDetail =>
         {
@@ -26,8 +26,8 @@ public class CreatePaymentValidator : AbstractValidator<CreatePaymentCommand>
         });
     }
     
-    private bool HaveAtLeastOneSeatId(IEnumerable<PaymentDetailDto> paymentDetails)
+    private static bool HaveAtLeastOneSeatId(IEnumerable<PaymentDetailDto> paymentDetails)
     {
-        return paymentDetails.Any(detail => detail.SeatId.HasValue);
+        return paymentDetails.Any(detail => detail.SeatScheduleId.HasValue);
     }
 }

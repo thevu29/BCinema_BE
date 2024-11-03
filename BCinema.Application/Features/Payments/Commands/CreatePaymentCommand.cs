@@ -23,8 +23,8 @@ public class CreatePaymentCommand : IRequest<PaymentDto>
         IUserVoucherRepository userVoucherRepository,
         IFoodRepository foodRepository,
         ISeatRepository seatRepository,
-        IMapper mapper)
-        : IRequestHandler<CreatePaymentCommand, PaymentDto>
+        ISeatScheduleRepository seatScheduleRepository,
+        IMapper mapper) : IRequestHandler<CreatePaymentCommand, PaymentDto>
     {
         public async Task<PaymentDto> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
         {
@@ -36,9 +36,9 @@ public class CreatePaymentCommand : IRequest<PaymentDto>
 
             switch (schedule.Status)
             {
-                case Domain.Entities.Schedule.ScheduleStatus.Ended:
+                case Schedule.ScheduleStatus.Ended:
                     throw new BadRequestException("Schedule is already finished");
-                case Domain.Entities.Schedule.ScheduleStatus.Cancelled:
+                case Schedule.ScheduleStatus.Cancelled:
                     throw new BadRequestException("Schedule is already cancelled");
             }
 
@@ -118,36 +118,36 @@ public class CreatePaymentCommand : IRequest<PaymentDto>
             CancellationToken cancellationToken)
         {
             var paymentDetails = new List<PaymentDetail>();
-            // var room = payment.Schedule.Room;
             
             foreach (var paymentDetailDto in paymentDetailsDto)
             {
                 var paymentDetail = mapper.Map<PaymentDetail>(paymentDetailDto);
                 paymentDetail.Payment = payment;
                 
-                if (paymentDetailDto.SeatId is not null)
+                if (paymentDetailDto.SeatScheduleId is not null)
                 {
-                    var seat = await seatRepository.GetSeatByIdAsync(paymentDetailDto.SeatId.Value, cancellationToken)
-                               ?? throw new NotFoundException(nameof(Seat));
-
-                    switch (seat.Status)
+                    var seatSchedule = await seatScheduleRepository
+                        .GetSeatScheduleByIdAsync(paymentDetailDto.SeatScheduleId.Value, cancellationToken)
+                         ?? throw new NotFoundException(nameof(SeatSchedule));
+                    
+                    switch (seatSchedule.Status)
                     {
-                        case Seat.SeatStatus.Booked:
+                        case SeatSchedule.SeatScheduleStatus.Booked:
                             throw new BadRequestException("Seat is already booked");
-                        case Seat.SeatStatus.Pending:
+                        case SeatSchedule.SeatScheduleStatus.Pending:
                             throw new BadRequestException("Seat is waiting for other user to confirm");
-                        case Seat.SeatStatus.Unavailable:
+                        case SeatSchedule.SeatScheduleStatus.Unavailable:
                             throw new BadRequestException("Seat is unavailable");
                     }
                     
-                    if (seat.RoomId != payment.Schedule.RoomId)
+                    if (seatSchedule.Seat.RoomId != payment.Schedule.RoomId)
                     {
                         throw new BadRequestException("Seat is not in the same room as the schedule");
                     }
                     
-                    paymentDetail.Seat = seat;
-                    paymentDetail.Price = seat.SeatType.Price;
-                    seat.Status = Seat.SeatStatus.Booked;
+                    paymentDetail.SeatSchedule = seatSchedule;
+                    paymentDetail.Price = seatSchedule.Seat.SeatType.Price;
+                    seatSchedule.Status = SeatSchedule.SeatScheduleStatus.Booked;
                 }
                 
                 if (paymentDetailDto.FoodId is not null)

@@ -1,37 +1,39 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using BCinema.Domain.Entities;
+using BCinema.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace BCinema.Persistence.Seeds;
 
 public class ApplicationDbContextSeed
 {
-    public static void Seed(ModelBuilder modelBuilder)
+    public static async Task Seed(ApplicationDbContext context)
     {
-        var adminRoleId = Guid.NewGuid();
+        if (!await context.Roles.AnyAsync())
+        {
+            var adminRoleId = Guid.NewGuid();
 
-        modelBuilder.Entity<Role>().HasData(
-            new Role { Id = adminRoleId, Name = "Admin" },
-            new Role { Id = Guid.NewGuid(), Name = "User" }
-        );
-        
-        modelBuilder.Entity<User>().HasData(
-            new User
+            context.Roles.AddRange(
+                new Role { Id = adminRoleId, Name = "Admin" },
+                new Role { Id = Guid.NewGuid(), Name = "User" }
+            );
+
+            context.Users.Add(new User
             {
                 Id = Guid.NewGuid(),
                 Name = "Admin",
                 Email = "admin@gmail.com",
                 Password = HashPassword("admin"),
                 RoleId = adminRoleId
-            }
-        );
-        
-        modelBuilder.Entity<SeatType>().HasData(
-            new SeatType { Id = Guid.NewGuid(), Name = "Regular", Price = 50 }
-        );
+            });
+
+            context.SeatTypes.Add(new SeatType { Id = Guid.NewGuid(), Name = "Regular", Price = 50 });
+
+            await context.SaveChangesAsync();
+        }
     }
-    
+
     private static string HashPassword(string password)
     {
         var hashedBytes = SHA256.HashData(Encoding.UTF8.GetBytes(password));

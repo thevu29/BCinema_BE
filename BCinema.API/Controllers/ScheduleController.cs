@@ -1,8 +1,8 @@
 ﻿using BCinema.API.Responses;
 using BCinema.Application.DTOs;
 using BCinema.Application.Exceptions;
-using BCinema.Application.Features.Schedule.Commands;
-using BCinema.Application.Features.Schedule.Queries;
+using BCinema.Application.Features.Schedules.Commands;
+using BCinema.Application.Features.Schedules.Queries;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

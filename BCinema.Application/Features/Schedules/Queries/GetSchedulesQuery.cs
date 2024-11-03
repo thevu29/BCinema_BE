@@ -7,7 +7,7 @@ using BCinema.Domain.Interfaces.IServices;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace BCinema.Application.Features.Schedule.Queries;
+namespace BCinema.Application.Features.Schedules.Queries;
 
 public class GetSchedulesQuery : IRequest<PaginatedList<SchedulesDto>>
 {

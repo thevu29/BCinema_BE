@@ -1,5 +1,6 @@
 ﻿using BCinema.Application.Interfaces;
 using BCinema.Persistence.Context;
+using BCinema.Persistence.Seeds;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,10 @@ namespace BCinema.Persistence
 
             services.AddScoped<IApplicationDbContext>(provider =>
                     provider.GetRequiredService<ApplicationDbContext>());
+            
+            using var scope = services.BuildServiceProvider().CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            ApplicationDbContextSeed.Seed(context).Wait();
 
             return services;
         }

@@ -1,8 +1,7 @@
-﻿using BCinema.Application.Features.Schedule.Commands;
-using BCinema.Domain.Interfaces.IRepositories;
+﻿using BCinema.Application.Features.Schedules.Commands;
 using FluentValidation;
 
-namespace BCinema.Application.Features.Schedule.Validators;
+namespace BCinema.Application.Features.Schedules.Validators;
 
 public class UpdateScheduleCommandValidator : AbstractValidator<UpdateScheduleCommand>
 {

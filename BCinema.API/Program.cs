@@ -45,9 +45,9 @@ builder.Services.AddPersistence(builder.Configuration);
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", builder =>
+    options.AddPolicy("AllowAll", policyBuilder =>
     {
-        builder.AllowAnyOrigin()
+        policyBuilder.AllowAnyOrigin()
                .AllowAnyMethod()
                .AllowAnyHeader();
     });
@@ -70,4 +70,5 @@ app.UseMiddleware<GlobalExceptionHandleMiddleware>();
 
 app.UseAuthorization();
 app.MapControllers();
+
 app.Run();
