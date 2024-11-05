@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BCinema.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241102034147_v2")]
-    partial class v2
+    [Migration("20241104082933_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -108,7 +108,7 @@ namespace BCinema.Persistence.Migrations
                     b.Property<double>("Price")
                         .HasColumnType("double precision");
 
-                    b.Property<Guid?>("SeatId")
+                    b.Property<Guid?>("SeatScheduleId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -117,7 +117,7 @@ namespace BCinema.Persistence.Migrations
 
                     b.HasIndex("PaymentId");
 
-                    b.HasIndex("SeatId");
+                    b.HasIndex("SeatScheduleId");
 
                     b.ToTable("PaymentDetails");
                 });
@@ -141,20 +141,6 @@ namespace BCinema.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("a75923ce-8c94-40c2-9594-e7461f814afe"),
-                            CreateAt = new DateTime(2024, 11, 2, 3, 41, 46, 903, DateTimeKind.Utc).AddTicks(8686),
-                            Name = "Admin"
-                        },
-                        new
-                        {
-                            Id = new Guid("2c18a686-9fd4-4283-949a-1ea25bcdccc7"),
-                            CreateAt = new DateTime(2024, 11, 2, 3, 41, 46, 903, DateTimeKind.Utc).AddTicks(8692),
-                            Name = "User"
-                        });
                 });
 
             modelBuilder.Entity("BCinema.Domain.Entities.Room", b =>
@@ -232,9 +218,6 @@ namespace BCinema.Persistence.Migrations
                     b.Property<Guid>("SeatTypeId")
                         .HasColumnType("uuid");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("RoomId");
@@ -242,6 +225,33 @@ namespace BCinema.Persistence.Migrations
                     b.HasIndex("SeatTypeId");
 
                     b.ToTable("Seats");
+                });
+
+            modelBuilder.Entity("BCinema.Domain.Entities.SeatSchedule", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("ScheduleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("SeatId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ScheduleId");
+
+                    b.HasIndex("SeatId");
+
+                    b.ToTable("SeatSchedule");
                 });
 
             modelBuilder.Entity("BCinema.Domain.Entities.SeatType", b =>
@@ -263,15 +273,6 @@ namespace BCinema.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SeatTypes");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("a3c920af-5f1d-4c28-ac26-5b3c2f16816e"),
-                            CreateAt = new DateTime(2024, 11, 2, 3, 41, 46, 903, DateTimeKind.Utc).AddTicks(9574),
-                            Name = "Regular",
-                            Price = 50.0
-                        });
                 });
 
             modelBuilder.Entity("BCinema.Domain.Entities.Token", b =>
@@ -341,18 +342,6 @@ namespace BCinema.Persistence.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("71e2fc6f-5cfb-4e9a-9052-67d2c0a1c5e8"),
-                            CreateAt = new DateTime(2024, 11, 2, 3, 41, 46, 903, DateTimeKind.Utc).AddTicks(8886),
-                            Email = "admin@gmail.com",
-                            Name = "Admin",
-                            Password = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
-                            Point = 0,
-                            RoleId = new Guid("a75923ce-8c94-40c2-9594-e7461f814afe")
-                        });
                 });
 
             modelBuilder.Entity("BCinema.Domain.Entities.UserVoucher", b =>
@@ -443,15 +432,15 @@ namespace BCinema.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BCinema.Domain.Entities.Seat", "Seat")
+                    b.HasOne("BCinema.Domain.Entities.SeatSchedule", "SeatSchedule")
                         .WithMany("PaymentDetails")
-                        .HasForeignKey("SeatId");
+                        .HasForeignKey("SeatScheduleId");
 
                     b.Navigation("Food");
 
                     b.Navigation("Payment");
 
-                    b.Navigation("Seat");
+                    b.Navigation("SeatSchedule");
                 });
 
             modelBuilder.Entity("BCinema.Domain.Entities.Schedule", b =>
@@ -482,6 +471,25 @@ namespace BCinema.Persistence.Migrations
                     b.Navigation("Room");
 
                     b.Navigation("SeatType");
+                });
+
+            modelBuilder.Entity("BCinema.Domain.Entities.SeatSchedule", b =>
+                {
+                    b.HasOne("BCinema.Domain.Entities.Schedule", "Schedule")
+                        .WithMany("SeatSchedules")
+                        .HasForeignKey("ScheduleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("BCinema.Domain.Entities.Seat", "Seat")
+                        .WithMany("SeatSchedules")
+                        .HasForeignKey("SeatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Schedule");
+
+                    b.Navigation("Seat");
                 });
 
             modelBuilder.Entity("BCinema.Domain.Entities.Token", b =>
@@ -547,7 +555,17 @@ namespace BCinema.Persistence.Migrations
                     b.Navigation("Seats");
                 });
 
+            modelBuilder.Entity("BCinema.Domain.Entities.Schedule", b =>
+                {
+                    b.Navigation("SeatSchedules");
+                });
+
             modelBuilder.Entity("BCinema.Domain.Entities.Seat", b =>
+                {
+                    b.Navigation("SeatSchedules");
+                });
+
+            modelBuilder.Entity("BCinema.Domain.Entities.SeatSchedule", b =>
                 {
                     b.Navigation("PaymentDetails");
                 });

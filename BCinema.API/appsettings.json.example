@@ -7,7 +7,7 @@
   },
   "AllowedHosts": "*",
   "ConnectionStrings": {
-    "DefaultConnection": "Server=host;Database=database;Username=username;Password=password;"
+    "DefaultConnection": "Host=localhost;Port=5432;Database=BCinemaDB;Username=postgres;Password=password"
   },
   "ApiSettings": {
     "TheMovieDbApiKey": "your_api_key_here"

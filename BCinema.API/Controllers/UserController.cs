@@ -11,23 +11,14 @@ namespace BCinema.API.Controllers
 {
     [Route("api/users")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController(IMediator mediator, ILogger<UserController> logger) : ControllerBase
     {
-        private readonly IMediator _mediator;
-        private readonly ILogger<UserController> _logger;
-
-        public UserController(IMediator mediator, ILogger<UserController> logger)
-        {
-            _mediator = mediator;
-            _logger = logger;
-        }
-
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
             try
             {
-                await _mediator.Send(new DeleteUserCommand { Id = id });
+                await mediator.Send(new DeleteUserCommand { Id = id });
 
                 return Ok(new ApiResponse<string>(true, "User deleted successfully"));
             }
@@ -37,18 +28,18 @@ namespace BCinema.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unexpected error occurred while deleting user");
+                logger.LogError(ex, "An unexpected error occurred while deleting user");
                 return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateUser(Guid id, [FromForm] UpdateUserCommand command)
         {
             try
             {
                 command.Id = id;
-                var user = await _mediator.Send(command);
+                var user = await mediator.Send(command);
 
                 return Ok(new ApiResponse<UserDto>(true, "User updated successfully", user));
             }
@@ -62,7 +53,7 @@ namespace BCinema.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unexpected error occurred while updating user");
+                logger.LogError(ex, "An unexpected error occurred while updating user");
                 return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
             }
         }
@@ -72,7 +63,7 @@ namespace BCinema.API.Controllers
         {
             try
             {
-                var user = await _mediator.Send(command);
+                var user = await mediator.Send(command);
                 return Ok(new ApiResponse<UserDto>(true, "User created successfully", user));
             }
             catch (NotFoundException ex)
@@ -85,7 +76,7 @@ namespace BCinema.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unexpected error occurred while creating user");
+                logger.LogError(ex, "An unexpected error occurred while creating user");
                 return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
             }
         }
@@ -95,7 +86,7 @@ namespace BCinema.API.Controllers
         {
             try
             {
-                var user = await _mediator.Send(new GetUserByEmailQuery { Email = email });
+                var user = await mediator.Send(new GetUserByEmailQuery { Email = email });
 
                 return Ok(new ApiResponse<UserDto>(true, "Get user successfully", user));
             }
@@ -105,17 +96,17 @@ namespace BCinema.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unexpected error occurred while getting user by id");
+                logger.LogError(ex, "An unexpected error occurred while getting user by id");
                 return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetUserById(Guid id)
         {
             try
             {
-                var user = await _mediator.Send(new GetUserByIdQuery { Id = id });
+                var user = await mediator.Send(new GetUserByIdQuery { Id = id });
 
                 return Ok(new ApiResponse<UserDto>(true, "Get user successfully", user));
             }
@@ -125,7 +116,7 @@ namespace BCinema.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unexpected error occurred while getting user by id");
+                logger.LogError(ex, "An unexpected error occurred while getting user by id");
                 return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
             }
         }
@@ -135,7 +126,7 @@ namespace BCinema.API.Controllers
         {
             try
             {
-                var users = await _mediator.Send(new GetUsersQuery { Query = query });
+                var users = await mediator.Send(new GetUsersQuery { Query = query });
 
                 return Ok(new PageResponse<IEnumerable<UserDto>>(
                     true, "Get users successfully",
@@ -147,7 +138,7 @@ namespace BCinema.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unexpected error occurred while getting users");
+                logger.LogError(ex, "An unexpected error occurred while getting users");
                 return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
             }
         }
