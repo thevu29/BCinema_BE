@@ -26,7 +26,6 @@ namespace BCinema.Application.Mappers
 
             CreateMap<UpdateUserCommand, User>()
                 .ForMember(dest => dest.Name, opt => opt.Condition(src => src.Name != null))
-                .ForMember(dest => dest.RoleId, opt => opt.Condition(src => src.RoleId != null))
                 .ForMember(dest => dest.Avatar, opt => opt.Ignore());
 
             // Role

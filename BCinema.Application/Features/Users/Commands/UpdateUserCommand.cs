@@ -14,11 +14,9 @@ namespace BCinema.Application.Features.Users.Commands
         public Guid Id { get; set; }
         public string? Name { get; set; }
         public IFormFile? Avatar { get; set; }
-        public Guid? RoleId { get; set; }
         
         public class UpdateUserCommandHandler(
             IUserRepository userRepository,
-            IRoleRepository roleRepository,
             IFileStorageService fileStorageService,
             IMapper mapper) : IRequestHandler<UpdateUserCommand, UserDto>
         {
@@ -36,13 +34,7 @@ namespace BCinema.Application.Features.Users.Commands
                         ? await fileStorageService.UpdateImageAsync(imageStream, Guid.NewGuid() + ".jpg", user.Avatar)
                         : await fileStorageService.UploadImageAsync(imageStream, Guid.NewGuid() + ".jpg");
                 }
-
-                if (request.RoleId != null)
-                {
-                    var role = await roleRepository.GetByIdAsync(request.RoleId.Value, cancellationToken)
-                        ?? throw new NotFoundException(nameof(Role));
-                }
-
+                
                 mapper.Map<User>(request);
 
                 await userRepository.SaveChangesAsync(cancellationToken);
