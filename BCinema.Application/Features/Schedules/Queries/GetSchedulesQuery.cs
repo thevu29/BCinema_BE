@@ -2,6 +2,7 @@
 using BCinema.Application.DTOs;
 using BCinema.Application.Exceptions;
 using BCinema.Application.Helpers;
+using BCinema.Domain.Entities;
 using BCinema.Domain.Interfaces.IRepositories;
 using BCinema.Domain.Interfaces.IServices;
 using MediatR;
@@ -11,53 +12,40 @@ namespace BCinema.Application.Features.Schedules.Queries;
 
 public class GetSchedulesQuery : IRequest<PaginatedList<SchedulesDto>>
 {
-    public ScheduleQuery Query { get; set; } = default!;
+    public ScheduleQuery Query { get; init; } = default!;
 
-    public class GetSchedulesQueryHandler : IRequestHandler<GetSchedulesQuery, PaginatedList<SchedulesDto>>
+    public class GetSchedulesQueryHandler(
+        IScheduleRepository scheduleRepository,
+        IRoomRepository roomRepository,
+        IMovieFetchService movieFetchService,
+        IMapper mapper)
+        : IRequestHandler<GetSchedulesQuery, PaginatedList<SchedulesDto>>
     {
-        private readonly IScheduleRepository _scheduleRepository;
-        private readonly IRoomRepository _roomRepository;
-        private readonly IMovieFetchService _movieFetchService;
-        private readonly IMapper _mapper;
-        
-        public GetSchedulesQueryHandler(
-            IScheduleRepository scheduleRepository,
-            IRoomRepository roomRepository,
-            IMovieFetchService movieFetchService,
-            IMapper mapper)
-        {
-            _scheduleRepository = scheduleRepository;
-            _roomRepository = roomRepository;
-            _movieFetchService = movieFetchService;
-            _mapper = mapper;
-        }
-        
         public async Task<PaginatedList<SchedulesDto>> Handle(GetSchedulesQuery request, CancellationToken cancellationToken)
         {
-            var query = _scheduleRepository.GetSchedules();
+            var query = scheduleRepository.GetSchedules();
             
-            if (request.Query.Date.HasValue)
+            if (!string.IsNullOrEmpty(request.Query.Date))
             {
-                var utcDate = DateTime.SpecifyKind(request.Query.Date.Value, DateTimeKind.Utc);
-                query = query.Where(s => s.Date.Date == utcDate);
+                query = query.FilterByDate(request.Query.Date, s => s.Date);
             }
             if (request.Query.MovieId.HasValue)
             {
-                var movie = await _movieFetchService.FetchMovieByIdAsync(request.Query.MovieId.Value) as MovieDto
+                var movie = await movieFetchService.FetchMovieByIdAsync(request.Query.MovieId.Value) as MovieDto
                             ?? throw new NotFoundException("Movie");
                 
                 query = query.Where(s => s.MovieId == movie.Id);
             }
             if (request.Query.RoomId.HasValue)
             {
-                var room = await _roomRepository.GetRoomByIdAsync(request.Query.RoomId.Value, cancellationToken) 
+                var room = await roomRepository.GetRoomByIdAsync(request.Query.RoomId.Value, cancellationToken) 
                            ?? throw new NotFoundException("Room");
                 
                 query = query.Where(s => s.RoomId == room.Id);
             }
             if (!string.IsNullOrEmpty(request.Query.Status))
             {
-                if (!Enum.TryParse<Domain.Entities.Schedule.ScheduleStatus>(
+                if (!Enum.TryParse<Schedule.ScheduleStatus>(
                         request.Query.Status,
                         ignoreCase: true,
                         out var status))
@@ -76,7 +64,11 @@ public class GetSchedulesQuery : IRequest<PaginatedList<SchedulesDto>>
                 .GroupBy(s => new { s.Date.Date, s.MovieId, s.RoomId })
                 .Select(g =>
                 {
-                    var scheduleDto = _mapper.Map<SchedulesDto>(g.First());
+                    var scheduleDto = mapper.Map<SchedulesDto>(g.First());
+                    var movie = movieFetchService.FetchMovieByIdAsync(scheduleDto.MovieId).Result as MovieDto
+                                ?? throw new NotFoundException("Movie");
+                    
+                    scheduleDto.MovieName = movie.Title;
                     
                     scheduleDto.Schedules = g.Select(s => new ScheduleDetailDto
                     {
@@ -101,20 +93,19 @@ public class GetSchedulesQuery : IRequest<PaginatedList<SchedulesDto>>
                 paginatedList);
         }
 
-        private static IQueryable<Domain.Entities.Schedule> ApplySorting(
-            IQueryable<Domain.Entities.Schedule> query,
-            string sortBy,
-            string sortOrder)
+        private static IQueryable<Schedule> ApplySorting(IQueryable<Schedule> query, string sortBy, string sortOrder)
         {
-            switch (sortBy.ToLower())
+            var allowedSortColumns = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
-                case "date":
-                    return sortOrder.ToUpper().Equals("ASC")
-                        ? query.OrderBy(s => s.Date)
-                        : query.OrderByDescending(s => s.Date);
-                default:
-                    return query.OrderBy(s => s.Date);
+                nameof(Schedule.Date)
+            };
+            
+            if (string.IsNullOrEmpty(sortBy) || !allowedSortColumns.Contains(sortBy))
+            {
+                return query.OrderByDescending(s => s.Date);
             }
+
+            return query.ApplyDynamicSorting(sortBy, sortOrder);
         }
     }
 }

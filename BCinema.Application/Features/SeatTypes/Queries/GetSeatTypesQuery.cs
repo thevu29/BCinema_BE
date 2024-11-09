@@ -9,29 +9,22 @@ namespace BCinema.Application.Features.SeatTypes.Queries
 {
     public class GetSeatTypesQuery : IRequest<PaginatedList<SeatTypeDto>>
     {
-        public SeatTypeQuery Query { get; set; } = default!;
+        public SeatTypeQuery Query { get; init; } = default!;
 
-        public class GetSeatTypesQueryHandler : IRequestHandler<GetSeatTypesQuery, PaginatedList<SeatTypeDto>>
+        public class GetSeatTypesQueryHandler(ISeatTypeRepository seatTypeRepository, IMapper mapper)
+            : IRequestHandler<GetSeatTypesQuery, PaginatedList<SeatTypeDto>>
         {
-            private readonly ISeatTypeRepository _seatTypeRepository;
-            private readonly IMapper _mapper;
-
-            public GetSeatTypesQueryHandler(ISeatTypeRepository seatTypeRepository, IMapper mapper)
+            public async Task<PaginatedList<SeatTypeDto>> Handle(GetSeatTypesQuery request, CancellationToken cancellationToken)
             {
-                _seatTypeRepository = seatTypeRepository;
-                _mapper = mapper;
-            }
-
-            public async Task<PaginatedList<SeatTypeDto>> Handle(
-                GetSeatTypesQuery request,
-                CancellationToken cancellationToken)
-            {
-
-                IQueryable<SeatType> query = _seatTypeRepository.GetSeatTypes();
+                var query = seatTypeRepository.GetSeatTypes();
 
                 if (!string.IsNullOrEmpty(request.Query.Name))
                 {
                     query = query.Where(x => x.Name.ToLower().Contains(request.Query.Name.ToLower()));
+                }
+                if (!string.IsNullOrEmpty(request.Query.Price))
+                {
+                    query = query.FilterByNumber(request.Query.Price, st => st.Price);
                 }
 
                 query = ApplySorting(query, request.Query.SortBy, request.Query.SortOrder);
@@ -39,7 +32,7 @@ namespace BCinema.Application.Features.SeatTypes.Queries
                 var seatTypes = await PaginatedList<SeatType>
                     .ToPageList(query, request.Query.Page, request.Query.Size);
 
-                var seatTypeDtos = _mapper.Map<IEnumerable<SeatTypeDto>>(seatTypes.Data);
+                var seatTypeDtos = mapper.Map<IEnumerable<SeatTypeDto>>(seatTypes.Data);
 
                 return new PaginatedList<SeatTypeDto>(
                     seatTypes.Page,
@@ -48,31 +41,21 @@ namespace BCinema.Application.Features.SeatTypes.Queries
                     seatTypeDtos);
             }
 
-            private static IQueryable<SeatType> ApplySorting(
-                IQueryable<SeatType> query,
-                string sortBy,
-                string sortOrder)
+            private static IQueryable<SeatType> ApplySorting(IQueryable<SeatType> query, string sortBy, string sortOrder)
             {
-                switch (sortBy.ToLower())
+                var allowedSortColumns = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    case "name":
-                        query = sortOrder.ToUpper() == "ASC"
-                            ? query.OrderBy(st => st.Name)
-                            : query.OrderByDescending(st => st.Name);
-                        break;
-                    case "price":
-                        query = sortOrder.ToUpper() == "ASC"
-                            ? query.OrderBy(st => st.Price)
-                            : query.OrderByDescending(st => st.Price);
-                        break;
-                    default:
-                        query = sortOrder.ToUpper() == "ASC"
-                            ? query.OrderBy(st => st.Id)
-                            : query.OrderByDescending(st => st.Id);
-                        break;
+                    nameof(SeatType.Name),
+                    nameof(SeatType.Price),
+                    nameof(SeatType.CreateAt)
+                };
+                
+                if (string.IsNullOrEmpty(sortBy) || !allowedSortColumns.Contains(sortBy))
+                {
+                    query = query.OrderByDescending(st => st.CreateAt);
                 }
 
-                return query;
+                return query.ApplyDynamicSorting(sortBy, sortOrder);
             }
         }
     }

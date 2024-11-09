@@ -48,7 +48,8 @@ namespace BCinema.Application.Mappers
 
             // Schedule
             CreateMap<Schedule, ScheduleDto>()
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room.Name));
             
             CreateMap<Schedule, SchedulesDto>()
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.Date)))
@@ -103,7 +104,9 @@ namespace BCinema.Application.Mappers
                 .ForMember(dest => dest.Quantity, opt => opt.Condition(src => src.Quantity != null));
             
             // Payment
-            CreateMap<Payment, PaymentDto>();
+            CreateMap<Payment, PaymentDto>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.Name));
+            
             CreateMap<CreatePaymentCommand, Payment>();
             
             // Payment Detail

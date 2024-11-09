@@ -4,6 +4,7 @@ public class PaymentDto
 {
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
+    public string UserName { get; set; } = default!;
     public Guid ScheduleId { get; set; }
     public Guid? VoucherId { get; set; }
     public DateTime Date { get; set; }

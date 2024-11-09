@@ -9,24 +9,16 @@ namespace BCinema.Application.Features.Users.Queries
 {
     public class GetUsersQuery : IRequest<PaginatedList<UserDto>>
     {
-        public UserQuery Query { get; set; } = default!;
+        public UserQuery Query { get; init; } = default!;
 
-        public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, PaginatedList<UserDto>>
+        public class GetUsersQueryHandler(IUserRepository userRepository, IMapper mapper)
+            : IRequestHandler<GetUsersQuery, PaginatedList<UserDto>>
         {
-            private readonly IUserRepository _userRepository;
-            private readonly IMapper _mapper;
-
-            public GetUsersQueryHandler(IUserRepository userRepository, IMapper mapper)
-            {
-                _userRepository = userRepository;
-                _mapper = mapper;
-            }
-
             public async Task<PaginatedList<UserDto>> Handle(
                 GetUsersQuery request,
                 CancellationToken cancellationToken)
             {
-                IQueryable<User> query = _userRepository.GetUsers();
+                var query = userRepository.GetUsers();
 
                 if (!string.IsNullOrEmpty(request.Query.Name))
                 {
@@ -36,13 +28,17 @@ namespace BCinema.Application.Features.Users.Queries
                 {
                     query = query.Where(x => x.Email.ToLower().Contains(request.Query.Email.ToLower()));
                 }
+                if (request.Query.Role.HasValue)
+                {
+                    query = query.Where(x => x.RoleId == request.Query.Role);
+                }
 
                 query = ApplySorting(query, request.Query.SortBy, request.Query.SortOrder);
 
                 var users = await PaginatedList<User>
                     .ToPageList(query, request.Query.Page, request.Query.Size);
 
-                var usersDto = _mapper.Map<IEnumerable<UserDto>>(users.Data);
+                var usersDto = mapper.Map<IEnumerable<UserDto>>(users.Data);
 
                 return new PaginatedList<UserDto>(
                     users.Page,
@@ -51,29 +47,22 @@ namespace BCinema.Application.Features.Users.Queries
                     usersDto);
             }
 
-            private static IQueryable<User> ApplySorting(
-                IQueryable<User> query,
-                string sortBy,
-                string sortOrder)
+            private static IQueryable<User> ApplySorting(IQueryable<User> query, string sortBy, string sortOrder)
             {
-                switch (sortBy.ToLower())
+                var allowedSortColumns = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    case "name":
-                        query = sortOrder.ToUpper() == "ASC"
-                            ? query.OrderBy(st => st.Name)
-                            : query.OrderByDescending(st => st.Name);
-                        break;
-                    case "email":
-                        query = sortOrder.ToUpper() == "ASC"
-                            ? query.OrderBy(st => st.Email)
-                            : query.OrderByDescending(st => st.Email);
-                        break;
-                    default:
-                        query = query.OrderBy(st => st.Name);
-                        break;
+                    nameof(User.Name),
+                    nameof(User.Email),
+                    nameof(User.Point),
+                    nameof(Food.CreateAt)
+                };
+            
+                if (string.IsNullOrWhiteSpace(sortBy) || !allowedSortColumns.Contains(sortBy))
+                {
+                    return query.OrderByDescending(u => u.CreateAt);
                 }
 
-                return query;
+                return query.ApplyDynamicSorting(sortBy, sortOrder);
             }
         }
     }

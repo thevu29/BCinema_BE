@@ -9,24 +9,14 @@ namespace BCinema.Application.Features.Roles.Queries
 {
     public class GetRolesQuery : IRequest<PaginatedList<RoleDto>>
     {
-        public RoleQuery Query { get; set; } = default!;
+        public RoleQuery Query { get; init; } = default!;
 
-        public class GetRolesQueryHandler : IRequestHandler<GetRolesQuery, PaginatedList<RoleDto>>
+        public class GetRolesQueryHandler(IRoleRepository roleRepository, IMapper mapper)
+            : IRequestHandler<GetRolesQuery, PaginatedList<RoleDto>>
         {
-            private readonly IRoleRepository _roleRepository;
-            private readonly IMapper _mapper;
-
-            public GetRolesQueryHandler(IRoleRepository roleRepository, IMapper mapper)
+            public async Task<PaginatedList<RoleDto>> Handle(GetRolesQuery request, CancellationToken cancellationToken)
             {
-                _roleRepository = roleRepository;
-                _mapper = mapper;
-            }
-
-            public async Task<PaginatedList<RoleDto>> Handle(
-                GetRolesQuery request,
-                CancellationToken cancellationToken)
-            {
-                var query = _roleRepository.GetRoles();
+                var query = roleRepository.GetRoles();
 
                 if (!string.IsNullOrEmpty(request.Query.Name))
                 {
@@ -38,7 +28,7 @@ namespace BCinema.Application.Features.Roles.Queries
                 var roles = await PaginatedList<Role>
                     .ToPageList(query, request.Query.Page, request.Query.Size);
 
-                var rolesDto = _mapper.Map<IEnumerable<RoleDto>>(roles.Data);
+                var rolesDto = mapper.Map<IEnumerable<RoleDto>>(roles.Data);
 
                 return new PaginatedList<RoleDto>(
                     roles.Page,
@@ -47,26 +37,20 @@ namespace BCinema.Application.Features.Roles.Queries
                     rolesDto);
             }
 
-            private static IQueryable<Role> ApplySorting(
-                IQueryable<Role> query,
-                string sortBy,
-                string sortOrder)
+            private static IQueryable<Role> ApplySorting(IQueryable<Role> query, string sortBy, string sortOrder)
             {
-                switch (sortBy.ToLower())
+                var allowedSortColumns = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                 {
-                    case "name":
-                        query = sortOrder.ToUpper() == "ASC"
-                            ? query.OrderBy(st => st.Name)
-                            : query.OrderByDescending(st => st.Name);
-                        break;
-                    default:
-                        query = sortOrder.ToUpper() == "ASC"
-                            ? query.OrderBy(st => st.Id)
-                            : query.OrderByDescending(st => st.Id);
-                        break;
+                    nameof(Role.Name),
+                    nameof(Role.CreateAt)
+                };
+                
+                if (string.IsNullOrEmpty(sortBy) && !allowedSortColumns.Contains(sortBy))
+                {
+                    return query.OrderByDescending(r => r.CreateAt);
                 }
 
-                return query;
+                return query.ApplyDynamicSorting(sortBy, sortOrder);
             }
         }
     }

@@ -4,14 +4,14 @@ namespace BCinema.Application.Features.Schedules.Queries;
 
 public class ScheduleQuery : PaginationQuery
 {
-    public DateTime? Date { get; set; }
+    public string? Date { get; set; }
     public int? MovieId { get; set; }
     public Guid? RoomId { get; set; }
     public string? Status { get; set; }
     
     public ScheduleQuery() : base() {}
 
-    public ScheduleQuery(int page, int size, DateTime? date, int? movieId, Guid? roomId, string? status) 
+    public ScheduleQuery(int page, int size, string? date, int? movieId, Guid? roomId, string? status) 
         : base(page, size)
     {
         this.Date = date;

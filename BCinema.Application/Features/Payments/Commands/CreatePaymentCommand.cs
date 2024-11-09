@@ -66,6 +66,8 @@ public class CreatePaymentCommand : IRequest<PaymentDto>
                 payment.TotalPrice -= payment.TotalPrice * voucherDiscount;
             }
 
+            user.Point = CalculateTotalPoint(payment);
+            
             await using (var transaction = await paymentRepository.BeginTransactionAsync(cancellationToken))
             {
                 try
@@ -82,6 +84,7 @@ public class CreatePaymentCommand : IRequest<PaymentDto>
                     await paymentDetailRepository.SaveChangesAsync(cancellationToken);
                     await seatRepository.SaveChangesAsync(cancellationToken);
                     await foodRepository.SaveChangesAsync(cancellationToken);
+                    await userRepository.SaveChangesAsync(cancellationToken);
 
                     await transaction.CommitAsync(cancellationToken);
                 }
@@ -98,6 +101,11 @@ public class CreatePaymentCommand : IRequest<PaymentDto>
         private static double CalculateTotalPrice(IEnumerable<PaymentDetail> paymentDetails)
         {
             return paymentDetails.Sum(pd => pd.Price);
+        }
+        
+        private static int CalculateTotalPoint(Payment payment)
+        {
+            return (int) payment.TotalPrice / 10;
         }
         
         private async Task UseVoucherAsync(User user, Voucher voucher, CancellationToken cancellationToken)

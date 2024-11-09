@@ -13,23 +13,14 @@ namespace BCinema.API.Controllers;
 
 [ApiController]
 [Route("api/vouchers")]
-public class VoucherController : ControllerBase
+public class VoucherController(IMediator mediator, ILogger<VoucherController> logger) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    private readonly ILogger<VoucherController> _logger;
-
-    public VoucherController(IMediator mediator, ILogger<VoucherController> logger)
-    {
-        _mediator = mediator;
-        _logger = logger;
-    }
-
     [HttpGet]
     public async Task<IActionResult> GetVouchers([FromQuery] VoucherQuery query)
     {
         try
         {
-            var vouchers = await _mediator.Send(new GetVouchersQuery { Query = query });
+            var vouchers = await mediator.Send(new GetVouchersQuery { Query = query });
 
             return Ok(new PageResponse<IEnumerable<VoucherDto>>(
                 true,
@@ -40,19 +31,27 @@ public class VoucherController : ControllerBase
                 vouchers.TotalPages,
                 vouchers.TotalElements));
         }
+        catch (NotFoundException ex)
+        {
+            return NotFound(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (BadRequestException ex)
+        {
+            return BadRequest(new ApiResponse<string>(false, ex.Message));
+        }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An unexpected error occurred while getting all vouchers");
+            logger.LogError(ex, "An unexpected error occurred while getting all vouchers");
             return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
         }
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetVoucherById(Guid id)
     {
         try
         {
-            var voucher = await _mediator.Send(new GetVoucherByIdQuery { Id = id });
+            var voucher = await mediator.Send(new GetVoucherByIdQuery { Id = id });
 
             return Ok(new ApiResponse<VoucherDto>(true, "Get voucher successfully", voucher));
         }
@@ -62,7 +61,7 @@ public class VoucherController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An unexpected error occurred while getting voucher");
+            logger.LogError(ex, "An unexpected error occurred while getting voucher");
             return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
         }
     }
@@ -72,7 +71,7 @@ public class VoucherController : ControllerBase
     {
         try
         {
-            var voucher = await _mediator.Send(new GetVoucherByCodeQuery { Code = code });
+            var voucher = await mediator.Send(new GetVoucherByCodeQuery { Code = code });
 
             return Ok(new ApiResponse<VoucherDto>(true, "Get voucher successfully", voucher));
         }
@@ -82,25 +81,22 @@ public class VoucherController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An unexpected error occurred while getting voucher");
+            logger.LogError(ex, "An unexpected error occurred while getting voucher");
             return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
         }
     }
 
-    [HttpGet("{voucherId}/users/{userId}")]
+    [HttpGet("{voucherId:guid}/users/{userId:guid}")]
     public async Task<IActionResult> CheckVoucherUsed(Guid userId, Guid voucherId)
     {
         try
         {
-            var userVoucher = await _mediator.Send(
+            var userVoucher = await mediator.Send(
                 new GetUserVoucherByUIdAndVIdQuery() { UserId = userId, VoucherId = voucherId });
 
-            if (userVoucher == null)
-            {
-                return Ok(new ApiResponse<UserVoucherDto>(true, "User hasn't used this voucher"));
-            }
-
-            return Ok(new ApiResponse<UserVoucherDto>(true, "User has used this voucher", userVoucher));
+            return userVoucher == null 
+                ? Ok(new ApiResponse<string>(true, "User hasn't used this voucher")) 
+                : Ok(new ApiResponse<UserVoucherDto>(true, "User has used this voucher", userVoucher));
         }
         catch (NotFoundException ex)
         {
@@ -108,17 +104,17 @@ public class VoucherController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An unexpected error occurred while check voucher used");
+            logger.LogError(ex, "An unexpected error occurred while checking voucher usage");
             return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
         }
     }
 
-    [HttpGet("users/{userId}")]
+    [HttpGet("users/{userId:guid}")]
     public async Task<IActionResult> GetUserVouchers(Guid userId)
     {
         try
         {
-            var userVouchers = await _mediator.Send(new GetUserVouchersByUIdQuery { UserId = userId });
+            var userVouchers = await mediator.Send(new GetUserVouchersByUIdQuery { UserId = userId });
 
             return Ok(new ApiResponse<IEnumerable<UserVoucherDto>>(
                 true,
@@ -131,7 +127,7 @@ public class VoucherController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An unexpected error occurred while getting user vouchers");
+            logger.LogError(ex, "An unexpected error occurred while getting user vouchers");
             return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
         }
     }
@@ -141,7 +137,7 @@ public class VoucherController : ControllerBase
     {
         try
         {
-            var voucher = await _mediator.Send(command);
+            var voucher = await mediator.Send(command);
 
             return StatusCode(
                 StatusCodes.Status201Created,
@@ -153,7 +149,7 @@ public class VoucherController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An unexpected error occurred while creating voucher");
+            logger.LogError(ex, "An unexpected error occurred while creating voucher");
             return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
         }
     }
@@ -163,7 +159,7 @@ public class VoucherController : ControllerBase
     {
         try
         {
-            var userVoucher = await _mediator.Send(command);
+            var userVoucher = await mediator.Send(command);
             return StatusCode(
                 StatusCodes.Status201Created,
                 new ApiResponse<UserVoucherDto>(true, "Use voucher successfully", userVoucher));
@@ -178,7 +174,7 @@ public class VoucherController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An unexpected error occurred while using voucher");
+            logger.LogError(ex, "An unexpected error occurred while using voucher");
             return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
         }
     }

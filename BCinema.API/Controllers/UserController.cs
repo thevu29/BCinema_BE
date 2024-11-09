@@ -136,6 +136,14 @@ namespace BCinema.API.Controllers
                     users.TotalPages,
                     users.TotalElements));
             }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new ApiResponse<string>(false, ex.Message));
+            }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(new ApiResponse<string>(false, ex.Message));
+            }
             catch (Exception ex)
             {
                 logger.LogError(ex, "An unexpected error occurred while getting users");

@@ -7,46 +7,32 @@ using MediatR;
 
 namespace BCinema.Application.Features.UserVouchers.Queries;
 
-public class GetUserVoucherByUIdAndVIdQuery : IRequest<UserVoucherDto>
+public class GetUserVoucherByUIdAndVIdQuery : IRequest<UserVoucherDto?>
 {
-    public Guid UserId { get; set; }
-    public Guid VoucherId { get; set; }
+    public Guid UserId { get; init; }
+    public Guid VoucherId { get; init; }
     
-    public class GetUserByUIdAndVIdQueryHandler : IRequestHandler<GetUserVoucherByUIdAndVIdQuery, UserVoucherDto>
+    public class GetUserByUIdAndVIdQueryHandler(
+        IUserVoucherRepository userVoucherRepository,
+        IUserRepository userRepository,
+        IVoucherRepository voucherRepository,
+        IMapper mapper)
+        : IRequestHandler<GetUserVoucherByUIdAndVIdQuery, UserVoucherDto?>
     {
-        private readonly IUserVoucherRepository _userVoucherRepository;
-        private readonly IUserRepository _userRepository;
-        private readonly IVoucherRepository _voucherRepository;
-        private readonly IMapper _mapper;
-
-        public GetUserByUIdAndVIdQueryHandler(
-            IUserVoucherRepository userVoucherRepository,
-            IUserRepository userRepository,
-            IVoucherRepository voucherRepository,
-            IMapper mapper)
+        public async Task<UserVoucherDto?> Handle(GetUserVoucherByUIdAndVIdQuery request, CancellationToken cancellationToken)
         {
-            _userVoucherRepository = userVoucherRepository;
-            _userRepository = userRepository;
-            _voucherRepository = voucherRepository;
-            _mapper = mapper;
-        }
-        
-        public async Task<UserVoucherDto> Handle(
-            GetUserVoucherByUIdAndVIdQuery request,
-            CancellationToken cancellationToken)
-        {
-            var user = await _userRepository
+            var user = await userRepository
                 .GetByIdAsync(request.UserId, cancellationToken)
                 ?? throw new NotFoundException(nameof(User));
 
-            var voucher = await _voucherRepository
+            var voucher = await voucherRepository
                 .GetByIdAsync(request.VoucherId, cancellationToken)
                 ?? throw new NotFoundException(nameof(Voucher));
 
-            var userVoucher = await _userVoucherRepository
-                .GetUserVoucherByUIdAndVIdAsync(request.UserId, request.VoucherId, cancellationToken);
+            var userVoucher = await userVoucherRepository
+                .GetUserVoucherByUIdAndVIdAsync(user.Id, voucher.Id, cancellationToken);
 
-            return _mapper.Map<UserVoucherDto>(userVoucher);
+            return userVoucher != null ? mapper.Map<UserVoucherDto>(userVoucher) : null;
         }
     }
 }
