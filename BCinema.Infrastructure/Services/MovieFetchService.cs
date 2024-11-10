@@ -8,18 +8,12 @@ using BCinema.Application.Exceptions;
 
 namespace BCinema.Infrastructure.Services;
 
-public class MovieFetchService : IMovieFetchService
+public class MovieFetchService(IConfiguration configuration) : IMovieFetchService
 {
-    private readonly RestClient _client;
-    private readonly string _apiKey;
-    
-    public MovieFetchService(IConfiguration configuration)
-    {
-        _client = new RestClient("https://api.themoviedb.org/3");
-        _apiKey = configuration["ApiSettings:TheMovieDbApiKey"]
-                  ?? throw new Exception("TheMovieDbApiKey is missing in appsettings.json");
-    }
-    
+    private readonly RestClient _client = new("https://api.themoviedb.org/3");
+    private readonly string _apiKey = configuration["ApiSettings:TheMovieDbApiKey"]
+                                      ?? throw new Exception("TheMovieDbApiKey is missing in appsettings.json");
+
     public async Task<dynamic?> FetchNowPlayingMoviesAsync(int page)
     {
         var request = new RestRequest($"movie/now_playing?language=vi&page={page}&region=vn");
@@ -90,5 +84,31 @@ public class MovieFetchService : IMovieFetchService
             : null;
             
         return movieDetailDto;
+    }
+    
+    public async Task<dynamic?> FetchMovieByTitleAsync(string title, int page)
+    {
+        var request = new RestRequest($"search/movie?language=vi&region=vn&query={title}&page={page}");;
+        request.AddParameter("api_key", _apiKey);
+        
+        var response = await _client.ExecuteAsync(request);
+
+        if (response is { IsSuccessful: false, Content: not null })
+        {
+            using var document = JsonDocument.Parse(response.Content);
+            throw new BadRequestException(document.RootElement.GetProperty("status_message").GetString() ?? "An error occured");
+        }
+        
+        var movieResponse = response.Content != null
+            ? JsonConvert.DeserializeObject<MoviesDto>(response.Content)
+            : null;
+            
+        foreach (var movie in movieResponse?.Results ?? Enumerable.Empty<MovieDto>())
+        {
+            var movieDetail = await FetchMovieByIdAsync(movie.Id);
+            movie.Runtime = movieDetail?.Runtime;
+        }
+
+        return movieResponse;
     }
 }
