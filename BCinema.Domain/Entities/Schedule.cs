@@ -20,6 +20,8 @@ namespace BCinema.Domain.Entities
         [Required]
         public int MovieId { get; set; }
         [Required]
+        public string MovieName { get; set; } = default!;
+        [Required]
         public Guid RoomId { get; set; }
         [Required] public int Runtime { get; set; }
         

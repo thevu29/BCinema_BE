@@ -177,6 +177,10 @@ namespace BCinema.Persistence.Migrations
                     b.Property<int>("MovieId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("MovieName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<Guid>("RoomId")
                         .HasColumnType("uuid");
 
