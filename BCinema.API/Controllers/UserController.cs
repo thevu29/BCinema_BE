@@ -26,6 +26,10 @@ namespace BCinema.API.Controllers
             {
                 return NotFound(new ApiResponse<string>(false, ex.Message));
             }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(new ApiResponse<string>(false, ex.Message));
+            }
             catch (Exception ex)
             {
                 logger.LogError(ex, "An unexpected error occurred while deleting user");
