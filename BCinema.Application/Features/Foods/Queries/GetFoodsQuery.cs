@@ -4,6 +4,7 @@ using BCinema.Application.Helpers;
 using BCinema.Domain.Entities;
 using BCinema.Domain.Interfaces.IRepositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BCinema.Application.Features.Foods.Queries;
 
@@ -18,9 +19,10 @@ public class GetFoodsQuery : IRequest<PaginatedList<FoodDto>>
         {
             var query = foodRepository.GetFoods();
 
-            if (!string.IsNullOrEmpty(request.Query.Name))
+            if (!string.IsNullOrEmpty(request.Query.Search))
             {
-                query = query.Where(f => f.Name.ToLower().Contains(request.Query.Name.ToLower()));
+                var searchTerm = request.Query.Search.Trim().ToLower();
+                query = query.Where(f => EF.Functions.Like(f.Name.ToLower(), $"%{searchTerm}%"));
             }
             if (!string.IsNullOrEmpty(request.Query.Price))
             {

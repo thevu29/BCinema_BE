@@ -4,6 +4,7 @@ using BCinema.Application.Helpers;
 using BCinema.Domain.Entities;
 using BCinema.Domain.Interfaces.IRepositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BCinema.Application.Features.SeatTypes.Queries
 {
@@ -18,9 +19,10 @@ namespace BCinema.Application.Features.SeatTypes.Queries
             {
                 var query = seatTypeRepository.GetSeatTypes();
 
-                if (!string.IsNullOrEmpty(request.Query.Name))
+                if (!string.IsNullOrEmpty(request.Query.Search))
                 {
-                    query = query.Where(x => x.Name.ToLower().Contains(request.Query.Name.ToLower()));
+                    var searchTerm = request.Query.Search.Trim().ToLower();
+                    query = query.Where(st => EF.Functions.Like(st.Name.ToLower(), $"%{searchTerm}%"));
                 }
                 if (!string.IsNullOrEmpty(request.Query.Price))
                 {

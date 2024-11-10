@@ -26,7 +26,7 @@ public class CreateSchedulesCommand : IRequest<SchedulesDto>
     {
         public async Task<SchedulesDto> Handle(CreateSchedulesCommand request, CancellationToken cancellationToken)
         {
-            var movie = await movieFetchService.FetchMovieByIdAsync(request.MovieId)
+            var movie = await movieFetchService.FetchMovieByIdAsync(request.MovieId) as MovieDto
                         ?? throw new NotFoundException("Movie");
 
             var room = await roomRepository.GetRoomByIdAsync(request.RoomId, cancellationToken)
@@ -35,6 +35,7 @@ public class CreateSchedulesCommand : IRequest<SchedulesDto>
             var schedules = request.Times.Select(time =>
             {
                 var schedule = mapper.Map<Schedule>(request);
+                schedule.MovieName = movie.Title;
                 schedule.Date = DateTime.SpecifyKind(request.Date.Date.Add(time), DateTimeKind.Utc);
                 schedule.Runtime = movie.Runtime;
                 

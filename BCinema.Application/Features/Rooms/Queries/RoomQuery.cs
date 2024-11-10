@@ -4,14 +4,12 @@ namespace BCinema.Application.Features.Rooms.Queries;
 
 public class RoomQuery : PaginationQuery
 {
-    public string? Name { get; set; }
+    public string? Search { get; set; }
 
-    public RoomQuery() : base()
-    {
-    }
+    public RoomQuery() : base() {}
     
-    public RoomQuery(string? name, int pageNumber, int pageSize) : base(pageNumber, pageSize)
+    public RoomQuery(string? search, int pageNumber, int pageSize) : base(pageNumber, pageSize)
     {
-        Name = name;
+        Search = search;
     }
 }

@@ -4,6 +4,7 @@ using BCinema.Application.Helpers;
 using BCinema.Domain.Entities;
 using BCinema.Domain.Interfaces.IRepositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BCinema.Application.Features.Users.Queries
 {
@@ -14,19 +15,16 @@ namespace BCinema.Application.Features.Users.Queries
         public class GetUsersQueryHandler(IUserRepository userRepository, IMapper mapper)
             : IRequestHandler<GetUsersQuery, PaginatedList<UserDto>>
         {
-            public async Task<PaginatedList<UserDto>> Handle(
-                GetUsersQuery request,
-                CancellationToken cancellationToken)
+            public async Task<PaginatedList<UserDto>> Handle(GetUsersQuery request, CancellationToken cancellationToken)
             {
                 var query = userRepository.GetUsers();
-
-                if (!string.IsNullOrEmpty(request.Query.Name))
+                
+                if (!string.IsNullOrEmpty(request.Query.Search))
                 {
-                    query = query.Where(x => x.Name.ToLower().Contains(request.Query.Name.ToLower()));
-                }
-                if (!string.IsNullOrEmpty(request.Query.Email))
-                {
-                    query = query.Where(x => x.Email.ToLower().Contains(request.Query.Email.ToLower()));
+                    var searchTerm = request.Query.Search.Trim().ToLower();
+                    query = query.Where(x => 
+                        EF.Functions.Like(x.Name.ToLower(), $"%{searchTerm}%") ||
+                        EF.Functions.Like(x.Email.ToLower(), $"%{searchTerm}%"));
                 }
                 if (request.Query.Role.HasValue)
                 {

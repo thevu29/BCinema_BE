@@ -4,15 +4,15 @@ namespace BCinema.Application.Features.Foods.Queries;
 
 public class FoodQuery : PaginationQuery
 {
-    public string? Name { get; set; }
+    public string? Search { get; set; }
     public string? Price { get; set; }
     public string? Quantity { get; set; }
     
     public FoodQuery() : base() {}
 
-    public FoodQuery(string? name, string? price, string? quantity, int page, int size) : base(page, size)
+    public FoodQuery(string? search, string? price, string? quantity, int page, int size) : base(page, size)
     {
-        Name = name;
+        Search = search;
         Price = price;
         Quantity = quantity;
     }

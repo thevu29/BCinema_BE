@@ -4,6 +4,7 @@ using BCinema.Application.Helpers;
 using BCinema.Domain.Entities;
 using BCinema.Domain.Interfaces.IRepositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BCinema.Application.Features.Rooms.Queries;
 
@@ -18,9 +19,10 @@ public class GetRoomsQuery : IRequest<PaginatedList<RoomDto>>
         {
             var query = roomRepository.GetRooms();
             
-            if (!string.IsNullOrWhiteSpace(request.Query.Name))
+            if (!string.IsNullOrWhiteSpace(request.Query.Search))
             {
-                query = query.Where(r => r.Name.Contains(request.Query.Name));
+                var searchTerm = request.Query.Search.Trim().ToLower();
+                query = query.Where(r => EF.Functions.Like(r.Name.ToLower(), $"%{searchTerm}%"));
             }
             
             query = ApplySorting(query, request.Query.SortBy, request.Query.SortOrder);

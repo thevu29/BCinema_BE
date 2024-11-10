@@ -4,6 +4,7 @@ using BCinema.Application.Helpers;
 using BCinema.Domain.Entities;
 using BCinema.Domain.Interfaces.IRepositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BCinema.Application.Features.Vouchers.Queries;
 
@@ -18,9 +19,9 @@ public class GetVouchersQuery : IRequest<PaginatedList<VoucherDto>>
         {
             var query = voucherRepository.GetVouchers();
 
-            if (!string.IsNullOrEmpty(request.Query.Code))
+            if (!string.IsNullOrEmpty(request.Query.Search))
             {
-                query = query.Where(x => x.Code.ToLower().Contains(request.Query.Code.ToLower()));
+                query = query.Where(v => EF.Functions.Like(v.Code, $"%{request.Query.Search}%"));
             }
             if (!string.IsNullOrEmpty(request.Query.Discount))
             {

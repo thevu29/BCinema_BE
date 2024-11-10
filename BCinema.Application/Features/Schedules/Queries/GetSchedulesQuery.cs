@@ -18,13 +18,18 @@ public class GetSchedulesQuery : IRequest<PaginatedList<SchedulesDto>>
         IScheduleRepository scheduleRepository,
         IRoomRepository roomRepository,
         IMovieFetchService movieFetchService,
-        IMapper mapper)
-        : IRequestHandler<GetSchedulesQuery, PaginatedList<SchedulesDto>>
+        IMapper mapper) : IRequestHandler<GetSchedulesQuery, PaginatedList<SchedulesDto>>
     {
         public async Task<PaginatedList<SchedulesDto>> Handle(GetSchedulesQuery request, CancellationToken cancellationToken)
         {
             var query = scheduleRepository.GetSchedules();
-            
+
+            if (!string.IsNullOrEmpty(request.Query.Search))
+            {
+                var searchTerm = request.Query.Search.Trim().ToLower();
+                query = query.Where(s => 
+                    EF.Functions.Like(s.MovieName.ToLower(), $"%{searchTerm}%"));
+            }
             if (!string.IsNullOrEmpty(request.Query.Date))
             {
                 query = query.FilterByDate(request.Query.Date, s => s.Date);
@@ -65,10 +70,6 @@ public class GetSchedulesQuery : IRequest<PaginatedList<SchedulesDto>>
                 .Select(g =>
                 {
                     var scheduleDto = mapper.Map<SchedulesDto>(g.First());
-                    var movie = movieFetchService.FetchMovieByIdAsync(scheduleDto.MovieId).Result as MovieDto
-                                ?? throw new NotFoundException("Movie");
-                    
-                    scheduleDto.MovieName = movie.Title;
                     
                     scheduleDto.Schedules = g.Select(s => new ScheduleDetailDto
                     {
@@ -76,6 +77,7 @@ public class GetSchedulesQuery : IRequest<PaginatedList<SchedulesDto>>
                         Time = s.Date.TimeOfDay,
                         Status = s.Status.ToString()
                     }).ToList();
+                    
                     return scheduleDto;
                 })
                 .ToList();

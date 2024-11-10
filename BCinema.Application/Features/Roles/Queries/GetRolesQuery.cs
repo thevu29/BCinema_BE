@@ -4,6 +4,7 @@ using BCinema.Application.Helpers;
 using BCinema.Domain.Entities;
 using BCinema.Domain.Interfaces.IRepositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BCinema.Application.Features.Roles.Queries
 {
@@ -18,9 +19,10 @@ namespace BCinema.Application.Features.Roles.Queries
             {
                 var query = roleRepository.GetRoles();
 
-                if (!string.IsNullOrEmpty(request.Query.Name))
+                if (!string.IsNullOrEmpty(request.Query.Search))
                 {
-                    query = query.Where(x => x.Name.ToLower().Contains(request.Query.Name.ToLower()));
+                    var searchTerm = request.Query.Search.Trim().ToLower();
+                    query = query.Where(r => EF.Functions.Like(r.Name.ToLower(), $"%{searchTerm}%"));;
                 }
 
                 query = ApplySorting(query, request.Query.SortBy, request.Query.SortOrder);
