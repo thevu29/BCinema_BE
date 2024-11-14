@@ -25,7 +25,7 @@ namespace BCinema.Application.Features.Foods.Queries
             {
                 var food = await _context.Foods
                     .FirstOrDefaultAsync(v => v.Name == request.Name, cancellationToken: cancellationToken)
-                    ?? throw new NotFoundException(nameof(Foods), request.Name);
+                    ?? throw new NotFoundException(nameof(Foods));
                 return _mapper.Map<FoodDto>(food);
             }
         }
