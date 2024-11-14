@@ -4,11 +4,6 @@ using BCinema.Application.Exceptions;
 using BCinema.Application.Interfaces;
 using BCinema.Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BCinema.Application.Features.Foods.Commands
 {
