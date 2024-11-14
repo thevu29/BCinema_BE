@@ -10,8 +10,7 @@ namespace BCinema.Domain.Entities
         public Guid UserId { get; set; }
         [Required]
         public Guid ScheduleId { get; set; }
-        [Required]
-        public Guid VoucherId { get; set; }
+        public Guid? VoucherId { get; set; }
         [Required]
         public DateTime Date { get; set; } = DateTime.UtcNow;
         [Required]
@@ -22,7 +21,7 @@ namespace BCinema.Domain.Entities
         [ForeignKey(nameof(ScheduleId))]
         public Schedule Schedule { get; set; } = default!;
         [ForeignKey(nameof(VoucherId))]
-        public Voucher Voucher { get; set; } = default!;
+        public Voucher? Voucher { get; set; }
 
         public ICollection<PaymentDetail> PaymentDetails { get; set; } = new HashSet<PaymentDetail>();
     }

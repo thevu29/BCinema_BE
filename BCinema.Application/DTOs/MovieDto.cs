@@ -47,6 +47,6 @@ namespace BCinema.Application.DTOs
         public int VoteCount { get; set; }
         
         [JsonProperty("runtime")]
-        public int? Runtime { get; set; }
+        public int Runtime { get; set; }
     }
 }

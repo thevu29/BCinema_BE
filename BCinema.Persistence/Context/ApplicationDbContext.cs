@@ -5,17 +5,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BCinema.Persistence.Context
 {
-    public class ApplicationDbContext : DbContext, IApplicationDbContext
+    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : DbContext(options), IApplicationDbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-        {
-        }
-
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Food> Foods { get; set; }
         public DbSet<Room> Rooms { get; set; }
         public DbSet<Seat> Seats { get; set; }
+        public DbSet<SeatSchedule> SeatSchedules { get; set; }
         public DbSet<SeatType> SeatTypes { get; set; }
         public DbSet<Schedule> Schedules { get; set; }
         public DbSet<Voucher> Vouchers { get; set; }
@@ -39,7 +37,7 @@ namespace BCinema.Persistence.Context
                     if (property.Metadata.ClrType == typeof(DateTime) || 
                         property.Metadata.ClrType == typeof(DateTime?))
                     {
-                        if (property.CurrentValue is DateTime dateTime && dateTime.Kind == DateTimeKind.Local)
+                        if (property.CurrentValue is DateTime { Kind: DateTimeKind.Local } dateTime)
                         {
                             property.CurrentValue = dateTime.ToUniversalTime();
                         }
@@ -48,12 +46,6 @@ namespace BCinema.Persistence.Context
             }
             
             return await base.SaveChangesAsync(cancellationToken);
-        }
-        
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-            ApplicationDbContextSeed.Seed(modelBuilder);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace BCinema.Domain.Entities
     {
         [Required]
         public string Name { get; set; } = default!;
-        public string? Description { get; set; } = default!;
+        public string? Description { get; set; }
 
         public ICollection<User> Users { get; set; } = new HashSet<User>();
     }

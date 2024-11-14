@@ -1,125 +1,126 @@
 ﻿using BCinema.API.Responses;
-using BCinema.Application.Features.Foods.Queries;
-using MediatR;
 using BCinema.Application.DTOs;
-using Microsoft.AspNetCore.Mvc;
 using BCinema.Application.Exceptions;
 using BCinema.Application.Features.Foods.Commands;
-using System.ComponentModel.DataAnnotations;
+using BCinema.Application.Features.Foods.Queries;
+using FluentValidation;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
-namespace BCinema.API.Controllers
+namespace BCinema.API.Controllers;
+
+[Route("api/foods")]
+[ApiController]
+public class FoodController(IMediator mediator, ILogger<FoodController> logger) : ControllerBase
 {
-    [Route("api/foods")]
-    [ApiController]
-    public class FoodController : ControllerBase
+    [HttpGet]
+    public async Task<IActionResult> GetFoods([FromQuery] FoodQuery query)
     {
-        private readonly IMediator _mediator;
-        private readonly ILogger<FoodController> _logger;
-
-        public FoodController(IMediator mediator, ILogger<FoodController> logger)
+        try
         {
-            _mediator = mediator;
-            _logger = logger;
+            var foods = await mediator.Send(new GetFoodsQuery { Query = query });
+            return Ok(new PageResponse<IEnumerable<FoodDto>>(
+                true,
+                "Get foods successfully",
+                foods.Data,
+                foods.Page,
+                foods.Size,
+                foods.TotalPages,
+                foods.TotalElements));
         }
-
-        [HttpGet]
-        public async Task<IActionResult> GetFoods([FromQuery] FoodQuery query)
+        catch (NotFoundException ex)
         {
-            try
-            {
-                var foods = await _mediator.Send(new GetFoodsQuery { Query = query });
-                return Ok(new PageResponse<IEnumerable<FoodDto>>(true, "Get foods successfully",
-                    foods.Data, foods.Page, foods.Size, foods.TotalPages, foods.TotalElements));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An unexpected error occurred while getting all foods.");
-                return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred."));
-            }
+            return NotFound(new ApiResponse<string>(false, ex.Message));
         }
-
-        [HttpGet("{name}")]
-        public async Task<IActionResult> GetFoodByName(String name)
+        catch (BadRequestException ex)
         {
-            try
-            {
-                var food = await _mediator.Send(new GetFoodByNameQuery { Name = name });
-                return Ok(new ApiResponse<FoodDto>(true, "Get food successfully", food));
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new ApiResponse<string>(false, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An unexpected error occurred while getting food.");
-                return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred."));
-            }
-
+            return BadRequest(new ApiResponse<string>(false, ex.Message));
         }
-
-        [HttpPost]
-        public async Task<IActionResult> CreateFood([FromBody] CreateFoodCommand command)
+        catch (Exception ex)
         {
-            try
-            {
-                var food = await _mediator.Send(command);
-                return Ok(new ApiResponse<FoodDto>(true, "Create food successfully", food));
-            }
-            catch(ValidationException ex)
-            {
-                _logger.LogError(ex, "An error occurred while creating food.");
-                return BadRequest(new ApiResponse<string>(false, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An unexpected error occurred while creating food.");
-                return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred."));
-            }
+            logger.LogError(ex, "An error occured while getting foods");
+            return StatusCode(500, new ApiResponse<string>(false, "An error occured"));
         }
+    }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateFood(Guid id, [FromBody] UpdateFoodCommand command)
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetFoodById(Guid id)
+    {
+        try
         {
-            try
-            {
-                command.Id = id;
-                var food = await _mediator.Send(command);
-                return Ok(new ApiResponse<FoodDto>(true, "Update food successfully", food));
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new ApiResponse<string>(false, ex.Message));
-            }
-            catch (ValidationException ex)
-            {
-                _logger.LogError(ex, "An error occurred while updating food.");
-                return BadRequest(new ApiResponse<string>(false, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An unexpected error occurred while updating food.");
-                return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred."));
-            }
+            var food = await mediator.Send(new GetFoodByIdQuery { Id = id });
+            return Ok(new ApiResponse<FoodDto>(true, "Update food successfully", food));
         }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteFood(Guid id)
+        catch (NotFoundException ex)
         {
-            try
-            {
-                await _mediator.Send(new DeleteFoodCommand { Id = id });
-                return Ok(new ApiResponse<string>(true, "Delete food successfully"));
-            }
-            catch (NotFoundException ex)
-            {
-                return NotFound(new ApiResponse<string>(false, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An unexpected error occurred while deleting food.");
-                return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred."));
-            }
+            return NotFound(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occured while getting food");
+            return StatusCode(500, new ApiResponse<string>(false, "An error occured"));
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteFood(Guid id)
+    {
+        try
+        {
+            await mediator.Send(new DeleteFoodCommand { Id = id });
+            return Ok(new ApiResponse<string>(true, "Delete food successfully"));
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occured while updating food");
+            return StatusCode(500, new ApiResponse<string>(false, "An error occured"));
+        }
+    }
+    
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateFood(Guid id, [FromBody] UpdateFoodCommand command)
+    {
+        try
+        {
+            command.Id = id;
+            var food = await mediator.Send(command);
+            return Ok(new ApiResponse<FoodDto>(true, "Update food successfully", food));
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occured while updating food");
+            return StatusCode(500, new ApiResponse<string>(false, "An error occured"));
+        }
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateFood([FromBody] CreateFoodCommand command)
+    {
+        try
+        {
+            var food = await mediator.Send(command);
+            return StatusCode(201, new ApiResponse<FoodDto>(true, "Create food successfully", food));
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occured while creating food");
+            return StatusCode(500, new ApiResponse<string>(false, "An error occured"));
         }
     }
 }

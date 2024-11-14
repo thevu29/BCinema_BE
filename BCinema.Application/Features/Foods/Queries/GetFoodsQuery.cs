@@ -1,72 +1,63 @@
 ﻿using AutoMapper;
 using BCinema.Application.DTOs;
 using BCinema.Application.Helpers;
-using BCinema.Application.Interfaces;
 using BCinema.Domain.Entities;
+using BCinema.Domain.Interfaces.IRepositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
+namespace BCinema.Application.Features.Foods.Queries;
 
-namespace BCinema.Application.Features.Foods.Queries
+public class GetFoodsQuery : IRequest<PaginatedList<FoodDto>>
 {
-    public class GetFoodsQuery : IRequest<PaginatedList<FoodDto>>
+    public FoodQuery Query { get; init; } = default!;
+
+    public class GetFoodsQueryHandler(IFoodRepository foodRepository, IMapper mapper)
+        : IRequestHandler<GetFoodsQuery, PaginatedList<FoodDto>>
     {
-        public FoodQuery Query { get; set; } = default!;
-
-        public class GetFoodsQueryHandler : IRequestHandler<GetFoodsQuery, PaginatedList<FoodDto>>
+        public async Task<PaginatedList<FoodDto>> Handle(GetFoodsQuery request, CancellationToken cancellationToken)
         {
-            private readonly IApplicationDbContext _context;
-            private readonly IMapper _mapper;
+            var query = foodRepository.GetFoods();
 
-            public GetFoodsQueryHandler(IApplicationDbContext context, IMapper mapper)
+            if (!string.IsNullOrEmpty(request.Query.Search))
             {
-                _context = context;
-                _mapper = mapper;
+                var searchTerm = request.Query.Search.Trim().ToLower();
+                query = query.Where(f => EF.Functions.Like(f.Name.ToLower(), $"%{searchTerm}%"));
+            }
+            if (!string.IsNullOrEmpty(request.Query.Price))
+            {
+                query = query.FilterByNumber(request.Query.Price, f => f.Price);
+            }
+            if (!string.IsNullOrEmpty(request.Query.Quantity))
+            {
+                query = query.FilterByNumber(request.Query.Quantity, f => f.Quantity);
             }
 
-            public async Task<PaginatedList<FoodDto>> Handle(GetFoodsQuery request, CancellationToken cancellationToken)
+            query = ApplySorting(query, request.Query.SortBy, request.Query.SortOrder);
+
+            var foods = await PaginatedList<Food>.ToPageList(query, request.Query.Page, request.Query.Size);
+
+            var foodDtos = mapper.Map<IEnumerable<FoodDto>>(foods.Data);
+
+            return new PaginatedList<FoodDto>(foods.Page, foods.Size, foods.TotalElements, foodDtos);
+        }
+        
+        private static IQueryable<Food> ApplySorting(IQueryable<Food> query, string sortBy, string sortOrder)
+        {
+            var allowedSortColumns = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
-                IQueryable<Food> query = _context.Foods;
-                if (!string.IsNullOrEmpty(request.Query.Name))
-                {
-                    query = query.Where(x => x.Name.ToLower().Contains(request.Query.Name.ToLower()));
-                }
-
-                query = ApplySorting(query, request.Query.SortBy, request.Query.SortOrder);
-
-                var foods = await PaginatedList<Food>
-                    .ToPageList(query, request.Query.Page, request.Query.Size);
-                var foodDtos = _mapper.Map<IEnumerable<FoodDto>>(foods.Data);
-                return new PaginatedList<FoodDto>(foods.Page, foods.Size, foods.TotalElements, foodDtos);
+                nameof(Food.Name),
+                nameof(Food.Price),
+                nameof(Food.Quantity),
+                nameof(Food.CreateAt)
+            };
+            
+            if (string.IsNullOrWhiteSpace(sortBy) || !allowedSortColumns.Contains(sortBy))
+            {
+                return query.OrderByDescending(f => f.CreateAt);
             }
 
-            public static IQueryable<Food> ApplySorting(IQueryable<Food> query, string sortBy, string sortOrder)
-            {
-                switch (sortBy.ToLower())
-                {
-                    case "name":
-                        query = sortOrder.ToUpper() == "ASC"
-                            ? query.OrderBy(f => f.Name)
-                            : query.OrderByDescending(f => f.Name);
-                        break;
-                    case "price":
-                        query = sortOrder.ToUpper() == "ASC"
-                            ? query.OrderBy(f => f.Price)
-                            : query.OrderByDescending(f => f.Price);
-                        break;
-                    case "createdat":
-                        query = sortOrder.ToUpper() == "ASC"
-                            ? query.OrderBy(f => f.CreateAt)
-                            : query.OrderByDescending(f => f.CreateAt);
-                        break;
-                    default:
-                        query = sortOrder.ToUpper() == "ASC"
-                            ? query.OrderBy(f => f.Id)
-                            : query.OrderByDescending(f => f.Id);
-                        break;
-                }
-
-                return query;
-            }
+            return query.ApplyDynamicSorting(sortBy, sortOrder);
         }
     }
 }

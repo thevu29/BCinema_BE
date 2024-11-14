@@ -11,24 +11,15 @@ namespace BCinema.API.Controllers
 {
     [Route("api/roles")]
     [ApiController]
-    public class RoleController : ControllerBase
+    public class RoleController(IMediator mediator, ILogger<RoleController> logger) : ControllerBase
     {
-        private readonly IMediator _mediator;
-        private readonly ILogger<RoleController> _logger;
-
-        public RoleController(IMediator mediator, ILogger<RoleController> logger)
-        {
-            _mediator = mediator;
-            _logger = logger;
-        }
-
-        [HttpPut("{id}")]
+        [HttpPut("{id:guid}")]
         public async Task<ActionResult<RoleDto>> UpdateRole(Guid id, [FromBody] UpdateRoleCommand command)
         {
             try
             {
                 command.Id = id;
-                var role = await _mediator.Send(command);
+                var role = await mediator.Send(command);
                 return Ok(new ApiResponse<RoleDto>(true, "Role updated successfully", role));
             }
             catch (ValidationException ex)
@@ -41,7 +32,7 @@ namespace BCinema.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unexpected error occurred while updating role");
+                logger.LogError(ex, "An unexpected error occurred while updating role");
                 return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
             }
         }
@@ -51,7 +42,7 @@ namespace BCinema.API.Controllers
         {
             try
             {
-                var role = await _mediator.Send(command);
+                var role = await mediator.Send(command);
                 return Ok(new ApiResponse<RoleDto>(true, "Role created successfully", role));
             }
             catch (ValidationException ex)
@@ -60,7 +51,7 @@ namespace BCinema.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unexpected error occurred while creating role");
+                logger.LogError(ex, "An unexpected error occurred while creating role");
                 return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
             }
         }
@@ -70,7 +61,7 @@ namespace BCinema.API.Controllers
         {
             try
             {
-                var roles = await _mediator.Send(new GetRolesQuery { Query = query });
+                var roles = await mediator.Send(new GetRolesQuery { Query = query });
 
                 return Ok(new PageResponse<IEnumerable<RoleDto>>(
                     true,
@@ -81,19 +72,27 @@ namespace BCinema.API.Controllers
                     roles.TotalPages,
                     roles.TotalElements));
             }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new ApiResponse<string>(false, ex.Message));
+            }
+            catch (BadRequestException ex)
+            {
+                return BadRequest(new ApiResponse<string>(false, ex.Message));
+            }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unexpected error occurred while getting roles");
+                logger.LogError(ex, "An unexpected error occurred while getting roles");
                 return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
             }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:guid}")]
         public async Task<ActionResult<RoleDto>> GetRoleById(Guid id)
         {
             try
             {
-                var role = await _mediator.Send(new GetRoleByIdQuery { Id = id });
+                var role = await mediator.Send(new GetRoleByIdQuery { Id = id });
                 return Ok(new ApiResponse<RoleDto>(true, "Get role successfully", role));
             }
             catch (NotFoundException ex)
@@ -102,7 +101,7 @@ namespace BCinema.API.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unexpected error occurred while getting role");
+                logger.LogError(ex, "An unexpected error occurred while getting role");
                 return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
             }
         }

@@ -6,6 +6,7 @@ using BCinema.Persistence;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Mvc;
+using DependencyInjection = BCinema.Persistence.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,18 @@ FirebaseApp.Create(new AppOptions()
     Credential = GoogleCredential.FromFile("firebase-adminsdk.json"),
 });
 
+// Add CORS
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(corsPolicyBuilder =>
+    {
+        corsPolicyBuilder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
+// Add other services
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>
     {
@@ -43,17 +56,9 @@ builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
 builder.Services.AddPersistence(builder.Configuration);
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll", builder =>
-    {
-        builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
-    });
-});
-
 var app = builder.Build();
+
+await DependencyInjection.InitializeDatabaseAsync(app.Services);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -63,11 +68,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors("AllowAll");
+app.UseCors();
 
 app.UseMiddleware<DateValidationMiddleware>();
 app.UseMiddleware<GlobalExceptionHandleMiddleware>();
 
 app.UseAuthorization();
 app.MapControllers();
+
 app.Run();

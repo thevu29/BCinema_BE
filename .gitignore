@@ -115,13 +115,6 @@ $RECYCLE.BIN/
 # Ignore Windows shortcuts
 *.lnk
 
-# Ignore Docker related files
-**/Dockerfile
-**/docker-compose.yml
-**/docker-compose.override.yml
-*.dockerignore
-.docker/
-
 # Ignore IIS Express files
 .IISExpress/
 

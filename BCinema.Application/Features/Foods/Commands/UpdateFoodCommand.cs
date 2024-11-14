@@ -1,42 +1,40 @@
 ﻿using AutoMapper;
 using BCinema.Application.DTOs;
 using BCinema.Application.Exceptions;
-using BCinema.Application.Interfaces;
 using BCinema.Domain.Entities;
+using BCinema.Domain.Interfaces.IRepositories;
 using MediatR;
 
-namespace BCinema.Application.Features.Foods.Commands
+namespace BCinema.Application.Features.Foods.Commands;
+
+public class UpdateFoodCommand : IRequest<FoodDto>
 {
-    public class UpdateFoodCommand : IRequest<FoodDto>
+    public Guid Id { get; set; }
+    public string? Name { get; set; }
+    public double? Price { get; set; }
+    public int? Quantity { get; set; }
+
+    public class UpdateFoodCommandHandler : IRequestHandler<UpdateFoodCommand, FoodDto>
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; } = default!;
-        public int Quantity { get; set; }
-        public double Price { get; set; }
+        private readonly IFoodRepository _foodRepository;
+        private readonly IMapper _mapper;
 
-        public class UpdateFoodCommandHandler: IRequestHandler<UpdateFoodCommand,
-            FoodDto>
+        public UpdateFoodCommandHandler(IFoodRepository foodRepository, IMapper mapper)
         {
-            private readonly IApplicationDbContext _context;
-            private readonly IMapper _mapper;
+            _foodRepository = foodRepository;
+            _mapper = mapper;
+        }
 
-            public UpdateFoodCommandHandler(IApplicationDbContext context,
-                IMapper mapper)
-            {
-                _context = context;
-                _mapper = mapper;
-            }
+        public async Task<FoodDto> Handle(UpdateFoodCommand request, CancellationToken cancellationToken)
+        {
+            var food = await _foodRepository.GetFoodByIdAsync(request.Id, cancellationToken)
+                ?? throw new NotFoundException(nameof(Food));
 
-            public async Task<FoodDto> Handle(UpdateFoodCommand request, CancellationToken cancellationToken)
-            {
-                var food = await _context.Foods.FindAsync(request.Id)
-                                ?? throw new NotFoundException(nameof(Food),
-                                request.Id);
+            _mapper.Map(request, food);
 
-                _mapper.Map(request, food);
-                await _context.SaveChangesAsync(cancellationToken);
-                return _mapper.Map<FoodDto>(food);
-            }
+            await _foodRepository.SaveChangesAsync(cancellationToken);
+
+            return _mapper.Map<FoodDto>(food);
         }
     }
 }

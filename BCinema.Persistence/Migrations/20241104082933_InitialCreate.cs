@@ -3,12 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
-
 namespace BCinema.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,6 +16,9 @@ namespace BCinema.Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    Price = table.Column<double>(type: "double precision", nullable: false),
+                    Quantity = table.Column<int>(type: "integer", nullable: false),
                     DeleteAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CreateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -119,6 +120,7 @@ namespace BCinema.Persistence.Migrations
                     Status = table.Column<int>(type: "integer", nullable: false),
                     MovieId = table.Column<int>(type: "integer", nullable: false),
                     RoomId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Runtime = table.Column<int>(type: "integer", nullable: false),
                     CreateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -139,7 +141,6 @@ namespace BCinema.Persistence.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Row = table.Column<string>(type: "text", nullable: false),
                     Number = table.Column<int>(type: "integer", nullable: false),
-                    Status = table.Column<int>(type: "integer", nullable: false),
                     SeatTypeId = table.Column<Guid>(type: "uuid", nullable: false),
                     RoomId = table.Column<Guid>(type: "uuid", nullable: false),
                     CreateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
@@ -215,7 +216,7 @@ namespace BCinema.Persistence.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     ScheduleId = table.Column<Guid>(type: "uuid", nullable: false),
-                    VoucherId = table.Column<Guid>(type: "uuid", nullable: false),
+                    VoucherId = table.Column<Guid>(type: "uuid", nullable: true),
                     Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     TotalPrice = table.Column<double>(type: "double precision", nullable: false),
                     CreateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
@@ -239,6 +240,32 @@ namespace BCinema.Persistence.Migrations
                         name: "FK_Payments_Vouchers_VoucherId",
                         column: x => x.VoucherId,
                         principalTable: "Vouchers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SeatSchedule",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    SeatId = table.Column<Guid>(type: "uuid", nullable: false),
+                    ScheduleId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    CreateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SeatSchedule", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SeatSchedule_Schedules_ScheduleId",
+                        column: x => x.ScheduleId,
+                        principalTable: "Schedules",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SeatSchedule_Seats_SeatId",
+                        column: x => x.SeatId,
+                        principalTable: "Seats",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -249,9 +276,9 @@ namespace BCinema.Persistence.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     PaymentId = table.Column<Guid>(type: "uuid", nullable: false),
-                    SeatId = table.Column<Guid>(type: "uuid", nullable: false),
-                    FoodId = table.Column<Guid>(type: "uuid", nullable: false),
-                    FoodQuantity = table.Column<int>(type: "integer", nullable: false),
+                    SeatScheduleId = table.Column<Guid>(type: "uuid", nullable: true),
+                    FoodId = table.Column<Guid>(type: "uuid", nullable: true),
+                    FoodQuantity = table.Column<int>(type: "integer", nullable: true),
                     Price = table.Column<double>(type: "double precision", nullable: false),
                     CreateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -262,8 +289,7 @@ namespace BCinema.Persistence.Migrations
                         name: "FK_PaymentDetails_Foods_FoodId",
                         column: x => x.FoodId,
                         principalTable: "Foods",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_PaymentDetails_Payments_PaymentId",
                         column: x => x.PaymentId,
@@ -271,31 +297,11 @@ namespace BCinema.Persistence.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_PaymentDetails_Seats_SeatId",
-                        column: x => x.SeatId,
-                        principalTable: "Seats",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_PaymentDetails_SeatSchedule_SeatScheduleId",
+                        column: x => x.SeatScheduleId,
+                        principalTable: "SeatSchedule",
+                        principalColumn: "Id");
                 });
-
-            migrationBuilder.InsertData(
-                table: "Roles",
-                columns: new[] { "Id", "CreateAt", "Description", "Name" },
-                values: new object[,]
-                {
-                    { new Guid("209cbb66-4ffb-4753-81f2-82e9ff47e1c7"), new DateTime(2024, 10, 28, 6, 18, 29, 747, DateTimeKind.Utc).AddTicks(4168), null, "Admin" },
-                    { new Guid("fd8d2b7c-0ce7-445a-b61a-4c420e4accdf"), new DateTime(2024, 10, 28, 6, 18, 29, 747, DateTimeKind.Utc).AddTicks(4173), null, "User" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "SeatTypes",
-                columns: new[] { "Id", "CreateAt", "Name", "Price" },
-                values: new object[] { new Guid("0d8f6f01-6afd-4017-be85-7f33e51bee1d"), new DateTime(2024, 10, 28, 6, 18, 29, 747, DateTimeKind.Utc).AddTicks(5613), "Regular", 50.0 });
-
-            migrationBuilder.InsertData(
-                table: "Users",
-                columns: new[] { "Id", "Avatar", "CreateAt", "DeleteAt", "Email", "Name", "Password", "Point", "Provider", "RoleId" },
-                values: new object[] { new Guid("f99c2469-0b1d-4f61-8e14-e2961d2c1e47"), null, new DateTime(2024, 10, 28, 6, 18, 29, 747, DateTimeKind.Utc).AddTicks(4408), null, "admin@gmail.com", "Admin", "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918", 0, null, new Guid("209cbb66-4ffb-4753-81f2-82e9ff47e1c7") });
 
             migrationBuilder.CreateIndex(
                 name: "IX_PaymentDetails_FoodId",
@@ -308,9 +314,9 @@ namespace BCinema.Persistence.Migrations
                 column: "PaymentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentDetails_SeatId",
+                name: "IX_PaymentDetails_SeatScheduleId",
                 table: "PaymentDetails",
-                column: "SeatId");
+                column: "SeatScheduleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Payments_ScheduleId",
@@ -341,6 +347,16 @@ namespace BCinema.Persistence.Migrations
                 name: "IX_Seats_SeatTypeId",
                 table: "Seats",
                 column: "SeatTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SeatSchedule_ScheduleId",
+                table: "SeatSchedule",
+                column: "ScheduleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SeatSchedule_SeatId",
+                table: "SeatSchedule",
+                column: "SeatId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tokens_UserId",
@@ -382,10 +398,7 @@ namespace BCinema.Persistence.Migrations
                 name: "Payments");
 
             migrationBuilder.DropTable(
-                name: "Seats");
-
-            migrationBuilder.DropTable(
-                name: "Schedules");
+                name: "SeatSchedule");
 
             migrationBuilder.DropTable(
                 name: "Users");
@@ -394,13 +407,19 @@ namespace BCinema.Persistence.Migrations
                 name: "Vouchers");
 
             migrationBuilder.DropTable(
-                name: "SeatTypes");
+                name: "Schedules");
+
+            migrationBuilder.DropTable(
+                name: "Seats");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Rooms");
 
             migrationBuilder.DropTable(
-                name: "Roles");
+                name: "SeatTypes");
         }
     }
 }

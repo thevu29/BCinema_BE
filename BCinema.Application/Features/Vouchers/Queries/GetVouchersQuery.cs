@@ -4,33 +4,28 @@ using BCinema.Application.Helpers;
 using BCinema.Domain.Entities;
 using BCinema.Domain.Interfaces.IRepositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BCinema.Application.Features.Vouchers.Queries;
 
 public class GetVouchersQuery : IRequest<PaginatedList<VoucherDto>>
 {
-    public VoucherQuery Query { get; set; } = default!;
+    public VoucherQuery Query { get; init; } = default!;
 
-    public class GetAllVoucherQueryHandler : IRequestHandler<GetVouchersQuery, PaginatedList<VoucherDto>>
+    public class GetVouchersQueryHandler(IVoucherRepository voucherRepository, IMapper mapper)
+        : IRequestHandler<GetVouchersQuery, PaginatedList<VoucherDto>>
     {
-        private readonly IVoucherRepository _voucherRepository;
-        private readonly IMapper _mapper;
-
-        public GetAllVoucherQueryHandler(IVoucherRepository voucherRepository, IMapper mapper)
+        public async Task<PaginatedList<VoucherDto>> Handle(GetVouchersQuery request, CancellationToken cancellationToken)
         {
-            _voucherRepository = voucherRepository;
-            _mapper = mapper;
-        }
+            var query = voucherRepository.GetVouchers();
 
-        public async Task<PaginatedList<VoucherDto>> Handle(
-            GetVouchersQuery request,
-            CancellationToken cancellationToken)
-        {
-            IQueryable<Voucher> query = _voucherRepository.GetVouchers();
-
-            if (!string.IsNullOrEmpty(request.Query.Code))
+            if (!string.IsNullOrEmpty(request.Query.Search))
             {
-                query = query.Where(x => x.Code.ToLower().Contains(request.Query.Code.ToLower()));
+                query = query.Where(v => EF.Functions.Like(v.Code, $"%{request.Query.Search}%"));
+            }
+            if (!string.IsNullOrEmpty(request.Query.Discount))
+            {
+                query = query.FilterByNumber(request.Query.Discount, v => v.Discount);
             }
 
             query = ApplySorting(query, request.Query.SortBy, request.Query.SortOrder);
@@ -38,28 +33,26 @@ public class GetVouchersQuery : IRequest<PaginatedList<VoucherDto>>
             var vouchers = await PaginatedList<Voucher>
                 .ToPageList(query, request.Query.Page, request.Query.Size);
 
-            var voucherDtos = _mapper.Map<IEnumerable<VoucherDto>>(vouchers.Data);
+            var voucherDtos = mapper.Map<IEnumerable<VoucherDto>>(vouchers.Data);
 
             return new PaginatedList<VoucherDto>(vouchers.Page, vouchers.Size, vouchers.TotalElements, voucherDtos);
         }
         
         private static IQueryable<Voucher> ApplySorting(IQueryable<Voucher> query, string sortBy, string sortOrder)
         {
-            switch (sortBy.ToLower())
+            var allowedSortColumns = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
-                case "createdat":
-                    query = sortOrder.ToUpper() == "ASC"
-                        ? query.OrderBy(v => v.CreateAt)
-                        : query.OrderByDescending(v => v.CreateAt);
-                    break;
-                default:
-                    query = sortOrder.ToUpper() == "ASC"
-                        ? query.OrderBy(v => v.Id)
-                        : query.OrderByDescending(v => v.Id);
-                    break;
+                nameof(Voucher.Code),
+                nameof(Voucher.Discount),
+                nameof(Voucher.CreateAt)
+            };
+            
+            if (string.IsNullOrEmpty(sortBy) || !allowedSortColumns.Contains(sortBy))
+            {
+                return query.OrderByDescending(v => v.CreateAt);
             }
 
-            return query;
+            return query.ApplyDynamicSorting(sortBy, sortOrder);
         }
     }
 }

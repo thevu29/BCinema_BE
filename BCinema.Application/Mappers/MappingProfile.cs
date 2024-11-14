@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using BCinema.Application.DTOs;
+using BCinema.Application.Features.Foods.Commands;
+using BCinema.Application.Features.Payments.Commands;
 using BCinema.Application.Features.Users.Commands;
 using BCinema.Application.Features.Roles.Commands;
 using BCinema.Application.Features.Rooms.Commands;
+using BCinema.Application.Features.Schedules.Commands;
 using BCinema.Application.Features.Seats.Commands;
 using BCinema.Application.Features.SeatTypes.Commands;
 using BCinema.Application.Features.UserVouchers.Commands;
@@ -23,8 +26,7 @@ namespace BCinema.Application.Mappers
 
             CreateMap<UpdateUserCommand, User>()
                 .ForMember(dest => dest.Name, opt => opt.Condition(src => src.Name != null))
-                .ForMember(dest => dest.RoleId, opt => opt.Condition(src => src.RoleId != null))
-                .ForMember(dest => dest.Avatar, opt => opt.Ignore()); ;
+                .ForMember(dest => dest.Avatar, opt => opt.Ignore());
 
             // Role
             CreateMap<Role, RoleDto>();
@@ -45,6 +47,21 @@ namespace BCinema.Application.Mappers
             CreateMap<CreateUserVoucherCommand, UserVoucher>();
 
             // Schedule
+            CreateMap<Schedule, ScheduleDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.RoomName, opt => opt.MapFrom(src => src.Room.Name));
+            
+            CreateMap<Schedule, SchedulesDto>()
+                .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.Date)))
+                .ForMember(dest => dest.Schedules, opt => opt.Ignore());
+            
+            CreateMap<CreateSchedulesCommand, Schedule>()
+                .ForMember(dest => dest.Date, opt => opt.Ignore());
+
+            CreateMap<UpdateScheduleCommand, Schedule>()
+                .ForMember(dest => dest.Date, opt => opt.Ignore())
+                .ForMember(dest => dest.RoomId, opt => opt.Condition(src => src.RoomId != null))
+                .ForMember(dest => dest.Status, opt => opt.Condition(src => src.Status != null));
             
             // Room
             CreateMap<Room, RoomDto>();
@@ -57,13 +74,11 @@ namespace BCinema.Application.Mappers
             // Seat
             CreateMap<Seat, SeatDto>()
                 .ForMember(dest => dest.SeatType, opt => opt.MapFrom(src => src.SeatType.Name))
-                .ForMember(dest => dest.Room, opt => opt.MapFrom(src => src.Room.Name))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+                .ForMember(dest => dest.Room, opt => opt.MapFrom(src => src.Room.Name));
             
             CreateMap<CreateSeatCommand, Seat>();
             
             CreateMap<UpdateSeatCommand, Seat>()
-                .ForMember(dest => dest.Status, opt => opt.Condition(src => src.Status != null))
                 .ForMember(dest => dest.SeatTypeId, opt => opt.Condition(src => src.SeatTypeId != null));
             
             // Seat Type
@@ -73,6 +88,29 @@ namespace BCinema.Application.Mappers
             CreateMap<UpdateSeatTypeCommand, SeatType>()
                 .ForMember(dest => dest.Name, opt => opt.Condition(src => src.Name != null))
                 .ForMember(dest => dest.Price, opt => opt.Condition(src => src.Price != 0));
+            
+            // Seat Schedule
+            CreateMap<SeatSchedule, SeatScheduleDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Seat.SeatType.Price));
+            
+            // Food
+            CreateMap<Food, FoodDto>();
+            CreateMap<CreateFoodCommand, Food>();
+
+            CreateMap<UpdateFoodCommand, Food>()
+                .ForMember(dest => dest.Name, opt => opt.Condition(src => src.Name != null))
+                .ForMember(dest => dest.Price, opt => opt.Condition(src => src.Price != null))
+                .ForMember(dest => dest.Quantity, opt => opt.Condition(src => src.Quantity != null));
+            
+            // Payment
+            CreateMap<Payment, PaymentDto>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User.Name));
+            
+            CreateMap<CreatePaymentCommand, Payment>();
+            
+            // Payment Detail
+            CreateMap<PaymentDetail, PaymentDetailDto>().ReverseMap();
         }
     }
 }

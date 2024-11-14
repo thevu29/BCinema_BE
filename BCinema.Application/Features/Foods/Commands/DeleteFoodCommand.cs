@@ -1,38 +1,23 @@
-﻿using AutoMapper;
-using BCinema.Application.DTOs;
-using BCinema.Application.Exceptions;
-using BCinema.Application.Interfaces;
-using BCinema.Domain.Entities;
+﻿using BCinema.Application.Exceptions;
+using BCinema.Domain.Interfaces.IRepositories;
 using MediatR;
 
-namespace BCinema.Application.Features.Foods.Commands
+namespace BCinema.Application.Features.Foods.Commands;
+
+public class DeleteFoodCommand : IRequest
 {
-    public class DeleteFoodCommand : IRequest<FoodDto>
+    public Guid Id { get; set; }
+
+    public class DeleteFoodCommandHandler(IFoodRepository foodRepository) : IRequestHandler<DeleteFoodCommand>
     {
-        public Guid Id { get; set; }
-        public DateTime DeleteAt { get; set; } = DateTime.Now;
-
-        public class DeleteFoodCommandHandler : IRequestHandler<DeleteFoodCommand, FoodDto>
+        public async Task Handle(DeleteFoodCommand request, CancellationToken cancellationToken)
         {
-            private readonly IApplicationDbContext _context;
-            private readonly IMapper _mapper;
+            var food = await foodRepository.GetFoodByIdAsync(request.Id, cancellationToken)
+                ?? throw new NotFoundException("Food");
+            
+            food.DeleteAt = DateTime.UtcNow;
 
-            public DeleteFoodCommandHandler(IApplicationDbContext context, IMapper mapper)
-            {
-                _context = context;
-                _mapper = mapper;
-            }
-
-            public async Task<FoodDto> Handle(DeleteFoodCommand request, CancellationToken cancellationToken)
-            {
-                var food = await _context.Foods.FindAsync(request.Id)
-                                ?? throw new NotFoundException(nameof(Food), request.Id);
-
-                food.DeleteAt = request.DeleteAt;
-                _mapper.Map(request, food);
-                await _context.SaveChangesAsync(cancellationToken);
-                return _mapper.Map<FoodDto>(food);
-            }
+            await foodRepository.SaveChangesAsync(cancellationToken);
         }
     }
 }
