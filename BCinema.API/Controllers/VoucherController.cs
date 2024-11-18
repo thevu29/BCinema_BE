@@ -103,6 +103,29 @@ public class VoucherController(IMediator mediator, ILogger<VoucherController> lo
         }
     }
 
+    [HttpGet("code/{code}/users/{userId:guid}")]
+    public async Task<IActionResult> CheckVoucherUsedByCode(Guid userId, string code)
+    {
+        try
+        {
+            var userVoucher = await mediator.Send(
+                new GetUserVoucherByUIdAndVCodeQuery() { UserId = userId, Code = code });
+            
+            return userVoucher == null 
+                ? Ok(new ApiResponse<string>(true, "User hasn't used this voucher")) 
+                : Ok(new ApiResponse<UserVoucherDto>(true, "User has used this voucher", userVoucher));
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An unexpected error occurred while checking voucher usage");
+            return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
+        }
+    }
+    
     [HttpGet("{voucherId:guid}/users/{userId:guid}")]
     public async Task<IActionResult> CheckVoucherUsed(Guid userId, Guid voucherId)
     {
