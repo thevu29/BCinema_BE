@@ -15,6 +15,21 @@ namespace BCinema.API.Controllers;
 [Route("api/vouchers")]
 public class VoucherController(IMediator mediator, ILogger<VoucherController> logger) : ControllerBase
 {
+    [HttpGet("all")]
+    public async Task<IActionResult> GetAllVouchers()
+    {
+        try
+        {
+            var vouchers = await mediator.Send(new GetAllVouchersQuery());
+            return Ok(new ApiResponse<IEnumerable<VoucherDto>>(true, "Get all vouchers successfully", vouchers));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error getting rooms");
+            return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
+        }
+    }
+    
     [HttpGet]
     public async Task<IActionResult> GetVouchers([FromQuery] VoucherQuery query)
     {

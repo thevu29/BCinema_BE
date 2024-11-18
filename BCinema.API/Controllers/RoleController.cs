@@ -13,6 +13,21 @@ namespace BCinema.API.Controllers
     [ApiController]
     public class RoleController(IMediator mediator, ILogger<RoleController> logger) : ControllerBase
     {
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllRoles()
+        {
+            try
+            {
+                var roles = await mediator.Send(new GetAllRolesQuery());
+                return Ok(new ApiResponse<IEnumerable<RoleDto>>(true, "Get all roles successfully", roles));
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An unexpected error occurred while updating role");
+                return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
+            }
+        }
+        
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<RoleDto>> UpdateRole(Guid id, [FromBody] UpdateRoleCommand command)
         {
