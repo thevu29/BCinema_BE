@@ -9,7 +9,7 @@ public class MailService(
     IConfiguration configuration,
     ILogger<MailService> logger) : IMailService
 {
-    public async Task<bool> SendMail(MailData mailData)
+    public async Task<bool> SendMailAsync(MailData mailData, CancellationToken cancellationToken)
     {
         try
         {
@@ -25,7 +25,7 @@ public class MailService(
             
             smtpClient.Credentials = new NetworkCredential(email, password);
             var mailMessage = new MailMessage(email!, mailData.EmailToId, mailData.EmailSubject, mailData.EmailBody);
-            await smtpClient.SendMailAsync(mailMessage);
+            await smtpClient.SendMailAsync(mailMessage, cancellationToken);
             return true;
         }
         catch(Exception ex)

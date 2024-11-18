@@ -29,6 +29,10 @@ public class LoginCommand : IRequest<JwtResponse>
         {
             var user = await userRepository.GetByEmailAndProviderAsync(request.Email, Provider.Local,
                 cancellationToken) ?? throw new BadRequestException("Invalid email");
+            if ((bool)(!user.IsActivated)!)
+            {
+                throw new BadRequestException("Account is not activated");
+            }
             if (passwordHasher.VerifyHashedPassword(user, user.Password, request.Password) == PasswordVerificationResult.Failed)
             {
                 throw new BadRequestException("Invalid password");
