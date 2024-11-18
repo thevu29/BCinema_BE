@@ -1,7 +1,10 @@
 using BCinema.API.Middlewares;
 using BCinema.API.Responses;
 using BCinema.Application;
+using BCinema.Application.Helpers;
+using BCinema.Application.Mail;
 using BCinema.Infrastructure;
+using BCinema.Infrastructure.Filter;
 using BCinema.Persistence;
 using FirebaseAdmin;
 using Google.Apis.Auth.OAuth2;
@@ -20,6 +23,10 @@ FirebaseApp.Create(new AppOptions()
     Credential = GoogleCredential.FromFile("firebase-adminsdk.json"),
 });
 
+builder.Services.AddJwtBearerAuthentication(builder.Configuration);
+
+builder.Services.AddAuthorization();
+
 // Add CORS
 builder.Services.AddCors(options =>
 {
@@ -31,6 +38,10 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Register JwtProvider
+builder.Services.AddSingleton<JwtProvider>();
+
+builder.Services.AddHttpContextAccessor();
 // Add other services
 builder.Services.AddControllers()
     .ConfigureApiBehaviorOptions(options =>
@@ -47,6 +58,7 @@ builder.Services.AddControllers()
         };
     });
 
+builder.Services.AddTransient<IMailService, MailService>();
 
 builder.Services.AddLogging();
 builder.Services.AddEndpointsApiExplorer();
@@ -67,12 +79,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+
 app.UseHttpsRedirection();
 app.UseCors();
 
 app.UseMiddleware<DateValidationMiddleware>();
 app.UseMiddleware<GlobalExceptionHandleMiddleware>();
 
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

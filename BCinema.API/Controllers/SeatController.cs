@@ -6,10 +6,12 @@ using BCinema.Application.Features.Seats.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BCinema.API.Controllers;
 
 [Route("api/seats")]
+[Authorize]
 [ApiController]
 public class SeatController : ControllerBase
 {
@@ -61,6 +63,7 @@ public class SeatController : ControllerBase
     }
     
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateSeat([FromBody] CreateSeatCommand command)
     {
         try
@@ -88,6 +91,7 @@ public class SeatController : ControllerBase
     }
     
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateSeat(Guid id, [FromBody] UpdateSeatCommand command)
     {
         try

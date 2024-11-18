@@ -6,10 +6,12 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using FluentValidation;
 using BCinema.Application.Features.Users.Queries;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BCinema.API.Controllers
 {
     [Route("api/users")]
+    [Authorize]
     [ApiController]
     public class UserController(IMediator mediator, ILogger<UserController> logger) : ControllerBase
     {
@@ -78,6 +80,7 @@ namespace BCinema.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateUser([FromForm] CreateUserCommand command)
         {
             try

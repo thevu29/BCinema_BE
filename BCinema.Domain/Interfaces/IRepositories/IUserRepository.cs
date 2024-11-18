@@ -10,6 +10,7 @@ namespace BCinema.Domain.Interfaces.IRepositories
         Task AddAsync(User user, CancellationToken cancellationToken);
         Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
         Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken);
+        Task<User?> GetByEmailAndProviderAsync(string email, string provider, CancellationToken cancellationToken);
         Task<bool> AnyAsync(Expression<Func<User, bool>> predicate, CancellationToken cancellationToken);
         Task SaveChangesAsync();
         Task SaveChangesAsync(CancellationToken cancellationToken);

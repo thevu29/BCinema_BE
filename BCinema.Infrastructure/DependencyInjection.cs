@@ -16,6 +16,7 @@ namespace BCinema.Infrastructure
             
             services.AddScoped<IMovieFetchService, MovieFetchService>();
 
+            services.AddScoped<ITokenRepository, TokenRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<ISeatTypeRepository, SeatTypeRepository>();
