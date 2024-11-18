@@ -12,7 +12,7 @@ public class OtpRepository(ApplicationDbContext context) : IOtpRepository
         await context.Otps.AddAsync(otp, cancellationToken);
     }
 
-    public void DeleteAsync(Otp otp)
+    public void Delete(Otp otp)
     {
         context.Otps.Remove(otp);
         context.SaveChanges();

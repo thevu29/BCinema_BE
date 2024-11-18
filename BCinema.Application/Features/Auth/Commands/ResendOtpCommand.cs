@@ -24,6 +24,9 @@ public class ResendOtpCommand : IRequest<bool>
                       ?? throw new NotFoundException(nameof(Otp));
             if (otp.Attempts >= 5)
             {
+                otpRepository.Delete(otp);
+                await otpRepository.SaveChangesAsync(cancellationToken);
+                userRepository.Delete(user);
                 throw new BadRequestException("You have reached the maximum number of attempts");
             }
             otp.Code = GenerateUtil.GenerateOtp();
