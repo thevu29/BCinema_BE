@@ -29,4 +29,13 @@ public class TokenRepository : ITokenRepository
     {
         await _context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task DeleteByUserIdAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var tokens = await _context.Tokens
+            .Where(t => t.UserId == userId)
+            .ToListAsync(cancellationToken);
+        _context.Tokens.RemoveRange(tokens);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
 }

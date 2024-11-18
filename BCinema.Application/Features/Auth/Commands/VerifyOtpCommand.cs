@@ -26,7 +26,7 @@ public class VerifyOtpCommand : IRequest<bool>
             var user = otp.User;
             user.IsActivated = true;
             await userRepository.SaveChangesAsync(cancellationToken);
-            otpRepository.DeleteAsync(otp);
+            otpRepository.Delete(otp);
             return true;
         }
     }

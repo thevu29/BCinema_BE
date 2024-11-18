@@ -47,6 +47,12 @@ namespace BCinema.Infrastructure.Repositories
             await _context.Users.AddAsync(user, cancellationToken);
         }
 
+        public void Delete(User user)
+        {
+            _context.Users.Remove(user);
+            _context.SaveChanges();
+        }
+
         public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             return await _context.Users

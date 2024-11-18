@@ -18,6 +18,7 @@ public class ForgotPasswordCommand : IRequest<bool>
     public class ForgotPasswordCommandHandler(
         IUserRepository userRepository,
         IMailService mailService,
+        ITokenRepository tokenRepository,
         IPasswordHasher<User> passwordHasher,
         ILogger<ForgotPasswordCommandHandler> logger
         ) : IRequestHandler<ForgotPasswordCommand, bool>
@@ -31,6 +32,7 @@ public class ForgotPasswordCommand : IRequest<bool>
                 var newPassword = Guid.NewGuid().ToString("N").Substring(0, 8);
                 user.Password = passwordHasher.HashPassword(user, newPassword);
                 await userRepository.SaveChangesAsync(cancellationToken);
+                await tokenRepository.DeleteByUserIdAsync(user.Id, cancellationToken);
                 var mailData = new MailData
                 {
                     EmailToId = user.Email,
