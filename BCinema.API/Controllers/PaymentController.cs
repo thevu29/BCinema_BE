@@ -5,11 +5,13 @@ using BCinema.Application.Features.Payments.Commands;
 using BCinema.Application.Features.Payments.Queries;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BCinema.API.Controllers;
 
 [Route("api/payments")]
+[Authorize]
 [ApiController]
 public class PaymentController(IMediator mediator, ILogger<PaymentController> logger) : ControllerBase
 {

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BCinema.Application.DTOs;
+using BCinema.Application.Enums;
 using BCinema.Application.Exceptions;
 using BCinema.Domain.Entities;
 using BCinema.Domain.Interfaces.IRepositories;
@@ -31,8 +32,9 @@ namespace BCinema.Application.Features.Users.Commands
                     .GetByIdAsync(request.RoleId, cancellationToken)
                     ?? throw new NotFoundException(nameof(Role));
 
+                
                 var user = mapper.Map<User>(request);
-
+                user.Provider = Provider.Local;
                 user.Password = passwordHasher.HashPassword(user, request.Password);
 
                 if (request.Avatar != null)

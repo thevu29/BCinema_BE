@@ -5,12 +5,14 @@ using BCinema.Application.Features.Foods.Commands;
 using BCinema.Application.Features.Foods.Queries;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BCinema.API.Controllers;
 
 [Route("api/foods")]
 [ApiController]
+[Authorize]
 public class FoodController(IMediator mediator, ILogger<FoodController> logger) : ControllerBase
 {
     [HttpGet("all")]
@@ -78,6 +80,7 @@ public class FoodController(IMediator mediator, ILogger<FoodController> logger) 
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteFood(Guid id)
     {
         try
@@ -97,6 +100,7 @@ public class FoodController(IMediator mediator, ILogger<FoodController> logger) 
     }
     
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> UpdateFood(Guid id, [FromBody] UpdateFoodCommand command)
     {
         try
@@ -121,6 +125,7 @@ public class FoodController(IMediator mediator, ILogger<FoodController> logger) 
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateFood([FromBody] CreateFoodCommand command)
     {
         try

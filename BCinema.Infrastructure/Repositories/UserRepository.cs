@@ -15,6 +15,14 @@ namespace BCinema.Infrastructure.Repositories
             _context = context;
         }
 
+        public Task<User?> GetByEmailAndProviderAsync(string email, string provider, CancellationToken cancellationToken)
+        {
+            return _context.Users
+                .Include(u => u.Role)
+                .Where(u => u.DeleteAt == null)
+                .FirstOrDefaultAsync(u => u.Email == email && u.Provider == provider, cancellationToken);
+        }
+
         public async Task<bool> AnyAsync(
             Expression<Func<User, bool>> predicate,
             CancellationToken cancellationToken)

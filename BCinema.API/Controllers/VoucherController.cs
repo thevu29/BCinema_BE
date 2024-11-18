@@ -7,11 +7,13 @@ using BCinema.Application.Features.Vouchers.Commands;
 using BCinema.Application.Features.Vouchers.Queries;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BCinema.API.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/vouchers")]
 public class VoucherController(IMediator mediator, ILogger<VoucherController> logger) : ControllerBase
 {
@@ -171,6 +173,7 @@ public class VoucherController(IMediator mediator, ILogger<VoucherController> lo
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateVoucher([FromBody] CreateVoucherCommand command)
     {
         try

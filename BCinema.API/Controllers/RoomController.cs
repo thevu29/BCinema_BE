@@ -5,11 +5,13 @@ using BCinema.Application.Features.Rooms.Commands;
 using BCinema.Application.Features.Rooms.Queries;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BCinema.API.Controllers
 {
     [Route("api/rooms")]
+    [Authorize]
     [ApiController]
     public class RoomController(IMediator mediator, ILogger<RoomController> logger) : ControllerBase
     {
