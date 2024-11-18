@@ -120,11 +120,57 @@ public class AuthController(IMediator mediator, ILogger<FoodController> logger) 
         try
         {
             bool resp = await mediator.Send(command);
-            return Ok(new ApiResponse<string>(resp, resp ? "Password reset successfully" : "Password reset failed"));
+            return Ok(new ApiResponse<bool>(resp, resp ? "Password reset successfully" : "Password reset failed", resp));
         }
         catch (NotFoundException ex)
         {
             return NotFound(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occured while getting food");
+            return StatusCode(500, new ApiResponse<string>(false, "An error occured"));
+        }
+    }
+    
+    [HttpPost("verify-otp")]
+    public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpCommand command)
+    {
+        try
+        {
+            bool resp = await mediator.Send(command);
+            return Ok(new ApiResponse<bool>(resp, resp ? "OTP verified successfully" : "OTP verified fail", resp));
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (BadRequestException ex)
+        {
+            return BadRequest(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occured while getting food");
+            return StatusCode(500, new ApiResponse<string>(false, "An error occured"));
+        }
+    }
+    
+    [HttpPost("resend-otp")]
+    public async Task<IActionResult> ResendOtp([FromBody] ResendOtpCommand command)
+    {
+        try
+        {
+            bool resp = await mediator.Send(command);
+            return Ok(new ApiResponse<bool>(resp, resp ? "OTP resent successfully" : "OTP resent fail", resp));
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (BadRequestException ex)
+        {
+            return BadRequest(new ApiResponse<string>(false, ex.Message));
         }
         catch (Exception ex)
         {

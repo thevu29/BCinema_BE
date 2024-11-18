@@ -37,7 +37,7 @@ public class ForgotPasswordCommand : IRequest<bool>
                     EmailSubject = "Reset Password",
                     EmailBody = "Password: " + newPassword
                 };
-                return await mailService.SendMail(mailData);
+                return await mailService.SendMailAsync(mailData, cancellationToken);
             }
             catch (Exception e)
             {
