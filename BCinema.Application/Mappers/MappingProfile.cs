@@ -38,9 +38,7 @@ namespace BCinema.Application.Mappers
 
             // Voucher
             CreateMap<Voucher, VoucherDto>();
-
-            CreateMap<CreateVoucherCommand, Voucher>()
-                .ForMember(dest => dest.ExpireAt, opt => opt.MapFrom(src => src.ExpireAt.ToLocalTime()));
+            CreateMap<CreateVoucherCommand, Voucher>();
 
             // UserVoucher
             CreateMap<UserVoucher, UserVoucherDto>();
