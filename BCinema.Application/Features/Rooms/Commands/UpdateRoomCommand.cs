@@ -13,27 +13,19 @@ public class UpdateRoomCommand : IRequest<RoomDto>
     public string? Name { get; set; }
     public string? Description { get; set; }
     
-    public class UpdateRoomCommandHandler : IRequestHandler<UpdateRoomCommand, RoomDto>
+    public class UpdateRoomCommandHandler(IRoomRepository roomRepository, IMapper mapper)
+        : IRequestHandler<UpdateRoomCommand, RoomDto>
     {
-        private readonly IRoomRepository _roomRepository;
-        private readonly IMapper _mapper;
-
-        public UpdateRoomCommandHandler(IRoomRepository roomRepository, IMapper mapper)
-        {
-            _roomRepository = roomRepository;
-            _mapper = mapper;
-        }
-
         public async Task<RoomDto> Handle(UpdateRoomCommand request, CancellationToken cancellationToken)
         {
-            var room = await _roomRepository.GetRoomByIdAsync(request.Id, cancellationToken)
+            var room = await roomRepository.GetRoomByIdAsync(request.Id, cancellationToken)
                 ?? throw new NotFoundException(nameof(Room));
             
-            _mapper.Map(request, room);
+            mapper.Map(request, room);
 
-            await _roomRepository.SaveChangesAsync(cancellationToken);
+            await roomRepository.SaveChangesAsync(cancellationToken);
 
-            return _mapper.Map<RoomDto>(room);
+            return mapper.Map<RoomDto>(room);
         }
     }
 }
