@@ -121,5 +121,24 @@ namespace BCinema.API.Controllers
                 return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
             }
         }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteSeatType(Guid id)
+        {
+            try
+            {
+                await mediator.Send(new DeleteSeatTypeCommand { Id = id });
+                return Ok(new ApiResponse<string>(true, "Seat type deleted successfully"));
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new ApiResponse<string>(false, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An unexpected error occurred while deleting seat type");
+                return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
+            }
+        }
     }
 }
