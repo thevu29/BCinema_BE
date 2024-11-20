@@ -7,9 +7,28 @@ namespace BCinema.API.Controllers;
 
 [Route("api/movies")]
 [ApiController]
-public class MovieController(IMovieFetchService movieFetchService, ILogger<MovieController> logger)
-    : ControllerBase
+public class MovieController(IMovieFetchService movieFetchService, ILogger<MovieController> logger) : ControllerBase
 {
+    [HttpGet]
+    public async Task<IActionResult> GetSearchMovieByAsync([FromQuery] string query, [FromQuery] int page)
+    {
+        try
+        {
+            var movies = await movieFetchService.FetchSearchMovieByAsync(query, page);
+
+            return Ok(new ApiResponse<dynamic>(true, "Get search movies successfully", movies));
+        }
+        catch (BadRequestException ex)
+        {
+            return BadRequest(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to fetch search movies from TheMovieDb API");
+            return StatusCode(500, new ApiResponse<string>(false, "An error occured"));
+        }
+    }
+    
     [HttpGet("upcoming/{page:int}")]
     public async Task<IActionResult> GetUpcomingMoviesAsync(int page)
     {

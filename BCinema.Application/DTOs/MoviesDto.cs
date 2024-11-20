@@ -5,7 +5,7 @@ namespace BCinema.Application.DTOs
     public class MoviesDto
     {
         [JsonProperty("dates")]
-        public DatesDto? Dates { get; set; } = default!;
+        public DatesDto? Dates { get; set; }
 
         [JsonProperty("page")]
         public int Page { get; set; }
