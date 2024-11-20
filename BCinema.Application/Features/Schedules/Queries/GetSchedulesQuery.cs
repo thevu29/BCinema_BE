@@ -76,7 +76,7 @@ public class GetSchedulesQuery : IRequest<PaginatedList<SchedulesDto>>
                         Id = s.Id,
                         Time = s.Date.TimeOfDay,
                         Status = s.Status.ToString()
-                    }).ToList();
+                    }).OrderBy(sd => sd.Time).ToList();
                     
                     return scheduleDto;
                 })

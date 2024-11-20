@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-namespace BCinema.Application.DTOs
+﻿namespace BCinema.Application.DTOs
 {
     public class SchedulesDto
     {

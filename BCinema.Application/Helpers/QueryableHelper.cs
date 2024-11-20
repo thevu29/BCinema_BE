@@ -30,7 +30,7 @@ public static class QueryableHelper
                 .First(m => m.Name == methodName && m.GetParameters().Length == 2)
                 .MakeGenericMethod(typeof(T), property.Type);
             
-            var result = orderByMethod.Invoke(null, new object[] { query, lambda });
+            var result = orderByMethod.Invoke(null, [query, lambda]);
 
             return result as IQueryable<T> ?? query;
         }
