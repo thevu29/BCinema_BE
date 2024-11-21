@@ -86,9 +86,9 @@ public class MovieFetchService(IConfiguration configuration) : IMovieFetchServic
         return movieDetailDto;
     }
     
-    public async Task<dynamic?> FetchMovieByTitleAsync(string title, int page)
+    public async Task<dynamic?> FetchSearchMovieByAsync(string query, int page)
     {
-        var request = new RestRequest($"search/movie?language=vi&region=vn&query={title}&page={page}");;
+        var request = new RestRequest($"search/movie?language=vi&region=vn&query={query}&page={page}");
         request.AddParameter("api_key", _apiKey);
         
         var response = await _client.ExecuteAsync(request);
@@ -103,7 +103,7 @@ public class MovieFetchService(IConfiguration configuration) : IMovieFetchServic
             ? JsonConvert.DeserializeObject<MoviesDto>(response.Content)
             : null;
             
-        foreach (var movie in movieResponse?.Results ?? Enumerable.Empty<MovieDto>())
+        foreach (var movie in movieResponse?.Results ?? [])
         {
             var movieDetail = await FetchMovieByIdAsync(movie.Id);
             movie.Runtime = movieDetail?.Runtime;

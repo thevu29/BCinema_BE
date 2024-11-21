@@ -14,27 +14,19 @@ public class UpdateFoodCommand : IRequest<FoodDto>
     public double? Price { get; set; }
     public int? Quantity { get; set; }
 
-    public class UpdateFoodCommandHandler : IRequestHandler<UpdateFoodCommand, FoodDto>
+    public class UpdateFoodCommandHandler(IFoodRepository foodRepository, IMapper mapper)
+        : IRequestHandler<UpdateFoodCommand, FoodDto>
     {
-        private readonly IFoodRepository _foodRepository;
-        private readonly IMapper _mapper;
-
-        public UpdateFoodCommandHandler(IFoodRepository foodRepository, IMapper mapper)
-        {
-            _foodRepository = foodRepository;
-            _mapper = mapper;
-        }
-
         public async Task<FoodDto> Handle(UpdateFoodCommand request, CancellationToken cancellationToken)
         {
-            var food = await _foodRepository.GetFoodByIdAsync(request.Id, cancellationToken)
+            var food = await foodRepository.GetFoodByIdAsync(request.Id, cancellationToken)
                 ?? throw new NotFoundException(nameof(Food));
 
-            _mapper.Map(request, food);
+            mapper.Map(request, food);
 
-            await _foodRepository.SaveChangesAsync(cancellationToken);
+            await foodRepository.SaveChangesAsync(cancellationToken);
 
-            return _mapper.Map<FoodDto>(food);
+            return mapper.Map<FoodDto>(food);
         }
     }
 }

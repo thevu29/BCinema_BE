@@ -11,23 +11,14 @@ namespace BCinema.API.Controllers;
 
 [Route("api/seats")]
 [ApiController]
-public class SeatController : ControllerBase
+public class SeatController(IMediator mediator, ILogger<SeatController> logger) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    private readonly ILogger<SeatController> _logger;
-    
-    public SeatController(IMediator mediator, ILogger<SeatController> logger)
-    {
-        _mediator = mediator;
-        _logger = logger;
-    }
-    
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetSeatById(Guid id)
     {
         try
         {
-            var seat = await _mediator.Send(new GetSeatByIdQuery() { Id = id });
+            var seat = await mediator.Send(new GetSeatByIdQuery() { Id = id });
             return Ok(new ApiResponse<SeatDto>(true, "Seat retrieved successfully", seat));
         }
         catch (NotFoundException ex)
@@ -36,17 +27,17 @@ public class SeatController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error while retrieving seat");
+            logger.LogError(ex, "Error while retrieving seat");
             return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
         }
     }
     
-    [HttpGet("room/{roomId}")]
+    [HttpGet("room/{roomId:guid}")]
     public async Task<IActionResult> GetSeatsByRoomId(Guid roomId)
     {
         try
         {
-            var seats = await _mediator.Send(new GetSeatsByRoomIdQuery { RoomId = roomId });
+            var seats = await mediator.Send(new GetSeatsByRoomIdQuery { RoomId = roomId });
             return Ok(new ApiResponse<IEnumerable<SeatDto>>(true, "Seats retrieved successfully", seats));
         }
         catch (NotFoundException ex)
@@ -55,7 +46,7 @@ public class SeatController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error while retrieving seats");
+            logger.LogError(ex, "Error while retrieving seats");
             return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
         }
     }
@@ -65,7 +56,7 @@ public class SeatController : ControllerBase
     {
         try
         {
-            var seat = await _mediator.Send(command);
+            var seat = await mediator.Send(command);
             return StatusCode(201, new ApiResponse<SeatDto>(true, "Seat created successfully", seat));
         }
         catch (NotFoundException ex)
@@ -82,18 +73,18 @@ public class SeatController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error while creating a seat");
+            logger.LogError(ex, "Error while creating a seat");
             return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
         }
     }
     
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdateSeat(Guid id, [FromBody] UpdateSeatCommand command)
     {
         try
         {
             command.Id = id;
-            var seat = await _mediator.Send(command);
+            var seat = await mediator.Send(command);
             return Ok(new ApiResponse<SeatDto>(true, "Seat updated successfully", seat));
         }
         catch (NotFoundException ex)
@@ -110,7 +101,7 @@ public class SeatController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error while updating a seat");
+            logger.LogError(ex, "Error while updating a seat");
             return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
         }
     }

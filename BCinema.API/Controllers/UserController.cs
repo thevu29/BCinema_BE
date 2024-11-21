@@ -13,6 +13,21 @@ namespace BCinema.API.Controllers
     [ApiController]
     public class UserController(IMediator mediator, ILogger<UserController> logger) : ControllerBase
     {
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            try
+            {
+                var users = await mediator.Send(new GetAllUsersQuery());
+                return Ok(new ApiResponse<IEnumerable<UserDto>>(true, "Get all users successfully", users));
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An unexpected error occurred while getting all users");
+                return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
+            }
+        }
+        
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {

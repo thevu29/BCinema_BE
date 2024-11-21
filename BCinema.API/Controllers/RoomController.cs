@@ -13,6 +13,21 @@ namespace BCinema.API.Controllers
     [ApiController]
     public class RoomController(IMediator mediator, ILogger<RoomController> logger) : ControllerBase
     {
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllRooms()
+        {
+            try
+            {
+                var rooms = await mediator.Send(new GetAllRoomsQuery());
+                return Ok(new ApiResponse<IEnumerable<RoomDto>>(true, "Get all rooms successfully", rooms));
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error getting rooms");
+                return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
+            }
+        }
+        
         [HttpGet]
         public async Task<IActionResult> GetRooms([FromQuery] RoomQuery query)
         {

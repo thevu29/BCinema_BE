@@ -13,6 +13,21 @@ namespace BCinema.API.Controllers;
 [ApiController]
 public class FoodController(IMediator mediator, ILogger<FoodController> logger) : ControllerBase
 {
+    [HttpGet("all")]
+    public async Task<IActionResult> GetAllFoods()
+    {
+        try
+        {
+            var foods = await mediator.Send(new GetAllFoodsQuery());
+            return Ok(new ApiResponse<IEnumerable<FoodDto>>(true, "Get foods successfully", foods));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occured while getting foods");
+            return StatusCode(500, new ApiResponse<string>(false, "An error occured"));
+        }
+    }
+    
     [HttpGet]
     public async Task<IActionResult> GetFoods([FromQuery] FoodQuery query)
     {

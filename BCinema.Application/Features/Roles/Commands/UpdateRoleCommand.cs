@@ -13,28 +13,20 @@ namespace BCinema.Application.Features.Roles.Commands
         public string? Name { get; set; }
         public string? Description { get; set; }
 
-        public class UpdateRoleCommandHandler : IRequestHandler<UpdateRoleCommand, RoleDto>
+        public class UpdateRoleCommandHandler(IRoleRepository roleRepository, IMapper mapper)
+            : IRequestHandler<UpdateRoleCommand, RoleDto>
         {
-            private readonly IRoleRepository _roleRepository;
-            private readonly IMapper _mapper;
-
-            public UpdateRoleCommandHandler(IRoleRepository roleRepository, IMapper mapper)
-            {
-                _roleRepository = roleRepository;
-                _mapper = mapper;
-            }
-
             public async Task<RoleDto> Handle(UpdateRoleCommand request, CancellationToken cancellationToken)
             {
-                var role = await _roleRepository
+                var role = await roleRepository
                     .GetByIdAsync(request.Id, cancellationToken)
                     ?? throw new NotFoundException(nameof(Role));
 
-                _mapper.Map(request, role);
+                mapper.Map(request, role);
 
-                await _roleRepository.SaveChangesAsync(cancellationToken);
+                await roleRepository.SaveChangesAsync(cancellationToken);
 
-                return _mapper.Map<RoleDto>(role);
+                return mapper.Map<RoleDto>(role);
             }
         }
     }

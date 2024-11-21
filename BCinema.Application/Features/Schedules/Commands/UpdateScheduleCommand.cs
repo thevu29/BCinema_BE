@@ -15,36 +15,28 @@ public class UpdateScheduleCommand : IRequest<ScheduleDto>
     public string? Status { get; set; }
     public Guid? RoomId { get; set; }
 
-    public class UpdateScheduleCommandHandler : IRequestHandler<UpdateScheduleCommand, ScheduleDto>
+    public class UpdateScheduleCommandHandler(
+        IScheduleRepository scheduleRepository,
+        IRoomRepository roomRepository,
+        IMapper mapper)
+        : IRequestHandler<UpdateScheduleCommand, ScheduleDto>
     {
-        private readonly IScheduleRepository _scheduleRepository;
-        private readonly IRoomRepository _roomRepository;
-        private readonly IMapper _mapper;
-        
-        public UpdateScheduleCommandHandler(
-            IScheduleRepository scheduleRepository,
-            IRoomRepository roomRepository,
-            IMapper mapper)
-        {
-            _scheduleRepository = scheduleRepository;
-            _roomRepository = roomRepository;
-            _mapper = mapper;
-        }
-
         public async Task<ScheduleDto> Handle(UpdateScheduleCommand request, CancellationToken cancellationToken)
         {
-            var schedule = await _scheduleRepository.GetScheduleByIdAsync(request.Id, cancellationToken)
+            var schedule = await scheduleRepository.GetScheduleByIdAsync(request.Id, cancellationToken)
                 ?? throw new NotFoundException(nameof(Schedule));
             
-            if (schedule.Status == Domain.Entities.Schedule.ScheduleStatus.Ended)
+            if (schedule.Status == Schedule.ScheduleStatus.Ended)
             {
                 throw new BadRequestException("Cannot update ended schedule");
             }
             
             if (request.RoomId != null)
             {
-                var room = await _roomRepository.GetRoomByIdAsync(request.RoomId.Value, cancellationToken)
+                var room = await roomRepository.GetRoomByIdAsync(request.RoomId.Value, cancellationToken)
                     ?? throw new NotFoundException(nameof(Room));
+                
+                schedule.Room = room;
             }
             if (request.Date != null)
             {
@@ -56,11 +48,11 @@ public class UpdateScheduleCommand : IRequest<ScheduleDto>
                 schedule.Date = DateTime.SpecifyKind(schedule.Date.Date.Add(request.Time.Value), DateTimeKind.Utc);
             }
 
-            _mapper.Map(request, schedule);
+            mapper.Map(request, schedule);
 
-            await _scheduleRepository.SaveChangesAsync(cancellationToken);
+            await scheduleRepository.SaveChangesAsync(cancellationToken);
             
-            return _mapper.Map<ScheduleDto>(schedule);
+            return mapper.Map<ScheduleDto>(schedule);
         }
     }
 }

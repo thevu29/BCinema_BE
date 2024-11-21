@@ -23,7 +23,7 @@ namespace BCinema.Application.Features.SeatTypes.Validators
 
         private async Task<bool> BeUniqueName(string name, CancellationToken cancellationToken)
         {
-            return !await _seatTypeRepository.AnyAsync(x => x.Name != name, cancellationToken);
+            return !await _seatTypeRepository.AnyAsync(x => x.Name == name, cancellationToken);
         }
     }
 }

@@ -11,27 +11,17 @@ namespace BCinema.Application.Features.SeatTypes.Commands
         public string Name { get; set; } = default!;
         public double Price { get; set; }
 
-        public class CreateSeatTypeCommandHandler : IRequestHandler<CreateSeatTypeCommand, SeatTypeDto>
+        public class CreateSeatTypeCommandHandler(ISeatTypeRepository seatTypeRepository, IMapper mapper)
+            : IRequestHandler<CreateSeatTypeCommand, SeatTypeDto>
         {
-            private readonly ISeatTypeRepository _seatTypeRepository;
-            private readonly IMapper _mapper;
-
-            public CreateSeatTypeCommandHandler(ISeatTypeRepository seatTypeRepository, IMapper mapper)
+            public async Task<SeatTypeDto> Handle(CreateSeatTypeCommand request, CancellationToken cancellationToken)
             {
-                _seatTypeRepository = seatTypeRepository;
-                _mapper = mapper;
-            }
+                var seatType = mapper.Map<SeatType>(request);
 
-            public async Task<SeatTypeDto> Handle(
-                CreateSeatTypeCommand request,
-                CancellationToken cancellationToken)
-            {
-                var seatType = _mapper.Map<SeatType>(request);
+                await seatTypeRepository.AddAsync(seatType, cancellationToken);
+                await seatTypeRepository.SaveChangesAsync(cancellationToken);
 
-                await _seatTypeRepository.AddAsync(seatType, cancellationToken);
-                await _seatTypeRepository.SaveChangesAsync(cancellationToken);
-
-                return _mapper.Map<SeatTypeDto>(seatType);
+                return mapper.Map<SeatTypeDto>(seatType);
             }
         }
     }

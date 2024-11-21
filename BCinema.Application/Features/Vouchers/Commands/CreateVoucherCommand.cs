@@ -13,25 +13,19 @@ public class CreateVoucherCommand : IRequest<VoucherDto>
     public string? Description { get; set; }
     public DateTime ExpireAt { get; set; }
     
-    public class CreateVoucherCommandHandler : IRequestHandler<CreateVoucherCommand, VoucherDto>
+    public class CreateVoucherCommandHandler(IVoucherRepository voucherRepository, IMapper mapper)
+        : IRequestHandler<CreateVoucherCommand, VoucherDto>
     {
-        private readonly IVoucherRepository _voucherRepository;
-        private readonly IMapper _mapper;
-
-        public CreateVoucherCommandHandler(IVoucherRepository voucherRepository, IMapper mapper)
-        {
-            _voucherRepository = voucherRepository;
-            _mapper = mapper;
-        }
-
         public async Task<VoucherDto> Handle(CreateVoucherCommand request, CancellationToken cancellationToken)
         {
-            var voucher = _mapper.Map<Voucher>(request);
+            request.ExpireAt = DateTime.SpecifyKind(request.ExpireAt, DateTimeKind.Utc);
 
-            await _voucherRepository.AddVoucherAsync(voucher, cancellationToken);
-            await _voucherRepository.SaveChangesAsync(cancellationToken);
+            var voucher = mapper.Map<Voucher>(request);
 
-            return _mapper.Map<VoucherDto>(voucher);
+            await voucherRepository.AddVoucherAsync(voucher, cancellationToken);
+            await voucherRepository.SaveChangesAsync(cancellationToken);
+
+            return mapper.Map<VoucherDto>(voucher);
         }
     }
 }

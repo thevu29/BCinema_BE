@@ -38,9 +38,7 @@ namespace BCinema.Application.Mappers
 
             // Voucher
             CreateMap<Voucher, VoucherDto>();
-
-            CreateMap<CreateVoucherCommand, Voucher>()
-                .ForMember(dest => dest.ExpireAt, opt => opt.MapFrom(src => src.ExpireAt.ToLocalTime()));
+            CreateMap<CreateVoucherCommand, Voucher>();
 
             // UserVoucher
             CreateMap<UserVoucher, UserVoucherDto>();
@@ -74,12 +72,10 @@ namespace BCinema.Application.Mappers
             // Seat
             CreateMap<Seat, SeatDto>()
                 .ForMember(dest => dest.SeatType, opt => opt.MapFrom(src => src.SeatType.Name))
-                .ForMember(dest => dest.Room, opt => opt.MapFrom(src => src.Room.Name));
+                .ForMember(dest => dest.Room, opt => opt.MapFrom(src => src.Room.Name))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.SeatType.Price));
             
             CreateMap<CreateSeatCommand, Seat>();
-            
-            CreateMap<UpdateSeatCommand, Seat>()
-                .ForMember(dest => dest.SeatTypeId, opt => opt.Condition(src => src.SeatTypeId != null));
             
             // Seat Type
             CreateMap<SeatType, SeatTypeDto>();

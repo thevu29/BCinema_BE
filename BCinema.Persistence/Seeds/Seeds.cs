@@ -114,7 +114,7 @@ public class SeatTypeSeeder(ApplicationDbContext context, ILogger<SeatTypeSeeder
             {
                 new() { Id = Guid.NewGuid(), Name = "Regular", Price = 50 },
                 new() { Id = Guid.NewGuid(), Name = "VIP", Price = 100 },
-                new() { Id = Guid.NewGuid(), Name = "Premium", Price = 150 }
+                new() { Id = Guid.NewGuid(), Name = "Double", Price = 150 }
             };
 
             await context.SeatTypes.AddRangeAsync(seatTypes);

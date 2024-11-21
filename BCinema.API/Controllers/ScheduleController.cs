@@ -13,6 +13,21 @@ namespace BCinema.API.Controllers;
 [ApiController]
 public class ScheduleController(IMediator mediator, ILogger<ScheduleController> logger) : ControllerBase
 {
+    [HttpGet("all")]
+    public async Task<IActionResult> GetAllSchedules()
+    {
+        try
+        {
+            var schedules = await mediator.Send(new GetAllSchedulesQuery());
+            return Ok(new ApiResponse<IEnumerable<ScheduleDto>>(true, "Get all schedules successfully", schedules));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error getting rooms");
+            return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
+        }
+    }
+    
     [HttpGet]
     public async Task<IActionResult> GetSchedules([FromQuery] ScheduleQuery query)
     {

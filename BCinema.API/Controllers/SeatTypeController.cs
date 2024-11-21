@@ -13,6 +13,21 @@ namespace BCinema.API.Controllers
     [ApiController]
     public class SeatTypeController(IMediator mediator, ILogger<SeatTypeController> logger) : ControllerBase
     {
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllSeatTypes()
+        {
+            try
+            {
+                var seatTypes = await mediator.Send(new GetAllSeatTypesQuery());
+                return Ok(new ApiResponse<IEnumerable<SeatTypeDto>>(true, "Get all seat types successfully", seatTypes));
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error getting rooms");
+                return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
+            }
+        }
+        
         [HttpGet]
         public async Task<IActionResult> GetSeatTypes([FromQuery] SeatTypeQuery query)
         {
@@ -103,6 +118,25 @@ namespace BCinema.API.Controllers
             catch (Exception ex)
             {
                 logger.LogError(ex, "An unexpected error occurred while updating seat type");
+                return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
+            }
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteSeatType(Guid id)
+        {
+            try
+            {
+                await mediator.Send(new DeleteSeatTypeCommand { Id = id });
+                return Ok(new ApiResponse<string>(true, "Seat type deleted successfully"));
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new ApiResponse<string>(false, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An unexpected error occurred while deleting seat type");
                 return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
             }
         }
