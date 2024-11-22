@@ -53,9 +53,10 @@ namespace BCinema.Application.Mappers
                 .ForMember(dest => dest.Date, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.Date)))
                 .ForMember(dest => dest.Schedules, opt => opt.Ignore());
             
-            CreateMap<CreateSchedulesCommand, Schedule>()
-                .ForMember(dest => dest.Date, opt => opt.Ignore());
-
+            CreateMap<Schedule, ScheduleDetailDto>()
+                .ForMember(dest => dest.Time, opt => opt.MapFrom(src => src.Date.TimeOfDay))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+            
             CreateMap<UpdateScheduleCommand, Schedule>()
                 .ForMember(dest => dest.Date, opt => opt.Ignore())
                 .ForMember(dest => dest.RoomId, opt => opt.Condition(src => src.RoomId != null))

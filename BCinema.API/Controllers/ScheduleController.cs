@@ -108,8 +108,8 @@ public class ScheduleController(IMediator mediator, ILogger<ScheduleController> 
         }
     }
     
-    [HttpPost]
-    public async Task<IActionResult> CreateSchedules([FromBody] CreateSchedulesCommand command)
+    [HttpPost("auto-create")]
+    public async Task<IActionResult> AutoCreateSchedule([FromBody] AutoCreateScheduleCommand command)
     {
         try
         {
@@ -117,7 +117,37 @@ public class ScheduleController(IMediator mediator, ILogger<ScheduleController> 
             
             return StatusCode(
                 StatusCodes.Status201Created, 
-                new ApiResponse<SchedulesDto>(true, "Create schedules successfully", schedule));
+                new ApiResponse<IEnumerable<SchedulesDto>>(true, "Auto create schedules successfully", schedule));
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (BadRequestException ex)
+        {
+            return BadRequest(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error while auto creating schedules");
+            return StatusCode(500, new ApiResponse<string>(false, "An error occurred"));
+        }
+    }
+    
+    [HttpPost]
+    public async Task<IActionResult> CreateSchedule([FromBody] CreateScheduleCommand command)
+    {
+        try
+        {
+            var schedule = await mediator.Send(command);
+            
+            return StatusCode(
+                StatusCodes.Status201Created, 
+                new ApiResponse<ScheduleDto>(true, "Create schedules successfully", schedule));
         }
         catch (NotFoundException ex)
         {

@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using BCinema.Application.Behaviors;
-using BCinema.Application.Mappers;
 using BCinema.Domain.Entities;
 using FluentValidation;
 using MediatR;
@@ -19,11 +18,6 @@ namespace BCinema.Application
             services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             
-            services.AddControllers().AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.Converters.Add(new TimeSpanConverter());
-            });
-
             return services;
         }
     }
