@@ -142,8 +142,10 @@ public class CreatePaymentCommand : IRequest<PaymentDto>
                     {
                         case SeatSchedule.SeatScheduleStatus.Booked:
                             throw new BadRequestException("Seat is already booked");
-                        case SeatSchedule.SeatScheduleStatus.Pending:
-                            throw new BadRequestException("Seat is waiting for other user to confirm");
+                        case SeatSchedule.SeatScheduleStatus.Bought:
+                            throw new BadRequestException("Seat is already bought");
+                        case SeatSchedule.SeatScheduleStatus.Process:
+                            throw new BadRequestException("Seat is in process");
                         case SeatSchedule.SeatScheduleStatus.Unavailable:
                             throw new BadRequestException("Seat is unavailable");
                     }

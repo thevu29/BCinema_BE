@@ -9,8 +9,9 @@ public class SeatSchedule : Base
     public enum SeatScheduleStatus
     {
         Available,
-        Pending,
+        Bought,
         Booked,
+        Process,
         Unavailable
     }
     
