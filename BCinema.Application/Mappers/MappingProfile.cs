@@ -89,7 +89,11 @@ namespace BCinema.Application.Mappers
             // Seat Schedule
             CreateMap<SeatSchedule, SeatScheduleDto>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
-                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Seat.SeatType.Price));
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Seat.SeatType.Price))
+                .ForMember(dest => dest.Row, opt => opt.MapFrom(src => src.Seat.Row))
+                .ForMember(dest => dest.Number, opt => opt.MapFrom(src => src.Seat.Number))
+                .ForMember(dest => dest.SeatType, opt => opt.MapFrom(src => src.Seat.SeatType.Name))
+                .ForMember(dest => dest.SeatTypeId, opt => opt.MapFrom(src => src.Seat.SeatTypeId));
             
             // Food
             CreateMap<Food, FoodDto>();

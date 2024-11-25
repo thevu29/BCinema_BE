@@ -57,6 +57,7 @@ public class CreateScheduleCommand : IRequest<ScheduleDto>
             }).ToList();
             
             await seatScheduleRepository.AddSeatSchedulesAsync(seatSchedules, cancellationToken);
+            await scheduleRepository.SaveChangesAsync(cancellationToken);
             
             return mapper.Map<ScheduleDto>(schedule);
         }

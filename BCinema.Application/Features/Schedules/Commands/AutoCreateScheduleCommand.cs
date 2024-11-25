@@ -118,6 +118,7 @@ public class AutoCreateScheduleCommand : IRequest<IEnumerable<SchedulesDto>>
                     }).ToList();
                     
                     await seatScheduleRepository.AddSeatSchedulesAsync(seatSchedules, cancellationToken);
+                    await seatScheduleRepository.SaveChangesAsync(cancellationToken);
                 }
 
                 result.Add(dateSchedulesDto);
