@@ -42,7 +42,10 @@ public static class DateFilterHelper
 
         if (!TryParseDate(dates[0].Trim(), out var startDate) || !TryParseDate(dates[1].Trim(), out var endDate))
             throw new BadRequestException("Invalid date format in range. Use yyyy-MM-dd");
-
+        
+        startDate = startDate.Date;
+        endDate = endDate.Date.AddDays(1).AddTicks(-1);
+        
         var parameter = dateSelector.Parameters[0];
         var memberAccess = dateSelector.Body;
 
