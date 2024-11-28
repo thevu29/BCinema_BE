@@ -109,6 +109,11 @@ public class MovieFetchService(IConfiguration configuration) : IMovieFetchServic
             movie.Runtime = movieDetail?.Runtime;
         }
 
+        if (movieResponse != null)
+        {
+            movieResponse.Results = movieResponse.Results.OrderByDescending(m => m.ReleaseDate).ToList();
+        }
+        
         return movieResponse;
     }
 }
