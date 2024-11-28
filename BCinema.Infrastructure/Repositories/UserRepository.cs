@@ -64,5 +64,13 @@ namespace BCinema.Infrastructure.Repositories
         {
             await _context.SaveChangesAsync(cancellationToken);
         }
+        
+        public async Task<int> CountAsync(int year, int month, CancellationToken cancellationToken)
+        {
+            return await _context.Users
+                .Include(u => u.Role)
+                .Where(u => u.CreateAt.Year == year && u.CreateAt.Month == month && u.Role.Name == "User" && u.DeleteAt == null)
+                .CountAsync(cancellationToken);
+        }
     }
 }

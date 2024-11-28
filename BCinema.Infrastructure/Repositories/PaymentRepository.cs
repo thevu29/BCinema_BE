@@ -1,4 +1,5 @@
-﻿using BCinema.Domain.Entities;
+﻿using BCinema.Application.DTOs;
+using BCinema.Domain.Entities;
 using BCinema.Domain.Interfaces.IRepositories;
 using BCinema.Persistence.Context;
 using Microsoft.EntityFrameworkCore;
@@ -67,5 +68,27 @@ public class PaymentRepository(ApplicationDbContext context) : IPaymentRepositor
     public async Task SaveChangesAsync(CancellationToken cancellationToken)
     {
         await context.SaveChangesAsync(cancellationToken);
+    }
+    
+    public async Task<double> GetStatisticsRevenueAsync(int year, int month, CancellationToken cancellationToken)
+    {
+        return await context.Payments
+            .Where(p => p.CreateAt.Year == year && p.CreateAt.Month == month)
+            .SumAsync(p => p.TotalPrice, cancellationToken);
+    }
+    
+    public async Task<dynamic?> GetTopMoviesMostViewedAsync(int year, int month, int count, CancellationToken cancellationToken)
+    {
+        return await context.Payments
+            .Where(p => p.CreateAt.Year == year && p.CreateAt.Month == month)
+            .GroupBy(p => p.Schedule.MovieId)
+            .Select(g => new TopMovieDto()
+            {
+                MovieId = g.Key,
+                TotalView = g.Count()
+            })
+            .OrderByDescending(g => g.TotalView)
+            .Take(count)
+            .ToListAsync(cancellationToken);
     }
 }

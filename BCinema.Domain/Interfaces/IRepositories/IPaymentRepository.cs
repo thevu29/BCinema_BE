@@ -13,4 +13,7 @@ public interface IPaymentRepository
     Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken);
     Task SaveChangesAsync();
     Task SaveChangesAsync(CancellationToken cancellationToken);
+    Task<double> GetStatisticsRevenueAsync(int year, int month, CancellationToken cancellationToken); 
+    
+    Task<dynamic?> GetTopMoviesMostViewedAsync(int year, int month, int count, CancellationToken cancellationToken);
 }

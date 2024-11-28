@@ -169,5 +169,25 @@ namespace BCinema.API.Controllers
                 return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
             }
         }
+        
+        [HttpGet("count")]
+        public async Task<IActionResult> GetCountUser([FromQuery] int year, int month)
+        {
+            try
+            {
+                var count = await mediator.Send(new GetCountUserQuery { Year = year, Month = month });
+
+                return Ok(new ApiResponse<int>(true, "Get count user successfully", count));
+            }
+            catch (ValidationException ex)
+            {
+                return BadRequest(new ApiResponse<string>(false, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "An unexpected error occurred while getting count user");
+                return StatusCode(500, new ApiResponse<string>(false, "An unexpected error occurred"));
+            }
+        }
     }
 }
