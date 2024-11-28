@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BCinema.API.Controllers;
 
-[Route("api/seat-schedule")]
+[Route("api/seat-schedules")]
 [ApiController]
 public class SeatScheduleController(IMediator mediator, ILogger<SeatScheduleController> logger) : ControllerBase
 {

@@ -4,28 +4,17 @@ using System.Net;
 
 namespace BCinema.API.Middlewares
 {
-    public class GlobalExceptionHandleMiddleware
+    public class GlobalExceptionHandleMiddleware(RequestDelegate next, ILogger<GlobalExceptionHandleMiddleware> logger)
     {
-        private readonly RequestDelegate _next;
-        private readonly ILogger<GlobalExceptionHandleMiddleware> _logger;
-
-        public GlobalExceptionHandleMiddleware(
-            RequestDelegate next,
-            ILogger<GlobalExceptionHandleMiddleware> logger)
-        {
-            _next = next;
-            _logger = logger;
-        }
-
         public async Task InvokeAsync(HttpContext context)
         {
             try
             {
-                await _next(context);
+                await next(context);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An unexpected error occurred");
+                logger.LogError(ex, "An unexpected error occurred");
                 await HandleExceptionAsync(context, ex);
             }
         }

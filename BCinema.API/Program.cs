@@ -70,7 +70,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors();
 
-app.UseMiddleware<DateValidationMiddleware>();
 app.UseMiddleware<GlobalExceptionHandleMiddleware>();
 
 app.UseAuthorization();

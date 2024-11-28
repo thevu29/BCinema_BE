@@ -1,4 +1,6 @@
+using System.Text.Json.Serialization;
 using AutoMapper;
+using BCinema.Application.Converters;
 using BCinema.Application.DTOs;
 using BCinema.Domain.Entities;
 using BCinema.Domain.Interfaces.IRepositories;
@@ -11,6 +13,7 @@ public class CreateVoucherCommand : IRequest<VoucherDto>
     public string Code { get; set; } = default!;
     public int Discount { get; set; }
     public string? Description { get; set; }
+    [JsonConverter(typeof(DateConverter))]
     public DateTime ExpireAt { get; set; }
     
     public class CreateVoucherCommandHandler(IVoucherRepository voucherRepository, IMapper mapper)
