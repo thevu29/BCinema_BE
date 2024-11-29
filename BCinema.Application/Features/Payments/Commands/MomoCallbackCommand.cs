@@ -21,8 +21,9 @@ public class MomoCallbackCommand : IRequest<string>
         {
             var payment = await paymentRepository.GetPaymentByIdAsync(Guid.Parse(request.OrderId), cancellationToken)
                           ?? throw new NotFoundException(nameof(Payment));
-            var seatSchedule = await seatScheduleRepository.GetSeatScheduleByIdAsync(
-                                   payment.PaymentDetails.FirstOrDefault()!.SeatSchedule!.ScheduleId, cancellationToken)
+            var firstPaymentDetail = payment.PaymentDetails.FirstOrDefault();
+            
+            var seatSchedule = await seatScheduleRepository.GetSeatScheduleByIdAsync((Guid)firstPaymentDetail!.SeatScheduleId!, cancellationToken)
                                ?? throw new NotFoundException(nameof(SeatSchedule));
             if (request.ErrorCode != "0")
             {
@@ -42,8 +43,6 @@ public class MomoCallbackCommand : IRequest<string>
                 await paymentRepository.DeletePaymentAsync(payment, cancellationToken);
                 return request.ErrorCode;
             }
-
-            request.ErrorCode = "0";
             seatSchedule.Status = SeatSchedule.SeatScheduleStatus.Bought;
             await seatScheduleRepository.SaveChangesAsync(cancellationToken);
             return request.ErrorCode;
