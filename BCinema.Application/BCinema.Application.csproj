@@ -17,11 +17,17 @@
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.0.0" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="RestSharp" Version="112.1.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BCinema.Domain\BCinema.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\PaymentMomo\Commands\" />
+    <Folder Include="Features\PaymentMomo\Validators\" />
   </ItemGroup>
 
 </Project>

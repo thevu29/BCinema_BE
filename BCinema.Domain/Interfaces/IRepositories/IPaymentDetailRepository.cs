@@ -9,4 +9,5 @@ public interface IPaymentDetailRepository
     Task AddPaymentDetailsAsync(IEnumerable<PaymentDetail> paymentDetails, CancellationToken cancellationToken);
     Task SaveChangesAsync();
     Task SaveChangesAsync(CancellationToken cancellationToken);
+    Task DeletePaymentDetails(IEnumerable<PaymentDetail> paymentDetails, CancellationToken cancellationToken);
 }

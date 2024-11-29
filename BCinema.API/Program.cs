@@ -3,6 +3,7 @@ using BCinema.API.Responses;
 using BCinema.Application;
 using BCinema.Application.Helpers;
 using BCinema.Application.Mail;
+using BCinema.Application.Momo;
 using BCinema.Infrastructure;
 using BCinema.Infrastructure.Filter;
 using BCinema.Persistence;
@@ -12,6 +13,8 @@ using Microsoft.AspNetCore.Mvc;
 using DependencyInjection = BCinema.Persistence.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<MomoOptionModel>(builder.Configuration.GetSection("MomoAPI"));
 
 // Set the environment variable for Google Application Default Credentials
 Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS",

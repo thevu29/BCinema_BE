@@ -13,4 +13,6 @@ public interface IPaymentRepository
     Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken);
     Task SaveChangesAsync();
     Task SaveChangesAsync(CancellationToken cancellationToken);
+    
+    Task DeletePaymentAsync(Payment payment, CancellationToken cancellationToken);
 }
