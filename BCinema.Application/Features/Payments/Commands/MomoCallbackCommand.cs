@@ -30,7 +30,6 @@ public class MomoCallbackCommand : IRequest<string>
                 await seatScheduleRepository.SaveChangesAsync(cancellationToken);
                 foreach (var item in payment.PaymentDetails)
                 {
-                    
                     if (item.FoodId is not null)
                     {
                         var food = await foodRepository.GetFoodByIdAsync(item.FoodId.Value, cancellationToken)
