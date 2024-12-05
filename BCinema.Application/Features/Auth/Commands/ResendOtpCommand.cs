@@ -1,4 +1,5 @@
-﻿using BCinema.Application.Exceptions;
+﻿using BCinema.Application.Enums;
+using BCinema.Application.Exceptions;
 using BCinema.Application.Mail;
 using BCinema.Application.Utils;
 using BCinema.Domain.Entities;
@@ -9,7 +10,7 @@ namespace BCinema.Application.Features.Auth.Commands;
 
 public class ResendOtpCommand : IRequest<bool>
 {
-    public Guid UserId { get; set; } = default!;
+    public string Email { get; set; } = default!;
 
     public class ResendOtpCommandHandler(
         IUserRepository userRepository,
@@ -18,7 +19,7 @@ public class ResendOtpCommand : IRequest<bool>
     {
         public async Task<bool> Handle(ResendOtpCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetByIdAsync(request.UserId, cancellationToken)
+            var user = await userRepository.GetByEmailAndProviderAsync(request.Email, Provider.Local, cancellationToken)
                        ?? throw new NotFoundException(nameof(User));
             var otp = await otpRepository.GetByUserIdAsync(user.Id, cancellationToken)
                       ?? throw new NotFoundException(nameof(Otp));

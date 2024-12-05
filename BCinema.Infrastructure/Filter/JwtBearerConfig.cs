@@ -25,6 +25,7 @@ public static class JwtBearerConfig
                     ValidateLifetime = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secret)),
                     ValidateIssuerSigningKey = true,
+                    
                 };
             });
 

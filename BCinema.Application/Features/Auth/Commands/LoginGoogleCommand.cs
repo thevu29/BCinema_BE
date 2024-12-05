@@ -44,6 +44,7 @@ public class LoginGoogleCommand : IRequest<JwtResponse>
                         Avatar = payload.Picture,
                         Provider = Provider.Google,
                         Password = "google",
+                        IsActivated = true
                     };
                     var role = await roleRepository.GetByNameAsync("User", cancellationToken) 
                                ?? throw new NotFoundException(nameof(Role));

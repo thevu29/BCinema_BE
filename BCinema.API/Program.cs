@@ -4,6 +4,7 @@ using BCinema.Application;
 using BCinema.Application.Helpers;
 using BCinema.Application.Mail;
 using BCinema.Application.Momo;
+using BCinema.Application.Polling;
 using BCinema.Infrastructure;
 using BCinema.Infrastructure.Filter;
 using BCinema.Persistence;
@@ -13,6 +14,8 @@ using Microsoft.AspNetCore.Mvc;
 using DependencyInjection = BCinema.Persistence.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddHostedService<InactiveAccountCleanup>();
 
 builder.Services.Configure<MomoOptionModel>(builder.Configuration.GetSection("MomoAPI"));
 
@@ -35,9 +38,10 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(corsPolicyBuilder =>
     {
-        corsPolicyBuilder.AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
+        corsPolicyBuilder.WithOrigins("http://localhost:5173");
+        corsPolicyBuilder.AllowAnyMethod();
+        corsPolicyBuilder.AllowAnyHeader();
+        corsPolicyBuilder.AllowCredentials();
     });
 });
 

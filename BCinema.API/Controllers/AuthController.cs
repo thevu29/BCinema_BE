@@ -65,7 +65,7 @@ public class AuthController(IMediator mediator, ILogger<FoodController> logger) 
     }
     
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterCommand command)
+    public async Task<IActionResult> Register([FromForm] RegisterCommand command)
     {
         try
         {
@@ -125,6 +125,29 @@ public class AuthController(IMediator mediator, ILogger<FoodController> logger) 
         catch (NotFoundException ex)
         {
             return NotFound(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occured while getting food");
+            return StatusCode(500, new ApiResponse<string>(false, "An error occured"));
+        }
+    }
+    
+    [HttpPost("send-otp")]
+    public async Task<IActionResult> SendOtp([FromBody] SendOtpCommand command)
+    {
+        try
+        {
+            bool resp = await mediator.Send(command);
+            return Ok(new ApiResponse<bool>(resp, resp ? "OTP sent successfully" : "OTP sent fail", resp));
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (BadRequestException ex)
+        {
+            return BadRequest(new ApiResponse<string>(false, ex.Message));
         }
         catch (Exception ex)
         {

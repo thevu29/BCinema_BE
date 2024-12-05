@@ -12,6 +12,7 @@ namespace BCinema.Domain.Entities
         public string Code { get; set; } = default!;
         public int Attempts { get; set; } = 1;
         [Required]
+        public bool IsVerified { get; set; } = false;
         public DateTime ExpireAt { get; set; }
         [ForeignKey(nameof(UserId))]
         public User User { get; set; } = default!;

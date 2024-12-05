@@ -6,7 +6,9 @@ using BCinema.Application.Mail;
 using BCinema.Application.Utils;
 using BCinema.Domain.Entities;
 using BCinema.Domain.Interfaces.IRepositories;
+using BCinema.Domain.Interfaces.IServices;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace BCinema.Application.Features.Auth.Commands;
@@ -15,12 +17,14 @@ public class RegisterCommand : IRequest<UserDto>
 {
     public string Email { get; set; } = default!;
     public string Name { get; set; } = default!;
+    public IFormFile? Avatar { get; set; }
     public string Password { get; set; } = default!;
     
     public class RegisterCommandHandler(
         IUserRepository userRepository,
         IRoleRepository roleRepository,
         IOtpRepository otpRepository,
+        IFileStorageService fileStorageService,
         IMapper mapper,
         IPasswordHasher<User> passwordHasher,
         IMailService mailService) : IRequestHandler<RegisterCommand, UserDto>
@@ -33,6 +37,12 @@ public class RegisterCommand : IRequest<UserDto>
                 Name = request.Name,
                 Provider = Provider.Local
             };
+            if (request.Avatar != null)
+            {
+                await using var imageStream = request.Avatar.OpenReadStream();
+                user.Avatar = await fileStorageService.UploadImageAsync(
+                    imageStream, Guid.NewGuid() + ".jpg");
+            }
             user.Password = passwordHasher.HashPassword(user, request.Password);
             var role = await roleRepository.GetByNameAsync("User", cancellationToken)
                 ?? throw new NotFoundException(nameof(Role));

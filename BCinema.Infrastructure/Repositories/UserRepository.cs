@@ -78,5 +78,12 @@ namespace BCinema.Infrastructure.Repositories
         {
             await _context.SaveChangesAsync(cancellationToken);
         }
+
+        public Task DeleteInActiveUsersAsync(CancellationToken cancellationToken)
+        {
+            var users = _context.Users.Where(u => u.IsActivated == false);
+            _context.Users.RemoveRange(users);
+            return _context.SaveChangesAsync(cancellationToken);
+        }
     }
 }

@@ -15,10 +15,14 @@ public class ForgotPasswordCommand : IRequest<bool>
     [Required]
     public string Email { get; set; } = default!;
     
+    [Required]
+    public string Code { get; set; } = default!;
+    
     public class ForgotPasswordCommandHandler(
         IUserRepository userRepository,
         IMailService mailService,
         ITokenRepository tokenRepository,
+        IOtpRepository otpRepository,
         IPasswordHasher<User> passwordHasher,
         ILogger<ForgotPasswordCommandHandler> logger
         ) : IRequestHandler<ForgotPasswordCommand, bool>
@@ -27,12 +31,23 @@ public class ForgotPasswordCommand : IRequest<bool>
         {
             try
             {
-                var user = await userRepository.GetByEmailAndProviderAsync(request.Email, Provider.Local, cancellationToken)
+                var otp = await otpRepository.GetByCodeAsync(request.Code, cancellationToken)
+                    ?? throw new BadRequestException("OTP is invalid");
+                if (!otp.IsVerified)
+                {
+                    throw new BadRequestException("OTP is not verified");
+                }
+                var user = await userRepository.GetByIdAsync(otp.UserId, cancellationToken)
                     ?? throw new NotFoundException(nameof(User));
+                if (user.Email != request.Email)
+                {
+                    throw new BadRequestException("Email is invalid");
+                }
                 var newPassword = Guid.NewGuid().ToString("N").Substring(0, 8);
                 user.Password = passwordHasher.HashPassword(user, newPassword);
                 await userRepository.SaveChangesAsync(cancellationToken);
                 await tokenRepository.DeleteByUserIdAsync(user.Id, cancellationToken);
+                otpRepository.Delete(otp);
                 var mailData = new MailData
                 {
                     EmailToId = user.Email,

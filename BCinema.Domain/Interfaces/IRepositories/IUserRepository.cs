@@ -15,5 +15,7 @@ namespace BCinema.Domain.Interfaces.IRepositories
         Task<bool> AnyAsync(Expression<Func<User, bool>> predicate, CancellationToken cancellationToken);
         Task SaveChangesAsync();
         Task SaveChangesAsync(CancellationToken cancellationToken);
+        
+        Task DeleteInActiveUsersAsync(CancellationToken cancellationToken);
     }
 }
