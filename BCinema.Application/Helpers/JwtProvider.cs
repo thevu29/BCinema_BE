@@ -19,11 +19,10 @@ public class JwtProvider(IConfiguration configuration)
         var key = Encoding.ASCII.GetBytes(_key!);
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[]
-            {
+            Subject = new ClaimsIdentity([
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role.Name),
-            }),
+                new Claim(ClaimTypes.Role, user.Role.Name)
+            ]),
             Expires = DateTime.UtcNow.AddMinutes(1),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
             Issuer = _issuer,

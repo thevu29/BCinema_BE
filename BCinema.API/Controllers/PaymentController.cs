@@ -117,6 +117,7 @@ public class PaymentController(IMediator mediator, ILogger<PaymentController> lo
     public async Task<IActionResult> MomoCallback([FromQuery] MomoCallbackCommand command, CancellationToken cancellationToken)
     {
         var redirectUrl = $"http://localhost:3000/order-status?orderId={command.OrderId}&error_code=";
+        
         try
         {
             var resp = await mediator.Send(command, cancellationToken);
@@ -124,6 +125,7 @@ public class PaymentController(IMediator mediator, ILogger<PaymentController> lo
         }
         catch (NotFoundException ex)
         {
+            logger.LogError(ex, "An error occurred while processing momo callback");
             return Redirect(redirectUrl + "404");
         }
         catch (Exception ex)

@@ -24,24 +24,29 @@ public class SendOtpCommand : IRequest<bool>
         {
             var user = await userRepository.GetByEmailAndProviderAsync(request.Email, Provider.Local, cancellationToken)
                        ?? throw new NotFoundException(nameof(User));
+            
             if ((bool)(!user.IsActivated)!)
             {
                 throw new BadRequestException("Account is not activated");
             }
+            
             var otp = new Otp
             {
                 UserId = user.Id,
                 Code = GenerateUtil.GenerateOtp(),
                 ExpireAt = DateTime.UtcNow.AddMinutes(5)
             };
+            
             await otpRepository.AddAsync(otp, cancellationToken);
             await otpRepository.SaveChangesAsync(cancellationToken);
+            
             var mailData = new MailData()
             {
                 EmailToId = user.Email,
                 EmailSubject = "Verify forgot password",
                 EmailBody = "Code: " + otp.Code
             };
+            
             await mailService.SendMailAsync(mailData, cancellationToken);
             return true;
         }

@@ -18,14 +18,14 @@ public class PaymentInfoCommand : IRequest<string>
     [Required]
     public Guid PaymentId { get; set; }
     
-    public class PaymentInfoCommandHandler(
-        IOptions<MomoOptionModel> options,
-        IPaymentRepository paymentRepository) : IRequestHandler<PaymentInfoCommand, string>
+    public class PaymentInfoCommandHandler(IOptions<MomoOptionModel> options, IPaymentRepository paymentRepository) 
+        : IRequestHandler<PaymentInfoCommand, string>
     {
         public async Task<string> Handle(PaymentInfoCommand request, CancellationToken cancellationToken)
         {
             var payment = await paymentRepository.GetPaymentByIdAsync(request.PaymentId, cancellationToken)
                           ?? throw new NotFoundException(nameof(Payment));
+            
             var paymentId = payment.Id.ToString();
             var paymentAmount = payment.TotalPrice.ToString(CultureInfo.CurrentCulture);
             var paymentInfo = "Thanh toán vé xem phim";
@@ -63,7 +63,7 @@ public class PaymentInfoCommand : IRequest<string>
 
             req.AddParameter("application/json", JsonConvert.SerializeObject(requestData), ParameterType.RequestBody);
 
-            var response = await client.ExecuteAsync(req);
+            var response = await client.ExecuteAsync(req, cancellationToken);
             var resp = JsonConvert.DeserializeObject<MomoCreatePayment>(response.Content!)!;
             return resp.PayUrl;
         }
