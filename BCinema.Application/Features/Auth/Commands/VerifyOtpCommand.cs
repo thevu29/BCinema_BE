@@ -19,15 +19,20 @@ public class VerifyOtpCommand : IRequest<bool>
         {
             var otp = await otpRepository.GetByCodeAsync(request.Code, cancellationToken)
                 ?? throw new NotFoundException(nameof(Otp));
+            
             if (otp.ExpireAt < DateTime.UtcNow)
             {
                 throw new BadRequestException("OTP is expired");
             }
+            
             var user = otp.User;
+            
             user.IsActivated = true;
-            await userRepository.SaveChangesAsync(cancellationToken);
             otp.IsVerified = true;
+            
+            await userRepository.SaveChangesAsync(cancellationToken);
             await otpRepository.SaveChangesAsync(cancellationToken);
+            
             return true;
         }
     }

@@ -13,6 +13,21 @@ namespace BCinema.API.Controllers;
 [ApiController]
 public class AuthController(IMediator mediator, ILogger<FoodController> logger) : ControllerBase
 {
+    [HttpPost("logout")]
+    public async Task<IActionResult> Logout()
+    {
+        try
+        {
+            await mediator.Send(new LogoutCommand());
+            return Ok(new ApiResponse<string>(true, "Logout successfully"));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occurred while logging out");
+            return StatusCode(500, new ApiResponse<string>(false, "An error occurred"));
+        }
+    }
+    
     
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginCommand command)
@@ -119,7 +134,7 @@ public class AuthController(IMediator mediator, ILogger<FoodController> logger) 
     {
         try
         {
-            bool resp = await mediator.Send(command);
+            var resp = await mediator.Send(command);
             return Ok(new ApiResponse<bool>(resp, resp ? "Password reset successfully" : "Password reset failed", resp));
         }
         catch (NotFoundException ex)
@@ -138,7 +153,7 @@ public class AuthController(IMediator mediator, ILogger<FoodController> logger) 
     {
         try
         {
-            bool resp = await mediator.Send(command);
+            var resp = await mediator.Send(command);
             return Ok(new ApiResponse<bool>(resp, resp ? "OTP sent successfully" : "OTP sent fail", resp));
         }
         catch (NotFoundException ex)
@@ -161,7 +176,7 @@ public class AuthController(IMediator mediator, ILogger<FoodController> logger) 
     {
         try
         {
-            bool resp = await mediator.Send(command);
+            var resp = await mediator.Send(command);
             return Ok(new ApiResponse<bool>(resp, resp ? "OTP verified successfully" : "OTP verified fail", resp));
         }
         catch (NotFoundException ex)
@@ -184,7 +199,7 @@ public class AuthController(IMediator mediator, ILogger<FoodController> logger) 
     {
         try
         {
-            bool resp = await mediator.Send(command);
+            var resp = await mediator.Send(command);
             return Ok(new ApiResponse<bool>(resp, resp ? "OTP resent successfully" : "OTP resent fail", resp));
         }
         catch (NotFoundException ex)

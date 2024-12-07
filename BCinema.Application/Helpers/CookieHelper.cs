@@ -2,7 +2,7 @@
 
 namespace BCinema.Application.Helpers;
 
-public class CookieHelper ()
+public class CookieHelper()
 {
     public static void SetCookie(string key, string value, IHttpContextAccessor httpContextAccessor)
     {

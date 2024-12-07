@@ -37,18 +37,23 @@ public class RegisterCommand : IRequest<UserDto>
                 Name = request.Name,
                 Provider = Provider.Local
             };
+            
             if (request.Avatar != null)
             {
                 await using var imageStream = request.Avatar.OpenReadStream();
                 user.Avatar = await fileStorageService.UploadImageAsync(
                     imageStream, Guid.NewGuid() + ".jpg");
             }
+            
             user.Password = passwordHasher.HashPassword(user, request.Password);
+            
             var role = await roleRepository.GetByNameAsync("User", cancellationToken)
                 ?? throw new NotFoundException(nameof(Role));
             user.Role = role;
+            
             await userRepository.AddAsync(user, cancellationToken);
             await userRepository.SaveChangesAsync(cancellationToken);
+            
             var otp = new Otp
             {
                 UserId = user.Id,
@@ -58,13 +63,16 @@ public class RegisterCommand : IRequest<UserDto>
             
             await otpRepository.AddAsync(otp, cancellationToken);
             await otpRepository.SaveChangesAsync(cancellationToken);
+            
             var mailData = new MailData()
             {
                 EmailToId = user.Email,
                 EmailSubject = "Verify account",
                 EmailBody = "Code: " + otp.Code
             };
+            
             await mailService.SendMailAsync(mailData, cancellationToken);
+            
             return mapper.Map<UserDto>(user);
         }
     }

@@ -20,20 +20,25 @@ public class RefreshTokenCommand : IRequest<JwtResponse>
         {
             var refreshToken = httpContextAccessor.HttpContext?.Request.Cookies["refresh-token"]
                 ?? throw new BadRequestException("Refresh token not exists");
+            
             var token = await tokenRepository.GetTokenByRefreshTokenAsync(refreshToken, cancellationToken)
                 ?? throw new BadRequestException("Refresh token not exists");
+            
             if (token.RefreshTokenExpireAt < DateTime.UtcNow)
             {
                 throw new BadRequestException("Refresh token is expired");
             }
+            
             var user = token.User;
             var role = await roleRepository.GetByIdAsync(user.RoleId, cancellationToken)
                 ?? throw new NotFoundException(nameof(Role));
+            
             user.Role = role;
             
-            token.RefreshToken = jwtProvider.GenerateRefreshToken();
+            token.RefreshToken = JwtProvider.GenerateRefreshToken();
             await tokenRepository.SaveChangesAsync(cancellationToken);
             CookieHelper.SetCookie("refresh-token", token.RefreshToken, httpContextAccessor);
+            
             return new JwtResponse()
             {
                 Type = "Bearer",

@@ -1,7 +1,9 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using BCinema.Application.Enums;
 using BCinema.Domain.Entities;
 using BCinema.Persistence.Context;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -47,7 +49,8 @@ public class RoleSeeder(ApplicationDbContext context, ILogger<RoleSeeder> logger
     }
 }
 
-public class UserSeeder(ApplicationDbContext context, ILogger<UserSeeder> logger) : IDataSeeder
+public class UserSeeder(ApplicationDbContext context, ILogger<UserSeeder> logger, IPasswordHasher<User> passwordHasher) 
+    : IDataSeeder
 {
     public int Order => 2;
 
@@ -64,39 +67,31 @@ public class UserSeeder(ApplicationDbContext context, ILogger<UserSeeder> logger
             var adminRole = await context.Roles.FirstOrDefaultAsync(r => r.Name == "Admin")
                 ?? throw new InvalidOperationException("Admin role not found");
 
-            var users = new List<User>
+            var user = new User()
             {
-                new()
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "Admin",
-                    Email = "admin@gmail.com",
-                    Password = HashPassword("admin"),
-                    RoleId = adminRole.Id
-                }
+                Id = Guid.NewGuid(),
+                Name = "Admin",
+                Email = "admin@gmail.com",
+                RoleId = adminRole.Id,
+                Provider = Provider.Local,
+                IsActivated = true
             };
+            user.Password = passwordHasher.HashPassword(user, "admin");
 
-            await context.Users.AddRangeAsync(users);
+            await context.Users.AddAsync(user);
             await context.SaveChangesAsync();
 
-            logger.LogInformation("Seeded {Count} users", users.Count);
+            logger.LogInformation("Seeded user");
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error seeding users");
+            logger.LogError(ex, "Error seeding user");
             throw;
         }
     }
-
-    private static string HashPassword(string password)
-    {
-        var hashedBytes = SHA256.HashData(Encoding.UTF8.GetBytes(password));
-        return BitConverter.ToString(hashedBytes).Replace("-", "").ToLower();
-    }
 }
 
-public class SeatTypeSeeder(ApplicationDbContext context, ILogger<SeatTypeSeeder> logger)
-    : IDataSeeder
+public class SeatTypeSeeder(ApplicationDbContext context, ILogger<SeatTypeSeeder> logger) : IDataSeeder
 {
     public int Order => 3;
 

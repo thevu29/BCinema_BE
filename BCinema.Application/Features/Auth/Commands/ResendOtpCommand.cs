@@ -21,8 +21,10 @@ public class ResendOtpCommand : IRequest<bool>
         {
             var user = await userRepository.GetByEmailAndProviderAsync(request.Email, Provider.Local, cancellationToken)
                        ?? throw new NotFoundException(nameof(User));
+            
             var otp = await otpRepository.GetByUserIdAsync(user.Id, cancellationToken)
                       ?? throw new NotFoundException(nameof(Otp));
+            
             if (otp.Attempts >= 5)
             {
                 otpRepository.Delete(otp);
@@ -30,20 +32,23 @@ public class ResendOtpCommand : IRequest<bool>
                 userRepository.Delete(user);
                 throw new BadRequestException("You have reached the maximum number of attempts");
             }
+            
             otp.Code = GenerateUtil.GenerateOtp();
             otp.ExpireAt = DateTime.UtcNow.AddMinutes(5);
             otp.Attempts++;
+            
             await otpRepository.SaveChangesAsync(cancellationToken);
+            
             var mailData = new MailData()
             {
                 EmailToId = user.Email,
                 EmailSubject = "Verify account",
                 EmailBody = "Code: " + otp.Code
             };
+            
             await mailService.SendMailAsync(mailData, cancellationToken);
+            
             return true;
         }
-
-        
     }
 }

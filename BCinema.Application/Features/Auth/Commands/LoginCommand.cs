@@ -27,8 +27,9 @@ public class LoginCommand : IRequest<JwtResponse>
     {
         public async Task<JwtResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
-            var user = await userRepository.GetByEmailAndProviderAsync(request.Email, Provider.Local,
-                cancellationToken) ?? throw new BadRequestException("Invalid email");
+            var user = await userRepository.GetByEmailAndProviderAsync(request.Email, Provider.Local, cancellationToken) 
+                       ?? throw new BadRequestException("Invalid email");
+            
             if ((bool)(!user.IsActivated)!)
             {
                 throw new BadRequestException("Account is not activated");
@@ -37,16 +38,19 @@ public class LoginCommand : IRequest<JwtResponse>
             {
                 throw new BadRequestException("Invalid password");
             }
-            var refreshToken = jwtProvider.GenerateRefreshToken();
+            
+            var refreshToken = JwtProvider.GenerateRefreshToken();
             var token = new Token()
             {
                 RefreshToken = refreshToken,
                 RefreshTokenExpireAt = DateTime.UtcNow.AddDays(7),
                 UserId = user.Id
             };
+            
             await tokenRepository.AddTokenAsync(token, cancellationToken);
             await tokenRepository.SaveChangesAsync(cancellationToken);
             CookieHelper.SetCookie("refresh-token", refreshToken, httpContextAccessor);
+            
             return new JwtResponse()
             {
                 Type = "Bearer",

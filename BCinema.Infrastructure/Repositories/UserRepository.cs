@@ -23,9 +23,7 @@ namespace BCinema.Infrastructure.Repositories
                 .FirstOrDefaultAsync(u => u.Email == email && u.Provider == provider, cancellationToken);
         }
 
-        public async Task<bool> AnyAsync(
-            Expression<Func<User, bool>> predicate,
-            CancellationToken cancellationToken)
+        public async Task<bool> AnyAsync(Expression<Func<User, bool>> predicate, CancellationToken cancellationToken)
         {
             return await _context.Users.AnyAsync(predicate, cancellationToken);
         }

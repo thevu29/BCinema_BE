@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BCinema.Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -62,6 +62,7 @@ namespace BCinema.Persistence.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Price = table.Column<double>(type: "double precision", nullable: false),
+                    DeleteAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     CreateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -95,6 +96,7 @@ namespace BCinema.Persistence.Migrations
                     Password = table.Column<string>(type: "text", nullable: false),
                     Avatar = table.Column<string>(type: "text", nullable: true),
                     Point = table.Column<int>(type: "integer", nullable: true),
+                    IsActivated = table.Column<bool>(type: "boolean", nullable: true),
                     Provider = table.Column<string>(type: "text", nullable: true),
                     RoleId = table.Column<Guid>(type: "uuid", nullable: false),
                     DeleteAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
@@ -119,6 +121,7 @@ namespace BCinema.Persistence.Migrations
                     Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
                     MovieId = table.Column<int>(type: "integer", nullable: false),
+                    MovieName = table.Column<string>(type: "text", nullable: false),
                     RoomId = table.Column<Guid>(type: "uuid", nullable: false),
                     Runtime = table.Column<int>(type: "integer", nullable: false),
                     CreateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
@@ -158,6 +161,29 @@ namespace BCinema.Persistence.Migrations
                         name: "FK_Seats_SeatTypes_SeatTypeId",
                         column: x => x.SeatTypeId,
                         principalTable: "SeatTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Otps",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Code = table.Column<string>(type: "text", nullable: false),
+                    Attempts = table.Column<int>(type: "integer", nullable: false),
+                    IsVerified = table.Column<bool>(type: "boolean", nullable: false),
+                    ExpireAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    CreateAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Otps", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Otps_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -304,6 +330,11 @@ namespace BCinema.Persistence.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Otps_UserId",
+                table: "Otps",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PaymentDetails_FoodId",
                 table: "PaymentDetails",
                 column: "FoodId");
@@ -382,6 +413,9 @@ namespace BCinema.Persistence.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Otps");
+
             migrationBuilder.DropTable(
                 name: "PaymentDetails");
 

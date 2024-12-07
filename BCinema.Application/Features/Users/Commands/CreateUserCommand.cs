@@ -31,11 +31,11 @@ namespace BCinema.Application.Features.Users.Commands
                 var role = await roleRepository
                     .GetByIdAsync(request.RoleId, cancellationToken)
                     ?? throw new NotFoundException(nameof(Role));
-
                 
                 var user = mapper.Map<User>(request);
                 user.Provider = Provider.Local;
                 user.Password = passwordHasher.HashPassword(user, request.Password);
+                user.Role = role;
 
                 if (request.Avatar != null)
                 {
