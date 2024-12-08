@@ -56,7 +56,7 @@ public class AuthController(IMediator mediator, ILogger<FoodController> logger) 
         }
     }
     
-    [HttpPost("login/oauth2/code/google")]
+    [HttpPost("login/oauth2/google")]
     public async Task<IActionResult> LoginGoogle([FromBody] LoginGoogleCommand command)
     {
         try
