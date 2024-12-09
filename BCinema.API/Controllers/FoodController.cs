@@ -12,7 +12,6 @@ namespace BCinema.API.Controllers;
 
 [Route("api/foods")]
 [ApiController]
-[Authorize]
 public class FoodController(IMediator mediator, ILogger<FoodController> logger) : ControllerBase
 {
     [HttpGet("all")]
@@ -60,7 +59,7 @@ public class FoodController(IMediator mediator, ILogger<FoodController> logger) 
         }
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetFoodById(Guid id)
     {
         try
@@ -79,7 +78,7 @@ public class FoodController(IMediator mediator, ILogger<FoodController> logger) 
         }
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteFood(Guid id)
     {
@@ -99,9 +98,9 @@ public class FoodController(IMediator mediator, ILogger<FoodController> logger) 
         }
     }
     
-    [HttpPut("{id}")]
+    [HttpPut("{id:guid}")]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> UpdateFood(Guid id, [FromBody] UpdateFoodCommand command)
+    public async Task<IActionResult> UpdateFood(Guid id, [FromForm] UpdateFoodCommand command)
     {
         try
         {
@@ -126,7 +125,7 @@ public class FoodController(IMediator mediator, ILogger<FoodController> logger) 
 
     [HttpPost]
     [Authorize(Roles = "Admin")]
-    public async Task<IActionResult> CreateFood([FromBody] CreateFoodCommand command)
+    public async Task<IActionResult> CreateFood([FromForm] CreateFoodCommand command)
     {
         try
         {

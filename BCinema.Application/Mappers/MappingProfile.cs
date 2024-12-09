@@ -102,7 +102,8 @@ namespace BCinema.Application.Mappers
             CreateMap<UpdateFoodCommand, Food>()
                 .ForMember(dest => dest.Name, opt => opt.Condition(src => src.Name != null))
                 .ForMember(dest => dest.Price, opt => opt.Condition(src => src.Price != null))
-                .ForMember(dest => dest.Quantity, opt => opt.Condition(src => src.Quantity != null));
+                .ForMember(dest => dest.Quantity, opt => opt.Condition(src => src.Quantity != null))
+                .ForMember(dest => dest.Image, opt => opt.Ignore());
             
             // Payment
             CreateMap<Payment, PaymentDto>()
