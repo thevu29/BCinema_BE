@@ -37,6 +37,7 @@ public class RefreshTokenCommand : IRequest<JwtResponse>
             
             token.RefreshToken = JwtProvider.GenerateRefreshToken();
             await tokenRepository.SaveChangesAsync(cancellationToken);
+            
             CookieHelper.SetCookie("refresh-token", token.RefreshToken, httpContextAccessor);
             
             return new JwtResponse()

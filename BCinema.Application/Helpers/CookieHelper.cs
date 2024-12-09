@@ -9,9 +9,9 @@ public class CookieHelper()
         var option = new CookieOptions
         {
             HttpOnly = true,
-            Secure = false,
-            SameSite = SameSiteMode.Strict,
-            Expires = DateTime.UtcNow.AddDays(1),
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Expires = DateTime.UtcNow.AddDays(7),
         };
         httpContextAccessor.HttpContext?.Response.Cookies.Append(key, value, option);
     }

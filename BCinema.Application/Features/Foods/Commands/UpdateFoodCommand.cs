@@ -26,7 +26,6 @@ public class UpdateFoodCommand : IRequest<FoodDto>
         {
             var food = await foodRepository.GetFoodByIdAsync(request.Id, cancellationToken)
                 ?? throw new NotFoundException(nameof(Food));
-
             
             if (request.Image != null)
             {
