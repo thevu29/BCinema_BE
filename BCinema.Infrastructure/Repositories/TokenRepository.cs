@@ -38,4 +38,16 @@ public class TokenRepository : ITokenRepository
         _context.Tokens.RemoveRange(tokens);
         await _context.SaveChangesAsync(cancellationToken);
     }
+    
+    public async Task DeleteRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken)
+    {
+        var token = await _context.Tokens
+            .FirstOrDefaultAsync(t => t.RefreshToken == refreshToken, cancellationToken);
+        
+        if (token is not null)
+        {
+            _context.Tokens.Remove(token);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+    }
 }
