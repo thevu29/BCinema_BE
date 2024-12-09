@@ -14,6 +14,14 @@ namespace BCinema.Infrastructure.Repositories
         {
             _context = context;
         }
+        
+        public Task<User?> GetByEmailAndProviderAsync(string email, string provider, CancellationToken cancellationToken)
+        {
+            return _context.Users
+                .Include(u => u.Role)
+                .Where(u => u.DeleteAt == null)
+                .FirstOrDefaultAsync(u => u.Email == email && u.Provider == provider, cancellationToken);
+        }
 
         public async Task<bool> AnyAsync(
             Expression<Func<User, bool>> predicate,
@@ -37,6 +45,12 @@ namespace BCinema.Infrastructure.Repositories
         public async Task AddAsync(User user, CancellationToken cancellationToken)
         {
             await _context.Users.AddAsync(user, cancellationToken);
+        }
+
+        public void Delete(User user)
+        {
+            _context.Users.Remove(user);
+            _context.SaveChanges();
         }
 
         public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
@@ -63,6 +77,13 @@ namespace BCinema.Infrastructure.Repositories
         public async Task SaveChangesAsync(CancellationToken cancellationToken)
         {
             await _context.SaveChangesAsync(cancellationToken);
+        }
+
+        public Task DeleteInActiveUsersAsync(CancellationToken cancellationToken)
+        {
+            var users = _context.Users.Where(u => u.IsActivated == false);
+            _context.Users.RemoveRange(users);
+            return _context.SaveChangesAsync(cancellationToken);
         }
         
         public async Task<int> CountAsync(int year, int month, CancellationToken cancellationToken)

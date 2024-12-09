@@ -45,4 +45,10 @@ public class PaymentDetailRepository : IPaymentDetailRepository
     {
         await _context.SaveChangesAsync(cancellationToken);
     }
+
+    public Task DeletePaymentDetails(IEnumerable<PaymentDetail> paymentDetails, CancellationToken cancellationToken)
+    {
+        _context.PaymentDetails.RemoveRange(paymentDetails);
+        return Task.CompletedTask;
+    }
 }

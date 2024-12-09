@@ -6,10 +6,12 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using BCinema.Application.Exceptions;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BCinema.API.Controllers
 {
     [Route("api/roles")]
+    [Authorize]
     [ApiController]
     public class RoleController(IMediator mediator, ILogger<RoleController> logger) : ControllerBase
     {
@@ -29,6 +31,7 @@ namespace BCinema.API.Controllers
         }
         
         [HttpPut("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<RoleDto>> UpdateRole(Guid id, [FromBody] UpdateRoleCommand command)
         {
             try
@@ -53,6 +56,7 @@ namespace BCinema.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<RoleDto>> CreateRole([FromBody] CreateRoleCommand command)
         {
             try

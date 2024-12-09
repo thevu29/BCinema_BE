@@ -69,6 +69,12 @@ public class PaymentRepository(ApplicationDbContext context) : IPaymentRepositor
     {
         await context.SaveChangesAsync(cancellationToken);
     }
+
+    public Task DeletePaymentAsync(Payment payment, CancellationToken cancellationToken)
+    {
+        context.Payments.Remove(payment);
+        return Task.CompletedTask;
+    }
     
     public async Task<double> GetStatisticsRevenueAsync(int year, int month, CancellationToken cancellationToken)
     {

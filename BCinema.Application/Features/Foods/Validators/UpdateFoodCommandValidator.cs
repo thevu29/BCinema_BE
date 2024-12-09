@@ -12,5 +12,8 @@ public class UpdateFoodCommandValidator : AbstractValidator<UpdateFoodCommand>
 
         RuleFor(x => x.Price)
             .Must(price => price is null or > 0).WithMessage("Price must be greater than 0");
+        
+        RuleFor(x => x.Quantity)
+            .Must(quantity => quantity is null or > 0).WithMessage("Quantity must be greater than 0");
     }
 }

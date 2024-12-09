@@ -5,6 +5,7 @@ using BCinema.Application.Features.Foods.Commands;
 using BCinema.Application.Features.Foods.Queries;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BCinema.API.Controllers;
@@ -58,7 +59,7 @@ public class FoodController(IMediator mediator, ILogger<FoodController> logger) 
         }
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetFoodById(Guid id)
     {
         try
@@ -77,7 +78,8 @@ public class FoodController(IMediator mediator, ILogger<FoodController> logger) 
         }
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteFood(Guid id)
     {
         try
@@ -96,8 +98,9 @@ public class FoodController(IMediator mediator, ILogger<FoodController> logger) 
         }
     }
     
-    [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateFood(Guid id, [FromBody] UpdateFoodCommand command)
+    [HttpPut("{id:guid}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> UpdateFood(Guid id, [FromForm] UpdateFoodCommand command)
     {
         try
         {
@@ -121,7 +124,8 @@ public class FoodController(IMediator mediator, ILogger<FoodController> logger) 
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateFood([FromBody] CreateFoodCommand command)
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> CreateFood([FromForm] CreateFoodCommand command)
     {
         try
         {

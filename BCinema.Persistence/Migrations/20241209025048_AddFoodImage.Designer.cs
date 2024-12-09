@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BCinema.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241119140532_v3")]
-    partial class v3
+    [Migration("20241209025048_AddFoodImage")]
+    partial class AddFoodImage
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,6 +37,10 @@ namespace BCinema.Persistence.Migrations
                     b.Property<DateTime?>("DeleteAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -50,6 +54,38 @@ namespace BCinema.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Foods");
+                });
+
+            modelBuilder.Entity("BCinema.Domain.Entities.Otp", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ExpireAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("boolean");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Otps");
                 });
 
             modelBuilder.Entity("BCinema.Domain.Entities.Payment", b =>
@@ -327,6 +363,9 @@ namespace BCinema.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool?>("IsActivated")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
@@ -400,6 +439,17 @@ namespace BCinema.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Vouchers");
+                });
+
+            modelBuilder.Entity("BCinema.Domain.Entities.Otp", b =>
+                {
+                    b.HasOne("BCinema.Domain.Entities.User", "User")
+                        .WithMany("Otps")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BCinema.Domain.Entities.Payment", b =>
@@ -584,6 +634,8 @@ namespace BCinema.Persistence.Migrations
 
             modelBuilder.Entity("BCinema.Domain.Entities.User", b =>
                 {
+                    b.Navigation("Otps");
+
                     b.Navigation("Payments");
 
                     b.Navigation("Tokens");

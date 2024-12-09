@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BCinema.API.Controllers;
 
 [Route("api/payments")]
+// [Authorize]
 [ApiController]
 public class PaymentController(IMediator mediator, ILogger<PaymentController> logger) : ControllerBase
 {
@@ -86,6 +87,51 @@ public class PaymentController(IMediator mediator, ILogger<PaymentController> lo
         {
             logger.LogError(ex, "An error occurred while creating a payment");
             return StatusCode(500, new ApiResponse<string>(false, "An error occurred while creating a payment"));
+        }
+    }
+    
+    [HttpPost("momo")]
+    public async Task<IActionResult> CreatePaymentUrl([FromBody] PaymentInfoCommand command, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var paymentUrl = await mediator.Send(command, cancellationToken);
+            return Ok(new ApiResponse<string>(true, "Payment url created successfully", paymentUrl));
+        }
+        catch (NotFoundException ex)
+        {
+            return NotFound(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (BadRequestException ex)
+        {
+            return NotFound(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occurred while creating a payment url");
+            return StatusCode(500, new ApiResponse<string>(false, "An error occurred while creating a payment url"));
+        }
+    }
+    
+    [HttpGet("momo/callback")]
+    public async Task<IActionResult> MomoCallback([FromQuery] MomoCallbackCommand command, CancellationToken cancellationToken)
+    {
+        var redirectUrl = $"http://localhost:3000/order-status?orderId={command.OrderId}&error_code=";
+        
+        try
+        {
+            var resp = await mediator.Send(command, cancellationToken);
+            return Redirect(redirectUrl + resp);
+        }
+        catch (NotFoundException ex)
+        {
+            logger.LogError(ex, "An error occurred while processing momo callback");
+            return Redirect(redirectUrl + "404");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occurred while processing momo callback");
+            return Redirect(redirectUrl + "500");
         }
     }
     
