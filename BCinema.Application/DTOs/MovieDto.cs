@@ -13,8 +13,7 @@ namespace BCinema.Application.DTOs
         [JsonProperty("backdrop_path")]
         public string? BackdropPath { get; set; }
 
-        [JsonProperty("genre_ids")]
-        public IEnumerable<int>? Genres { get; set; }
+        public new IEnumerable<MovieGenreDto> Genres { get; set; } = default!;
 
         [JsonProperty("original_language")]
         public string? OriginalLanguage { get; set; }
