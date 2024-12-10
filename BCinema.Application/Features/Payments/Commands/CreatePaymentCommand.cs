@@ -66,7 +66,7 @@ public class CreatePaymentCommand : IRequest<PaymentDto>
                 payment.TotalPrice -= payment.TotalPrice * voucherDiscount;
             }
 
-            user.Point = CalculateTotalPoint(payment);
+            user.Point += CalculateTotalPoint(payment);
             
             await using (var transaction = await paymentRepository.BeginTransactionAsync(cancellationToken))
             {

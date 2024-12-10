@@ -68,7 +68,7 @@ public class PaymentInfoCommand : IRequest<string>
             return resp.PayUrl;
         }
         
-        private string ComputeHmacSha256(string message, string secretKey)
+        private static string ComputeHmacSha256(string message, string secretKey)
         {
             var keyBytes = Encoding.UTF8.GetBytes(secretKey);
             var messageBytes = Encoding.UTF8.GetBytes(message);
