@@ -115,13 +115,15 @@ public class PaymentController(IMediator mediator, ILogger<PaymentController> lo
     }
     
     [HttpGet("momo/callback")]
+    [AllowAnonymous]
     public async Task<IActionResult> MomoCallback([FromQuery] MomoCallbackCommand command, CancellationToken cancellationToken)
     {
-        var redirectUrl = $"http://localhost:3000/order-status?orderId={command.OrderId}&error_code=";
+        var redirectUrl = $"http://localhost:5173/payment-status?orderId={command.OrderId}&error_code=";
         
         try
         {
             var resp = await mediator.Send(command, cancellationToken);
+            logger.LogInformation("Response from mediator: {Resp}", resp);
             return Redirect(redirectUrl + resp);
         }
         catch (NotFoundException ex)
