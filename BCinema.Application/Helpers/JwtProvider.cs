@@ -25,7 +25,8 @@ public class JwtProvider(IConfiguration configuration)
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.Role, user.Role.Name),
                 new Claim("name", user.Name),
-                new Claim("image", user.Avatar ?? "")
+                new Claim("image", user.Avatar ?? ""),
+                new Claim("point", user.Point.ToString() ?? "0")
             ]),
             Expires = DateTime.UtcNow.AddMinutes(1),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),

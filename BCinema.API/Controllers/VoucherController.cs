@@ -108,12 +108,9 @@ public class VoucherController(IMediator mediator, ILogger<VoucherController> lo
     {
         try
         {
-            var userVoucher = await mediator.Send(
-                new GetUserVoucherByUIdAndVCodeQuery() { UserId = userId, Code = code });
-            
-            return userVoucher == null 
-                ? Ok(new ApiResponse<string>(true, "User hasn't used this voucher")) 
-                : Ok(new ApiResponse<UserVoucherDto>(true, "User has used this voucher", userVoucher));
+            var userVoucher = await mediator.Send(new GetUserVoucherByUIdAndVCodeQuery() { UserId = userId, Code = code });
+
+            return Ok(new ApiResponse<UseVoucherDto>(true, "Check user used voucher successfully", userVoucher));
         }
         catch (NotFoundException ex)
         {

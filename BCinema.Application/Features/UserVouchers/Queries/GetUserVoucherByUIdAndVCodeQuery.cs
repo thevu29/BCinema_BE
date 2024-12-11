@@ -7,7 +7,7 @@ using MediatR;
 
 namespace BCinema.Application.Features.UserVouchers.Queries;
 
-public class GetUserVoucherByUIdAndVCodeQuery : IRequest<UserVoucherDto?>
+public class GetUserVoucherByUIdAndVCodeQuery : IRequest<UseVoucherDto>
 {
     public Guid UserId { get; set; }
     public string Code { get; set; } = default!;
@@ -16,9 +16,9 @@ public class GetUserVoucherByUIdAndVCodeQuery : IRequest<UserVoucherDto?>
         IUserVoucherRepository userVoucherRepository,
         IUserRepository userRepository,
         IVoucherRepository voucherRepository,
-        IMapper mapper) : IRequestHandler<GetUserVoucherByUIdAndVCodeQuery, UserVoucherDto?>
+        IMapper mapper) : IRequestHandler<GetUserVoucherByUIdAndVCodeQuery, UseVoucherDto>
     {
-        public async Task<UserVoucherDto?> Handle(GetUserVoucherByUIdAndVCodeQuery request, CancellationToken cancellationToken)
+        public async Task<UseVoucherDto> Handle(GetUserVoucherByUIdAndVCodeQuery request, CancellationToken cancellationToken)
         {
             var user = await userRepository.GetByIdAsync(request.UserId, cancellationToken) 
                        ?? throw new NotFoundException(nameof(User));
@@ -29,7 +29,14 @@ public class GetUserVoucherByUIdAndVCodeQuery : IRequest<UserVoucherDto?>
             var userVoucher = await userVoucherRepository
                 .GetUserVoucherByUIdAndVIdAsync(user.Id, voucher.Id, cancellationToken);
 
-            return userVoucher != null ? mapper.Map<UserVoucherDto>(userVoucher) : null; 
+            var useVoucherDto = new UseVoucherDto { VoucherId = voucher.Id, UserId = user.Id, IsUsed = false };
+            
+            if (userVoucher is not null)
+            {
+                useVoucherDto.IsUsed = true;
+            }
+            
+            return useVoucherDto;
         }
     }
 }
