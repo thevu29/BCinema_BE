@@ -4,6 +4,7 @@ using BCinema.Application.Helpers;
 using BCinema.Domain.Entities;
 using BCinema.Domain.Interfaces.IRepositories;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace BCinema.Application.Features.Payments.Queries;
 
@@ -17,7 +18,17 @@ public class GetPaymentsQuery : IRequest<PaginatedList<PaymentDto>>
         public async Task<PaginatedList<PaymentDto>> Handle(GetPaymentsQuery request, CancellationToken cancellationToken)
         {
             var query = paymentRepository.GetPayments();
-            
+
+            if (!string.IsNullOrEmpty(request.Query.Search))
+            {
+                var searchTerm = request.Query.Search.Trim().ToLower();    
+                
+                query = query.Where(x => 
+                    EF.Functions.Like(x.Schedule.MovieName.ToLower(), $"%{searchTerm}%") ||
+                    EF.Functions.Like(x.Voucher != null ? x.Voucher.Code.ToLower() : "", 
+                        $"%{searchTerm}%")
+                    );
+            }
             if (request.Query.UserId.HasValue)
             {
                 query = query.Where(x => x.UserId == request.Query.UserId);
