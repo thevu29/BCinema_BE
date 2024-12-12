@@ -123,7 +123,7 @@ public class PaymentController(IMediator mediator, ILogger<PaymentController> lo
         try
         {
             var resp = await mediator.Send(command, cancellationToken);
-            logger.LogInformation("Response from mediator: {Resp}", resp);
+
             return Redirect(redirectUrl + resp);
         }
         catch (NotFoundException ex)
