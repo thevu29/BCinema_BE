@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Mail;
+using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -24,7 +25,18 @@ public class MailService(
             smtpClient.EnableSsl = true;
             
             smtpClient.Credentials = new NetworkCredential(email, password);
-            var mailMessage = new MailMessage(email!, mailData.EmailToId, mailData.EmailSubject, mailData.EmailBody);
+            
+            var mailMessage = new MailMessage
+            {
+                From = new MailAddress(email!, "BCinema"),
+                Subject = mailData.EmailSubject,
+                Body = mailData.EmailBody,
+                IsBodyHtml = true,
+                BodyEncoding = Encoding.UTF8,
+                SubjectEncoding = Encoding.UTF8
+            };
+            mailMessage.To.Add(mailData.EmailToId);
+        
             await smtpClient.SendMailAsync(mailMessage, cancellationToken);
             return true;
         }

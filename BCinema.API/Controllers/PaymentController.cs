@@ -92,7 +92,7 @@ public class PaymentController(IMediator mediator, ILogger<PaymentController> lo
     }
     
     [HttpPost("momo")]
-    public async Task<IActionResult> CreatePaymentUrl([FromBody] PaymentInfoCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreatePaymentUrl([FromBody] CreateMomoUrlCommand command, CancellationToken cancellationToken)
     {
         try
         {
@@ -118,12 +118,11 @@ public class PaymentController(IMediator mediator, ILogger<PaymentController> lo
     [AllowAnonymous]
     public async Task<IActionResult> MomoCallback([FromQuery] MomoCallbackCommand command, CancellationToken cancellationToken)
     {
-        var redirectUrl = $"http://localhost:5173/payment-status?orderId={command.OrderId}&error_code=";
-            
+        var redirectUrl = $"http://localhost:3000/order-status?orderId={command.OrderId}&error_code=";
+        
         try
         {
             var resp = await mediator.Send(command, cancellationToken);
-
             return Redirect(redirectUrl + resp);
         }
         catch (NotFoundException ex)
