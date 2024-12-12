@@ -8,7 +8,7 @@ namespace BCinema.Application.Features.Payments.Commands;
 public class MomoCallbackCommand : IRequest<string>
 {
     public string OrderId { get; set; } = default!;
-    private string ErrorCode { get; set; } = default!;
+    public string ErrorCode { get; set; } = default!;
     
     public class MomoCallbackCommandHandler(
         IPaymentRepository paymentRepository,

@@ -58,7 +58,10 @@ public class LoginGoogleCommand : IRequest<JwtResponse>
                 }
                 else
                 {
-                    user.Name = payload.Name;
+                    if (string.IsNullOrEmpty(user.Name))
+                    {
+                        user.Name = payload.Name;
+                    }
 
                     if (!string.IsNullOrEmpty(user.Avatar))
                     {
