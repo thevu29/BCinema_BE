@@ -53,7 +53,8 @@ public class GetPaymentsQuery : IRequest<PaginatedList<PaymentDto>>
         {
             var allowedSortColumns = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
-                nameof(Payment.Date)
+                nameof(Payment.Date),
+                nameof(Payment.TotalPrice)
             };
             
             if (string.IsNullOrWhiteSpace(sortBy) || !allowedSortColumns.Contains(sortBy))
