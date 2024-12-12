@@ -25,9 +25,4 @@
     <ProjectReference Include="..\BCinema.Domain\BCinema.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\PaymentMomo\Commands\" />
-    <Folder Include="Features\PaymentMomo\Validators\" />
-  </ItemGroup>
-
 </Project>

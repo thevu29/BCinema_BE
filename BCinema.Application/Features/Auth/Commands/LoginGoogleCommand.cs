@@ -46,7 +46,7 @@ public class LoginGoogleCommand : IRequest<JwtResponse>
                         Name = payload.Name,
                         Avatar = payload.Picture,
                         Provider = Provider.Google,
-                        Password = "google",
+                        Password = null,
                         IsActivated = true
                     };
                     

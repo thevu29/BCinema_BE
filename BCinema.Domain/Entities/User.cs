@@ -10,8 +10,7 @@ namespace BCinema.Domain.Entities
         public string Name { get; set; } = default!;
         [Required]
         public string Email { get; set; } = default!;
-        [Required]
-        public string Password { get; set; } = default!;
+        public string? Password { get; set; } = default!;
         public string? Avatar { get; set; }
         public int? Point { get; set; } = 0;
         public bool? IsActivated { get; set; } = false;
