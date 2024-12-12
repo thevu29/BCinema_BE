@@ -15,7 +15,6 @@ public class MomoService(IOptions<MomoOptionModel> options) : IMomoService
             $"&accessKey={options.Value.AccessKey}" +
             $"&requestId={paymentId}" +
             $"&amount={amount}" +
-            $"&orderExpireTime=5" +
             $"&orderId={paymentId}" +
             $"&orderInfo={paymentInfo}" +
             $"&returnUrl={options.Value.ReturnUrl}" +
@@ -37,7 +36,6 @@ public class MomoService(IOptions<MomoOptionModel> options) : IMomoService
             returnUrl = options.Value.ReturnUrl,
             orderId = paymentId,
             amount = amount,
-            orderExpireTime = 5,
             orderInfo = paymentInfo,
             requestId = paymentId,
             signature = signature
