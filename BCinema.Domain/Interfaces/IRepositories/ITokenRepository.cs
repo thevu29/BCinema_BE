@@ -8,4 +8,5 @@ public interface ITokenRepository
     Task<Token?> GetTokenByRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken);
     Task SaveChangesAsync(CancellationToken cancellationToken);
     Task DeleteByUserIdAsync(Guid userId, CancellationToken cancellationToken);
+    Task DeleteRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken);
 }

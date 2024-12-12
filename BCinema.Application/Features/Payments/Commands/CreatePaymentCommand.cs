@@ -12,6 +12,7 @@ public class CreatePaymentCommand : IRequest<PaymentDto>
     public Guid UserId { get; set; }
     public Guid ScheduleId { get; set; }
     public Guid? VoucherId { get; set; }
+    public int? Point { get; set; }
     public IEnumerable<PaymentDetailDto> PaymentDetails { get; set; } = default!;
 
     public class CreatePaymentCommandHandler(
@@ -66,7 +67,15 @@ public class CreatePaymentCommand : IRequest<PaymentDto>
                 payment.TotalPrice -= payment.TotalPrice * voucherDiscount;
             }
 
-            user.Point = CalculateTotalPoint(payment);
+            user.Point += CalculateTotalPoint(payment);
+            
+            if (request.Point is not null && request.Point > 100)
+            {
+                user.Point -= request.Point;
+                
+                var pointDiscount = (double) (request.Point * 100000) / 100.0;
+                payment.TotalPrice -= pointDiscount;
+            }
             
             await using (var transaction = await paymentRepository.BeginTransactionAsync(cancellationToken))
             {
@@ -105,7 +114,7 @@ public class CreatePaymentCommand : IRequest<PaymentDto>
         
         private static int CalculateTotalPoint(Payment payment)
         {
-            return (int) payment.TotalPrice / 10;
+            return payment.TotalPrice >= 100000 ? (int) payment.TotalPrice / 10000 : 0;
         }
         
         private async Task UseVoucherAsync(User user, Voucher voucher, CancellationToken cancellationToken)
@@ -157,7 +166,7 @@ public class CreatePaymentCommand : IRequest<PaymentDto>
                     
                     paymentDetail.SeatSchedule = seatSchedule;
                     paymentDetail.Price = seatSchedule.Seat.SeatType.Price;
-                    seatSchedule.Status = SeatSchedule.SeatScheduleStatus.Booked;
+                    seatSchedule.Status = SeatSchedule.SeatScheduleStatus.Bought;
                 }
                 
                 if (paymentDetailDto.FoodId is not null)

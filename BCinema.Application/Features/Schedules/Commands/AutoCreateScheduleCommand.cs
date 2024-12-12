@@ -143,8 +143,8 @@ public class AutoCreateScheduleCommand : IRequest<IEnumerable<SchedulesDto>>
         int requiredSlots)
     {
         var result = new List<TimeSlot>();
-        var currentTime = RoundToNearestInterval(workingStart);
-    
+        var currentTime = workingStart;
+
         while (currentTime.AddMinutes(movieDuration.TotalMinutes) <= workingEnd && result.Count < requiredSlots)
         {
             var potentialSlot = new TimeSlot
@@ -156,7 +156,7 @@ public class AutoCreateScheduleCommand : IRequest<IEnumerable<SchedulesDto>>
             if (IsSlotAvailable(potentialSlot, busySlots))
             {
                 result.Add(potentialSlot);
-                currentTime = RoundToNearestInterval(currentTime.AddMinutes(movieDuration.TotalMinutes + 15));
+                currentTime = RoundToNearestInterval(potentialSlot.End.AddMinutes(15));
             }
             else
             {
@@ -166,37 +166,18 @@ public class AutoCreateScheduleCommand : IRequest<IEnumerable<SchedulesDto>>
 
         return result;
     }
-    
+
     private static TimeOnly RoundToNearestInterval(TimeOnly time)
     {
         var totalMinutes = time.Hour * 60 + time.Minute;
-        
-        if (totalMinutes % 30 == 0) return time;
-        if (totalMinutes % 20 == 0) return time;
-        if (totalMinutes % 15 == 0) return time;
-        
-        foreach (var interval in new[] { 15, 20, 30 })
-        {
-            var nextInterval = ((totalMinutes + interval - 1) / interval) * interval;
-            if (nextInterval > totalMinutes)
-            {
-                return new TimeOnly(nextInterval / 60, nextInterval % 60);
-            }
-        }
-        
-        var next15Min = ((totalMinutes + 14) / 15) * 15;
-        return new TimeOnly(next15Min / 60, next15Min % 60);
+        var roundedMinutes = ((totalMinutes + 7) / 15) * 15;
+    
+        return new TimeOnly(roundedMinutes / 60, roundedMinutes % 60);
     }
 
     private static bool IsSlotAvailable(TimeSlot newSlot, List<TimeSlot> busySlots)
     {
-        foreach (var busySlot in busySlots)
-        {
-            if (newSlot.Start < busySlot.End && busySlot.Start < newSlot.End)
-            {
-                return false;
-            }
-        }
-        return true;
+        return !busySlots.Any(busySlot =>
+            newSlot.Start < busySlot.End && newSlot.End > busySlot.Start);
     }
 }

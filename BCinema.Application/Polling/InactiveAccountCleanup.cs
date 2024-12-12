@@ -8,7 +8,6 @@ namespace BCinema.Application.Polling;
 public class InactiveAccountCleanup(IServiceProvider serviceProvider, ILogger<InactiveAccountCleanup> logger)
     : BackgroundService
 {
-
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)

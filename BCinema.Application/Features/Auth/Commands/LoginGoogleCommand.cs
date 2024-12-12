@@ -59,7 +59,11 @@ public class LoginGoogleCommand : IRequest<JwtResponse>
                 else
                 {
                     user.Name = payload.Name;
-                    user.Avatar = payload.Picture;
+
+                    if (!string.IsNullOrEmpty(user.Avatar))
+                    {
+                        user.Avatar = payload.Picture;
+                    }
                 }
 
                 await userRepository.SaveChangesAsync(cancellationToken);

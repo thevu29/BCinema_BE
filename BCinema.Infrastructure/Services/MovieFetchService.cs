@@ -31,10 +31,11 @@ public class MovieFetchService(IConfiguration configuration) : IMovieFetchServic
             ? JsonConvert.DeserializeObject<MoviesDto>(response.Content)
             : null;
             
-        foreach (var movie in movieResponse?.Results ?? Enumerable.Empty<MovieDto>())
+        foreach (var movie in movieResponse?.Results ?? [])
         {
             var movieDetail = await FetchMovieByIdAsync(movie.Id);
             movie.Runtime = movieDetail?.Runtime;
+            movie.Genres = movieDetail?.Genres ?? "";
         }
 
         return movieResponse;
@@ -61,6 +62,7 @@ public class MovieFetchService(IConfiguration configuration) : IMovieFetchServic
         {
             var movieDetail = await FetchMovieByIdAsync(movie.Id);
             movie.Runtime = movieDetail?.Runtime;
+            movie.Genres = movieDetail?.Genres ?? "";
         }
 
         return movieResponse;
@@ -107,6 +109,7 @@ public class MovieFetchService(IConfiguration configuration) : IMovieFetchServic
         {
             var movieDetail = await FetchMovieByIdAsync(movie.Id);
             movie.Runtime = movieDetail?.Runtime;
+            movie.Genres = movieDetail?.Genres ?? "";
         }
 
         if (movieResponse != null)
