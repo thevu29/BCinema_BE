@@ -69,7 +69,8 @@ public class CreatePaymentCommand : IRequest<PaymentDto>
 
             user.Point += CalculateTotalPoint(payment);
             
-            if (request.Point is not null && request.Point > 100)
+            Console.WriteLine("point: " + request.Point);
+            if (request.Point is not null && request.Point >= 100)
             {
                 payment.Point = request.Point;
                 user.Point -= request.Point;

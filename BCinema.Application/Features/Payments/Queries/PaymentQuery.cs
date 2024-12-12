@@ -7,6 +7,7 @@ public class PaymentQuery : PaginationQuery
     public string? Search { get; set; }
     public Guid? UserId { get; set; }
     public string? Date { get; set; }
+    public bool? HasPoint { get; set; }
     
     public PaymentQuery() : base() {}
     

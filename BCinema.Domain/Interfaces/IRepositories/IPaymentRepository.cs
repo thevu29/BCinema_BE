@@ -17,5 +17,7 @@ public interface IPaymentRepository
     
     Task<dynamic?> GetTopMoviesMostViewedAsync(int year, int month, int count, CancellationToken cancellationToken);
     
+    Task<int> GetTotalPointsInYearOfUserAsync(Guid userId, int year, CancellationToken cancellationToken);
+    
     Task DeletePaymentAsync(Payment payment, CancellationToken cancellationToken);
 }

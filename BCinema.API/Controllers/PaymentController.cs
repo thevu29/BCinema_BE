@@ -175,4 +175,23 @@ public class PaymentController(IMediator mediator, ILogger<PaymentController> lo
             return StatusCode(500, new ApiResponse<string>(false, "An error occurred while getting top movies"));
         }
     }
+    
+    [HttpGet("total-points-user")]
+    public async Task<IActionResult> GetTotalPointsInYearOfUser([FromQuery] Guid userId, int year)
+    {
+        try
+        {
+            var points = await mediator.Send(new GetTotalPointsInYearOfUserQuery() { UserId = userId, Year = year });
+            return Ok(new ApiResponse<int>(true, "Get total points successfully", points));
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occurred while getting total points");
+            return StatusCode(500, new ApiResponse<string>(false, "An error occurred while getting total points"));
+        }
+    }
 }

@@ -38,6 +38,11 @@ public class GetPaymentsQuery : IRequest<PaginatedList<PaymentDto>>
             {
                 query = query.FilterByDate(request.Query.Date, p => p.Date);
             }
+
+            if (request.Query.HasPoint is true)
+            {
+                query = query.Where(x => x.Point != 0 && x.Point != null);
+            }
             
             query = ApplySorting(query, request.Query.SortBy, request.Query.SortOrder);
             

@@ -97,4 +97,11 @@ public class PaymentRepository(ApplicationDbContext context) : IPaymentRepositor
             .Take(count)
             .ToListAsync(cancellationToken);
     }
+    
+    public async Task<int> GetTotalPointsInYearOfUserAsync(Guid userId, int year, CancellationToken cancellationToken)
+    {
+        return await context.Payments
+            .Where(p => p.UserId == userId && p.CreateAt.Year == year)
+            .SumAsync(p => p.Point, cancellationToken) ?? 0;
+    }
 }
