@@ -38,7 +38,7 @@ public class MomoCallbackCommand : IRequest<string>
 
                 user.Point -= CalculateTotalPoint(payment);
 
-                user.Point += CalculatePointUsed(payment);
+                user.Point += payment.Point ?? 0;
                 
                 foreach (var item in payment.PaymentDetails)
                 {
@@ -68,19 +68,6 @@ public class MomoCallbackCommand : IRequest<string>
         private static int CalculateTotalPoint(Payment payment)
         {
             return (int) payment.TotalPrice / 10;
-        }
-
-        private static int CalculatePointUsed(Payment payment)
-        {
-            var voucher = payment.Voucher ?? null;
-            
-            var totalPrice = voucher != null
-                ? payment.TotalPrice - payment.TotalPrice * (voucher.Discount / 100.0) 
-                : payment.TotalPrice;
-            
-            totalPrice -= payment.PaymentDetails.Sum(pd => pd.Price);
-
-            return (int) (totalPrice * 100) / 100000;
         }
     }
 }
