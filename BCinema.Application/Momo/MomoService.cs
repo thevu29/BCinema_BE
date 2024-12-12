@@ -10,14 +10,20 @@ public class MomoService(IOptions<MomoOptionModel> options) : IMomoService
 {
     public async Task<string> CreateMomoPaymentUrl(string paymentId, string paymentInfo, string amount)
     {
+        Console.WriteLine($"Request Details:");
+        Console.WriteLine($"PaymentId: {paymentId}");
+        Console.WriteLine($"PaymentInfo: {paymentInfo}");
+        Console.WriteLine($"Amount: {amount}");
+        
+        var encodedPaymentInfo = Uri.EscapeDataString(paymentInfo);
+        
         var rawData =
             $"partnerCode={options.Value.PartnerCode}" +
             $"&accessKey={options.Value.AccessKey}" +
             $"&requestId={paymentId}" +
             $"&amount={amount}" +
-            $"&orderExpireTime=5" +
             $"&orderId={paymentId}" +
-            $"&orderInfo={paymentInfo}" +
+            $"&orderInfo={encodedPaymentInfo}" +
             $"&returnUrl={options.Value.ReturnUrl}" +
             $"&notifyUrl={options.Value.NotifyUrl}" +
             $"&extraData=";
@@ -37,21 +43,27 @@ public class MomoService(IOptions<MomoOptionModel> options) : IMomoService
             returnUrl = options.Value.ReturnUrl,
             orderId = paymentId,
             amount = amount,
-            orderExpireTime = 5,
             orderInfo = paymentInfo,
             requestId = paymentId,
-            signature = signature
+            signature = signature,
+            extraData = ""
         };
         
         req.AddParameter("application/json", JsonConvert.SerializeObject(requestData), ParameterType.RequestBody);
 
         var response = await client.ExecuteAsync(req);
+        Console.WriteLine($"Response Status: {response.StatusCode}");
+        Console.WriteLine($"Response Content: {response.Content}");
         var resp = JsonConvert.DeserializeObject<MomoCreatePayment>(response.Content!)!;
+        
         return resp.PayUrl;
     }
     
     private static string ComputeHmacSha256(string rawData, string secretKey)
     {
+        Console.WriteLine($"Raw Data: {rawData}");
+        Console.WriteLine($"Secret Key: {secretKey}");
+        
         var keyBytes = Encoding.UTF8.GetBytes(secretKey);
         var messageBytes = Encoding.UTF8.GetBytes(rawData);
 
@@ -60,7 +72,11 @@ public class MomoService(IOptions<MomoOptionModel> options) : IMomoService
         {
             hashBytes = hmac.ComputeHash(messageBytes);
         }
-        var hashString = BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+        
+        var hashString = Convert.ToBase64String(hashBytes);
+    
+        Console.WriteLine($"Computed Signature: {hashString}");
+    
         return hashString;
     }
 }

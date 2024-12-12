@@ -97,6 +97,7 @@ public class PaymentController(IMediator mediator, ILogger<PaymentController> lo
         try
         {
             var paymentUrl = await mediator.Send(command, cancellationToken);
+            Console.WriteLine("url: " + command.PaymentId);
             return Ok(new ApiResponse<string>(true, "Payment url created successfully", paymentUrl));
         }
         catch (NotFoundException ex)
@@ -105,7 +106,7 @@ public class PaymentController(IMediator mediator, ILogger<PaymentController> lo
         }
         catch (BadRequestException ex)
         {
-            return NotFound(new ApiResponse<string>(false, ex.Message));
+            return BadRequest(new ApiResponse<string>(false, ex.Message));
         }
         catch (Exception ex)
         {

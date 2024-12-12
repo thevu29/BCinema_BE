@@ -13,9 +13,7 @@ public class CreateMomoUrlCommand : IRequest<string>
     [Required]
     public Guid PaymentId { get; set; }
     
-    public class CreateMomoUrlCommandHandler(
-        IPaymentRepository paymentRepository,
-        IMomoService momoService)
+    public class CreateMomoUrlCommandHandler(IPaymentRepository paymentRepository, IMomoService momoService)
         : IRequestHandler<CreateMomoUrlCommand, string>
     {
         public async Task<string> Handle(CreateMomoUrlCommand request, CancellationToken cancellationToken)
@@ -26,8 +24,15 @@ public class CreateMomoUrlCommand : IRequest<string>
             var paymentId = payment.Id.ToString();
             var paymentAmount = payment.TotalPrice.ToString(CultureInfo.InvariantCulture);
             var paymentInfo = "Thanh toán vé xem phim";
+
+            var paymentUrl = await momoService.CreateMomoPaymentUrl(paymentId, paymentInfo, paymentAmount);
             
-            return await momoService.CreateMomoPaymentUrl(paymentId, paymentInfo, paymentAmount);
+            if (string.IsNullOrEmpty(paymentUrl))
+            {
+                throw new BadRequestException("Failed to generate Momo payment URL");
+            }
+        
+            return paymentUrl;
         }
     }
 }
