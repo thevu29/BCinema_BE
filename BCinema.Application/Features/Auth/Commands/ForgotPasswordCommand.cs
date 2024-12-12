@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using BCinema.Application.Enums;
 using BCinema.Application.Exceptions;
 using BCinema.Domain.Entities;
 using BCinema.Domain.Interfaces.IRepositories;
@@ -34,7 +35,7 @@ public class ForgotPasswordCommand : IRequest<bool>
                 throw new BadRequestException("OTP is not verified");
             }
                 
-            var user = await userRepository.GetByEmailAsync(request.Email, cancellationToken)
+            var user = await userRepository.GetByIdAsync(otp.UserId, cancellationToken)
                        ?? throw new NotFoundException(nameof(User));
             
             user.Password = passwordHasher.HashPassword(user, request.Password);
