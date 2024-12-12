@@ -11,6 +11,7 @@ namespace BCinema.Domain.Entities
         [Required]
         public Guid ScheduleId { get; set; }
         public Guid? VoucherId { get; set; }
+        public int? Point { get; set; }
         [Required]
         public DateTime Date { get; set; } = DateTime.UtcNow;
         [Required]

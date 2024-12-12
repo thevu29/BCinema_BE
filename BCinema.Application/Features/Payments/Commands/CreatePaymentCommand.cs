@@ -71,6 +71,7 @@ public class CreatePaymentCommand : IRequest<PaymentDto>
             
             if (request.Point is not null && request.Point > 100)
             {
+                payment.Point = request.Point;
                 user.Point -= request.Point;
                 
                 var pointDiscount = (double) (request.Point * 100000) / 100.0;

@@ -10,5 +10,6 @@ public class PaymentDto
     public Guid? VoucherId { get; set; }
     public DateTime Date { get; set; }
     public double TotalPrice { get; set; }
+    public int? Point { get; set; }
     public IEnumerable<PaymentDetailDto> PaymentDetails { get; set; } = default!;
 }

@@ -24,6 +24,7 @@ public class GetPaymentsQuery : IRequest<PaginatedList<PaymentDto>>
                 var searchTerm = request.Query.Search.Trim().ToLower();    
                 
                 query = query.Where(x => 
+                    EF.Functions.Like(x.User.Name.ToLower(), $"%{searchTerm}%") ||
                     EF.Functions.Like(x.Schedule.MovieName.ToLower(), $"%{searchTerm}%") ||
                     EF.Functions.Like(x.Voucher != null ? x.Voucher.Code.ToLower() : "", 
                         $"%{searchTerm}%")
