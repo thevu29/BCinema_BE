@@ -19,28 +19,6 @@ public class PaymentRepository(ApplicationDbContext context) : IPaymentRepositor
             .Include(p => p.PaymentDetails);
     }
     
-    public async Task<double> GetStatisticsRevenueAsync(int year, int month, CancellationToken cancellationToken)
-    {
-        return await context.Payments
-            .Where(p => p.CreateAt.Year == year && p.CreateAt.Month == month)
-            .SumAsync(p => p.TotalPrice, cancellationToken);
-    }
-    
-    public async Task<dynamic?> GetTopMoviesMostViewedAsync(int year, int month, int count, CancellationToken cancellationToken)
-    {
-        return await context.Payments
-            .Where(p => p.CreateAt.Year == year && p.CreateAt.Month == month)
-            .GroupBy(p => p.Schedule.MovieId)
-            .Select(g => new TopMovieDto()
-            {
-                MovieId = g.Key,
-                TotalView = g.Count()
-            })
-            .OrderByDescending(g => g.TotalView)
-            .Take(count)
-            .ToListAsync(cancellationToken);
-    }
-    
     public async Task<IEnumerable<Payment>> GetPaymentsAsync(CancellationToken cancellationToken)
     {
         return await context.Payments
@@ -96,5 +74,34 @@ public class PaymentRepository(ApplicationDbContext context) : IPaymentRepositor
     {
         context.Payments.Remove(payment);
         return Task.CompletedTask;
+    }
+    
+    public async Task<double> GetStatisticsRevenueAsync(int year, int month, CancellationToken cancellationToken)
+    {
+        return await context.Payments
+            .Where(p => p.CreateAt.Year == year && p.CreateAt.Month == month)
+            .SumAsync(p => p.TotalPrice, cancellationToken);
+    }
+    
+    public async Task<dynamic?> GetTopMoviesMostViewedAsync(int year, int month, int count, CancellationToken cancellationToken)
+    {
+        return await context.Payments
+            .Where(p => p.CreateAt.Year == year && p.CreateAt.Month == month)
+            .GroupBy(p => p.Schedule.MovieId)
+            .Select(g => new TopMovieDto()
+            {
+                MovieId = g.Key,
+                TotalView = g.Count()
+            })
+            .OrderByDescending(g => g.TotalView)
+            .Take(count)
+            .ToListAsync(cancellationToken);
+    }
+    
+    public async Task<int> GetTotalPointsInYearOfUserAsync(Guid userId, int year, CancellationToken cancellationToken)
+    {
+        return await context.Payments
+            .Where(p => p.UserId == userId && p.CreateAt.Year == year)
+            .SumAsync(p => p.Point, cancellationToken) ?? 0;
     }
 }
