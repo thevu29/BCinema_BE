@@ -16,7 +16,6 @@ namespace BCinema.Domain.Interfaces.IRepositories
         Task<int> CountAsync(int year, int month ,CancellationToken cancellationToken);
         Task SaveChangesAsync();
         Task SaveChangesAsync(CancellationToken cancellationToken);
-        
         Task DeleteInActiveUsersAsync(CancellationToken cancellationToken);
     }
 }

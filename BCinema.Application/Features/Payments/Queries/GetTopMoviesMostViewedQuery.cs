@@ -20,10 +20,10 @@ public class GetTopMoviesMostViewedQuery : IRequest<IEnumerable<MovieDto>>
         {
             var topMovies = await paymentRepository
                 .GetTopMoviesMostViewedAsync(request.Year,request.Month,request.Count, cancellationToken) as List<TopMovieDto>;
-            
             var movieDtos = new List<MovieDto>();
             
             Console.WriteLine("Top Movies: " + topMovies);
+
             if (topMovies == null)
             {
                 return movieDtos;
@@ -35,6 +35,7 @@ public class GetTopMoviesMostViewedQuery : IRequest<IEnumerable<MovieDto>>
                 var movieDto = await movieFetchService.FetchMovieByIdAsync(movie.MovieId);
                 movieDtos.Add(movieDto);
             }
+
             return movieDtos;
         }
     }

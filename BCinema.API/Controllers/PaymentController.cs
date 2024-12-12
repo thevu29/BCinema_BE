@@ -137,4 +137,42 @@ public class PaymentController(IMediator mediator, ILogger<PaymentController> lo
             return Redirect(redirectUrl + "500");
         }
     }
+    
+    [HttpGet("revenue")]
+    public async Task<IActionResult> GetStatisticsRevenue([FromQuery] int year, int month)
+    {
+        try
+        {
+            var revenue = await mediator.Send(new GetStatisticsRevenueQuery() { Year = year, Month = month});
+            return Ok(new ApiResponse<double>(true, "Get revenue successfully", revenue));
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occurred while getting revenue");
+            return StatusCode(500, new ApiResponse<string>(false, "An error occurred while getting revenue"));
+        }
+    }
+    
+    [HttpGet("top-movies")]
+    public async Task<IActionResult> GetTopMoviesMostViewed([FromQuery] int year, int month, int count)
+    {
+        try
+        {
+            var movies = await mediator.Send(new GetTopMoviesMostViewedQuery() { Year = year, Month = month, Count = count });
+            return Ok(new ApiResponse<IEnumerable<MovieDto>>(true, "Get top movies successfully", movies));
+        }
+        catch (ValidationException ex)
+        {
+            return BadRequest(new ApiResponse<string>(false, ex.Message));
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "An error occurred while getting top movies");
+            return StatusCode(500, new ApiResponse<string>(false, "An error occurred while getting top movies"));
+        }
+    }
 }

@@ -16,6 +16,5 @@ public interface IPaymentRepository
     Task<dynamic?> GetTopMoviesMostViewedAsync(int year, int month, int count, CancellationToken cancellationToken);
     Task SaveChangesAsync();
     Task SaveChangesAsync(CancellationToken cancellationToken);
-    
     Task DeletePaymentAsync(Payment payment, CancellationToken cancellationToken);
 }

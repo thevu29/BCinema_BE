@@ -112,6 +112,11 @@ public class MovieFetchService(IConfiguration configuration) : IMovieFetchServic
             movie.Genres = movieDetail?.Genres ?? "";
         }
 
+        if (movieResponse != null)
+        {
+            movieResponse.Results = movieResponse.Results.OrderByDescending(m => m.ReleaseDate).ToList();
+        }
+        
         return movieResponse;
     }
 }
