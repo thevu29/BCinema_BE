@@ -66,6 +66,8 @@ builder.Services.AddControllers()
     });
 
 builder.Services.AddTransient<IMailService, MailService>();
+builder.Services.AddScoped<IMomoService, MomoService>();
+
 
 builder.Services.AddLogging();
 builder.Services.AddEndpointsApiExplorer();

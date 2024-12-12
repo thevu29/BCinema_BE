@@ -92,7 +92,7 @@ public class PaymentController(IMediator mediator, ILogger<PaymentController> lo
     }
     
     [HttpPost("momo")]
-    public async Task<IActionResult> CreatePaymentUrl([FromBody] PaymentInfoCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreatePaymentUrl([FromBody] CreateMomoUrlCommand command, CancellationToken cancellationToken)
     {
         try
         {
