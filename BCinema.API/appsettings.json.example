@@ -7,9 +7,33 @@
   },
   "AllowedHosts": "*",
   "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Port=5432;Database=BCinemaDB;Username=postgres;Password=password"
+    "DefaultConnection": "Host=;Port=;Database=;Username=;Password="
   },
   "ApiSettings": {
-    "TheMovieDbApiKey": "your_api_key_here"
+    "TheMovieDbApiKey": ""
+  },
+  "MomoAPI": {
+    "MomoApiUrl": "https://test-payment.momo.vn/gw_payment/transactionProcessor",
+    "SecretKey": "",
+    "AccessKey": "",
+    "ReturnUrl": "https://localhost:7263/api/payments/momo/callback",
+    "NotifyUrl": "https://localhost:7263/api/payments/momo/notify",
+    "PartnerCode": "MOMO",
+    "RequestType": "captureMoMoWallet"
+  },
+  "JwtConfig": {
+    "Secret": "",
+    "Issuer": "https://localhost:7263",
+    "Audience": "https://localhost:5173"
+  },
+  "GoogleConfig": {
+    "ClientId": ""
+  },
+  "MailSettings":
+  {
+    "Host": "smtp.gmail.com",
+    "Port": 587,
+    "Email": "",
+    "Password": ""
   }
 }
