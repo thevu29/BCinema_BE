@@ -75,7 +75,7 @@ Set up the following environment variables in your `appsettings.json` based on `
 ## Database Schema
 Below is the database schema diagram:
 
-![Database Schema](/docs/database_diagram.png)
+![Database Schema](/database_diagram.png)
 
 ---
 
