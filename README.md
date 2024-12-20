@@ -53,6 +53,11 @@ git clone https://github.com/thevu29/BCinema_BE.git
 1. Create a PostgreSQL database.
 2. Update the `appsettings.json` file with your database connection string.
 
+### Firebase Configuration
+Create project in https://console.firebase.google.com/u/0/ and create file `firebase-adminsdk.json`
+
+---
+
 ### Run the Application
 ```bash
 dotnet build
